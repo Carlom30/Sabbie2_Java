@@ -1,1 +1,5 @@
 aggiustare il codice in modo che sia il più generico possibile, non andare avanti fino a che non avrai finito.
+nel dettaglio: 
+    - ripulire il codice (on run)
+    - separare dati dal gamepanel (ovvero dal rendering)
+    - comprendere appieno il codice in modo da non perderne il controllo

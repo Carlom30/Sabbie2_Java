@@ -44,7 +44,7 @@ public class Room
             for(int j = 0; j < bounds.width; j++)
             {
                 int offset = i * bounds.width + j; 
-                tiles[offset] = new Tile(new Vector2(0, 0), floor);
+                tiles[offset] = new Tile(floor);
                 
                 if(i == 0 || i == (bounds.height - 1) || j == 0 || j == (bounds.width - 1))
                 {
@@ -54,7 +54,7 @@ public class Room
         }
     }
 
-    public void printRoomOnMap(Map map, GamePanel gp)
+    public void printRoomOnMap(Map map, GamePanel gp) //print data only, no rendering
     {
         int k = 0;
         for(int i = bounds.min.y; i < bounds.min.y + bounds.height; i++)

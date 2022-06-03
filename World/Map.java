@@ -9,14 +9,20 @@ public class Map
 {
     Tile[] tiles;
     GamePanel gp;
+    
+    int width;
+    int height;
     int area;
 
-    public Map(GamePanel gp)
+
+    public Map(GamePanel gp, int width, int height)
     {
         //NOTA FUCKING BENE, le dimenzioni effetive della mappa non saranno mai queste, ma ben più grandi
         this.gp = gp;
-        area = gp.maxScreenColumn * gp.maxScreenRow;
+        area = width * height;
         tiles = new Tile[area];
+        this.width = width;
+        this.height = height;
     }
 
     //qualche funzione di utility immagino
@@ -33,12 +39,6 @@ public class Map
                 g2D.drawImage(sprite, x * gp.tileSize, y * gp.tileSize , gp.tileSize, gp.tileSize, null);
             }
         }
-    }
-
-    public void drawTileOnMap(Tile tile)
-    {
-        int offset = tile.globalPosition.y * gp.maxScreenColumn + tile.globalPosition.x;
-        tiles[offset] = tile;
     }
 
     public void fillMapWithOneTile(Tile tile)

@@ -3,21 +3,19 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import javax.swing.JPanel;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import javax.swing.JPanel;
 import Entity.*;
-import Math.RectInt;
-import Math.Vector2;
+import Math.*;
 //import Math.*;
-import World.Map;
-import World.Room;
-import World.Tile;
+import World.*;
 import javax.imageio.ImageIO;
 
 /*  
     NB: quando nelle mie funzioni scrivo "draw" si intende inserimento di dati, quando scrivo 
         print, si intende rendering.
+        java scrive "paint" quindi non ci sono troppi problemi
 */
 public class GamePanel extends JPanel implements Runnable
 {
@@ -39,15 +37,12 @@ public class GamePanel extends JPanel implements Runnable
     int fps = 60;
     KeyHandler kh = new KeyHandler();
     Thread gameThread;
-
-    //-------- TESTING ---------------
-    BufferedImage wallSprite;
-    Tile wall;
-    Room room = new Room(new RectInt(new Vector2(0, 0), 5, 5));
-    //--------------------------------
-    Map map;
     
-    Player player = new Player(this, kh);
+    //-------- TESTING ---------------
+    Map map;
+
+    //--------------------------------    
+    Player player;
 
     public GamePanel()
     {
@@ -58,22 +53,10 @@ public class GamePanel extends JPanel implements Runnable
         this.setFocusable(true);
 
         //TESTING
-        
-        try 
-        {
-            wallSprite = ImageIO.read(getClass().getResourceAsStream("/Sprites/world/sand2.png"));
-        } 
-
-        catch (Exception e) 
-        {
-            e.printStackTrace();
-        }
-
-        wall = new Tile(new Vector2(0, 0), wallSprite);
-        map = new Map(this);
-        map.fillMapWithOneTile(wall);
-        room.printRoomOnMap(map, this);
-
+        map = new Map(this, 10, 10);
+        Utils u = new Utils();
+        map.fillMapWithOneTile(new Tile(u.loadSprite("/Sprites/world/sand2.png")));
+        player = new Player(this, kh);
         //END OF TESTING
     } 
 
