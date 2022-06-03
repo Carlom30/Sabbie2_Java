@@ -21,16 +21,14 @@ public class Room
 
     void loadRoomSprite()
     {
-        Utils u = new Utils();
-        wall = u.loadSprite("/Sprites/wallme.png");
-        floor = u.loadSprite("/Sprites/world/sand0.png");
-        u = null; //garbagecollector or shit like that i dunno why there's no free() function?
+        wall = Utils.loadSprite("/Sprites/wallme.png");
+        floor = Utils.loadSprite("/Sprites/world/sand0.png");
+        //garbagecollector or shit like that i dunno why there's no free() function?
     }
 
     public Room(RectInt bounds)
     {
         this.bounds = bounds;
-
         //ora serve di creare la stanza e (altra funzione) "disegnarla" sulla mappa
         /*
             NB: il rendering funzionerà in questo modo:
@@ -54,7 +52,7 @@ public class Room
         }
     }
 
-    public void printRoomOnMap(Map map, GamePanel gp) //print data only, no rendering
+    public void drawRoomOnMap(Map map, GamePanel gp) //print data only, no rendering
     {
         int k = 0;
         for(int i = bounds.min.y; i < bounds.min.y + bounds.height; i++)

@@ -19,7 +19,6 @@ public class Player extends Entity
         this.kh = kh;
         setDefaultValues();
         readPlayerSprites();
-
     }
 
     public void setDefaultValues()
@@ -103,9 +102,7 @@ public class Player extends Entity
         BufferedImage image = null;
 
         switch(direction)
-        {
-
-                
+        { 
             case up:
                 if(spriteNum == 1)
                 {

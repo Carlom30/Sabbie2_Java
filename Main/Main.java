@@ -5,7 +5,6 @@ public class Main {
     public static void main(String[] args) 
     {
         //fix stuttering and lagging problems with linux gpu scheduling
-        final Utils u = new Utils();
         System.setProperty("sun.java2d.opengl", "true");
         JFrame window = new JFrame();
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // il programma si conclude quando l'utente chiude la finestra con la x

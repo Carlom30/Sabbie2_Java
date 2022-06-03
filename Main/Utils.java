@@ -14,14 +14,21 @@ public class Utils
         idle,
 
         ALL_DIRECTIONS
+
+        /* Java
+         * 
+         * 
+         *  Java
+         */
+        
     };
 
-    public BufferedImage loadSprite(String path)
+    public static BufferedImage loadSprite(String path)
     {
         BufferedImage sprite = null;
         try 
         {
-            sprite = ImageIO.read(getClass().getResourceAsStream(path));
+            sprite = ImageIO.read(Utils.class.getResourceAsStream(path));
         }
 
         catch (Exception e) 

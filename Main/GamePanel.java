@@ -23,7 +23,6 @@ public class GamePanel extends JPanel implements Runnable
 
     //tilesize è la dimenzione finale di una tile (in pixel ovviamente)
     final public int originalTileSize = 16; // 16 x 16 tiles
-
     //16x16 è comunque un po piccolo in generale per i monitor moderni quindi
     //posso scalare 
     final public int scale = 3;
@@ -53,9 +52,8 @@ public class GamePanel extends JPanel implements Runnable
         this.setFocusable(true);
 
         //TESTING
-        map = new Map(this, 10, 10);
-        Utils u = new Utils();
-        map.fillMapWithOneTile(new Tile(u.loadSprite("/Sprites/world/sand2.png")));
+        map = new Map(this, 100, 100);
+        map.fillMapWithOneTile(new Tile(Utils.loadSprite("/Sprites/world/sand2.png")));
         player = new Player(this, kh);
         //END OF TESTING
     } 
