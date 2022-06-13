@@ -5,7 +5,7 @@ import Main.Utils.*;
 
 public abstract class Entity 
 {
-    public Vector2 position;
+    public Vector2 worldPosition;
     public int velocity;
 
     public BufferedImage idle;

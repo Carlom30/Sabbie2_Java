@@ -15,7 +15,7 @@ public class Tile
         door
     }
     //tile è riferito alle tile della mappa e non di ciò che non è mappa
-    BufferedImage sprite;
+    public BufferedImage sprite;
     boolean collision = false;
 
     public Tile(BufferedImage sprite)

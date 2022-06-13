@@ -1,4 +1,4 @@
-package Main;
+package Engine;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -7,6 +7,8 @@ import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
 import Entity.*;
+import Main.KeyHandler;
+import Main.Utils;
 import Math.*;
 //import Math.*;
 import World.*;
@@ -31,7 +33,15 @@ public class GamePanel extends JPanel implements Runnable
     final public int maxScreenRow = 12;  // 4:3 hehe
     final public int screenWidth = tileSize * maxScreenColumn;
     final public int screenHeight = tileSize * maxScreenRow;
-    
+
+    //settings world
+
+    public final int maxWorldColumn = 50;
+    public final int maxWorldRow = 50;
+    public final int worldWidth = tileSize * maxWorldColumn;
+    public final int worldHeight = tileSize * maxWorldRow;
+
+
     // and so, 48 pixels * 16 = 768 pixel for width and 48 * 12 = 576 pixels for height
     int fps = 60;
     KeyHandler kh = new KeyHandler();
@@ -103,7 +113,7 @@ public class GamePanel extends JPanel implements Runnable
             }
         }
 
-        //so the game loop works like: 
+        //the game loop works like: 
         //update: processing stuff
         //rendering: draw shit
     }
@@ -113,8 +123,8 @@ public class GamePanel extends JPanel implements Runnable
         super.paintComponent(g); //questo va fatto ogni volta che si utilizza paintComponent
         Graphics2D g2 = (Graphics2D)g; //ofc graphics2d che fa override di graphics
                                        //grpahics2d è ottimo per il 2d ofc, ha più funzioni inerenti
-        map.printMap(g2);
-        player.print(g2);
+        Engine.printMap(map, g2);
+        Engine.printPlayer(g2, player);
         
         //g2.dispose();
     }

@@ -3,7 +3,7 @@ package World;
 import Math.*;
 import java.awt.image.BufferedImage;
 
-import Main.GamePanel;
+import Engine.GamePanel;
 import Main.Utils;
 
 

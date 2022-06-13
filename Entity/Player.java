@@ -6,12 +6,16 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+
+import Engine.GamePanel;
+
 import java.awt.image.BufferedImage;
 
 public class Player extends Entity 
 {
-    GamePanel gp; //rendering part
+    public GamePanel gp; //rendering part
     KeyHandler kh; //input manager (sarà comunque una classe a parte)
+    public Vector2 screenPosition;
 
     public Player(GamePanel gp, KeyHandler kh)
     {
@@ -19,11 +23,13 @@ public class Player extends Entity
         this.kh = kh;
         setDefaultValues();
         readPlayerSprites();
+        screenPosition = new Vector2(gp.screenWidth / 2 - gp.tileSize / 2, gp.screenHeight / 2 - gp.tileSize / 2);
+        //up: print character at the exact centre of the screen
     }
 
     public void setDefaultValues()
     {
-        position = new Vector2(100, 100);
+        worldPosition = new Vector2(gp.tileSize * 23, gp.tileSize * 21);
         velocity = 4;
         direction = Directions.idle;
     }
@@ -56,25 +62,25 @@ public class Player extends Entity
             if(kh.upPressed)
             {
                 direction = Directions.up;
-                position.y -= velocity;
+                worldPosition.y -= velocity;
             }
     
             if(kh.downPressed)
             {
                 direction = Directions.down;
-                position.y += velocity;
+                worldPosition.y += velocity;
             }
             
             if(kh.leftPressed)
             {
                 direction = Directions.left;
-                position.x -= velocity;
+                worldPosition.x -= velocity;
             }
     
             if(kh.rightPressed)
             {
                 direction = Directions.right;
-                position.x += velocity;
+                worldPosition.x += velocity;
             }
     
             spriteCounter++;
@@ -94,63 +100,4 @@ public class Player extends Entity
         }
     }
 
-    public void print(Graphics2D g2D)
-    {
-        /*g2D.setColor(Color.white);
-        g2D.fillRect(position.x, position.y, gp.tileSize, gp.tileSize);*/
-
-        BufferedImage image = null;
-
-        switch(direction)
-        { 
-            case up:
-                if(spriteNum == 1)
-                {
-                    image = up_1;
-                }
-
-                if(spriteNum == 2)
-                {
-                    image = up_2;
-                }
-                break;
-                
-            case down:
-                if(spriteNum == 1)
-                {
-                    image = down_1;
-                }
-
-                if(spriteNum == 2)
-                {
-                    image = down_2;
-                }
-                break;
-
-            case right:
-                if(spriteNum == 1)
-                {
-                    image = right_idle;
-                }
-                
-                if(spriteNum == 2)
-                {
-                    image = right_1;
-                }
-                break;
-                
-            case left:
-                if(spriteNum == 1)
-                {
-                    image = left_idle;
-                }
-
-                if(spriteNum == 2)
-                {
-                    image = left_1;
-                }
-                break;
-        }
-        g2D.drawImage(image, position.x, position.y, gp.tileSize, gp.tileSize, null);
-    }
 }

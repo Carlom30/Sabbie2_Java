@@ -1,7 +1,11 @@
 package Main;
 import javax.swing.JFrame;
 
+import Engine.GamePanel;
+
 public class Main {
+    
+    public static GamePanel gp;
     public static void main(String[] args) 
     {
         //fix stuttering and lagging problems with linux gpu scheduling
@@ -11,14 +15,14 @@ public class Main {
         window.setResizable(false);
         window.setTitle("Sabbie 2");
 
-        GamePanel gamePanel = new GamePanel();
-        window.add(gamePanel); //aggiungo gamePanel come componente di window, mi servirà dopo
+        gp = new GamePanel();
+        window.add(gp); //aggiungo gamePanel come componente di window, mi servirà dopo
 
         window.pack();
         
         window.setLocationRelativeTo(null); //la finestra viene creata la centro dello schermo
         window.setVisible(true);
 
-        gamePanel.startGameThread();
+        gp.startGameThread();
     }
 }
