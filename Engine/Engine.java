@@ -16,14 +16,49 @@ public class Engine
     public static void printMap(Map map,  Graphics2D g2D)
     {
         GamePanel gp = Main.gp;
-        for(int y = 0; y < gp.maxScreenRow; y++)
+
+        for(int y = 0; y < gp.maxWorldRow; y++)
         {
-            for(int x = 0; x < gp.maxScreenColumn; x++)
+            for(int x = 0; x < gp.maxWorldColumn; x++)
             {
-                int offset = y * gp.maxScreenColumn + x;
+                int offset = y * gp.maxWorldColumn + x;
                 Tile tile = map.tiles[offset];
+                
+                /* supponiamo che mapcolm e maprow siano 0, allora mapxy sarà 0, 0 e così via.
+                 * avremo quindi ogni tile nella sua posizione nel mondo.
+                 * ora però è necessario convertire queste coordinate in coordinate per lo screen,
+                 * quindi si sottrae da mapXY la posizione del player rispetto alla mappa totale
+                 * sommata però alla screen position (che però, nota bene, è prefixed al centro dello schermo):
+                 * 
+                 * ############
+                 * #..........#
+                 * #..........#
+                 * #.......@..#
+                 * #..........#
+                 * ############
+                 * 
+                 * supponiamo che il player (@) sia a [8, 3] (world pos) e che lo screen sia un 3 x 3,
+                 * quindi player è a [1, 1] nello screen:
+                 * 
+                 * allora si avrà
+                 * mapX = 0 * 1 (nell'esempio tilesize è 1) = 0
+                 * e quindi:
+                 * screenX = 0 - 8 + 1 = -7
+                 * 
+                 * contando dallo [0, 0] dello screen "all'indietro" si ottiene -7 per le X
+                 */
+                int mapX = x * gp.tileSize;
+                int mapY = y * gp.tileSize;
+                int screenX = mapX - gp.player.worldPosition.x + gp.player.screenPosition.x;
+                int screenY = mapY - gp.player.worldPosition.y + gp.player.screenPosition.y;
+
+                if(offset == 191)
+                {
+                    int a = 0;
+                }
+
                 BufferedImage sprite = tile.sprite;
-                g2D.drawImage(sprite, x * gp.tileSize, y * gp.tileSize , gp.tileSize, gp.tileSize, null);
+                g2D.drawImage(sprite, screenX, screenY , gp.tileSize, gp.tileSize, null);
             }
         }
     } 

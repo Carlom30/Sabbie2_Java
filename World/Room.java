@@ -59,7 +59,7 @@ public class Room
         {
             for(int j = bounds.min.x; j < bounds.min.x + bounds.width; j++)
             {
-                int offset = i * gp.maxScreenColumn + j; 
+                int offset = i * map.width + j; 
                 map.tiles[offset] = this.tiles[k];
                 k++;
             }

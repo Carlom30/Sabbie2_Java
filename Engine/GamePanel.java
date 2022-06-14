@@ -10,13 +10,12 @@ import Entity.*;
 import Main.KeyHandler;
 import Main.Utils;
 import Math.*;
-//import Math.*;
 import World.*;
 import javax.imageio.ImageIO;
 
 /*  
     NB: quando nelle mie funzioni scrivo "draw" si intende inserimento di dati, quando scrivo 
-        print, si intende rendering.
+        "print", si intende rendering.
         java scrive "paint" quindi non ci sono troppi problemi
 */
 public class GamePanel extends JPanel implements Runnable
@@ -62,7 +61,7 @@ public class GamePanel extends JPanel implements Runnable
         this.setFocusable(true);
 
         //TESTING
-        map = new Map(this, 100, 100);
+        map = new Map(this, maxWorldColumn, maxWorldRow);
         map.fillMapWithOneTile(new Tile(Utils.loadSprite("/Sprites/world/sand2.png")));
         player = new Player(this, kh);
         //END OF TESTING
