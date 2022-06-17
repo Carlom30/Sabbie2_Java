@@ -47,6 +47,7 @@ public class Room
                 if(i == 0 || i == (bounds.height - 1) || j == 0 || j == (bounds.width - 1))
                 {
                     tiles[offset].sprite = wall;
+                    tiles[offset].collision = true;    
                 }
             }
         }

@@ -1,6 +1,5 @@
 package Engine;
 import java.awt.image.BufferedImage;
-
 import Entity.Player;
 import Main.*;
 import World.Map;
@@ -10,7 +9,6 @@ import java.awt.Graphics2D;
 
 public class Engine 
 {
-
     //could be great to make a function that load all sprites. So the game doesn't need to do it every time 
     //a struct is allocated
     public static void printMap(Map map,  Graphics2D g2D)
@@ -46,7 +44,10 @@ public class Engine
                  * screenX = 0 - 8 + 1 = -7
                  * 
                  * contando dallo [0, 0] dello screen "all'indietro" si ottiene -7 per le X
+                 * che è esattamente il risultato voluto, e come atteso, non comparirà a schermo
                  */
+
+                 //quindi, banalmente, queste 4 righe implementano la camera
                 int mapX = x * gp.tileSize;
                 int mapY = y * gp.tileSize;
                 int screenX = mapX - gp.player.worldPosition.x + gp.player.screenPosition.x;
@@ -58,6 +59,14 @@ public class Engine
                 }
 
                 BufferedImage sprite = tile.sprite;
+                if(mapX + gp.tileSize < gp.player.worldPosition.x - gp.player.screenPosition.x ||
+                   mapX - gp.tileSize > gp.player.worldPosition.x + gp.player.screenPosition.x ||
+                   mapY + gp.tileSize < gp.player.worldPosition.y - gp.player.screenPosition.y ||
+                   mapY - gp.tileSize > gp.player.worldPosition.y + gp.player.screenPosition.y)
+                {
+                    continue;
+                }
+
                 g2D.drawImage(sprite, screenX, screenY , gp.tileSize, gp.tileSize, null);
             }
         }
@@ -122,4 +131,5 @@ public class Engine
         }
         g2D.drawImage(image, player.screenPosition.x, player.screenPosition.y, player.gp.tileSize, player.gp.tileSize, null);
     }
+    
 }

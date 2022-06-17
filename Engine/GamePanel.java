@@ -50,6 +50,7 @@ public class GamePanel extends JPanel implements Runnable
     Map map;
 
     //--------------------------------    
+    public CollisionLogic collision = new CollisionLogic(this);
     Player player;
 
     public GamePanel()
@@ -62,7 +63,7 @@ public class GamePanel extends JPanel implements Runnable
 
         //TESTING
         map = new Map(this, maxWorldColumn, maxWorldRow);
-        map.fillMapWithOneTile(new Tile(Utils.loadSprite("/Sprites/world/sand2.png")));
+        map.fillMapWithOneTile(new Tile(Utils.loadSprite("/Sprites/world/sand/sand3.png")));
         player = new Player(this, kh);
         //END OF TESTING
     } 

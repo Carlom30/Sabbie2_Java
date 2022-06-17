@@ -16,7 +16,7 @@ public class Tile
     }
     //tile è riferito alle tile della mappa e non di ciò che non è mappa
     public BufferedImage sprite;
-    boolean collision = false;
+    public boolean collision = false;
 
     public Tile(BufferedImage sprite)
     {

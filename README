@@ -1,3 +1,17 @@
 Sabbie 2, Java version
 
-this little 2D game is made for "programmazione di interfaccie grafiche" exam, and is made in java language
+this little 2D game is made for "programmazione di interfaccie grafiche" exam, and is made in java language-
+
+rules:
+
+the game is simple:
+
+- find the nomad
+- ask for map price
+- farm material for mining
+- create new dungeon
+- farm gold
+- buy map
+- create map the map spot
+- search for ship parts exploding walls in the dungeon
+- live the planet

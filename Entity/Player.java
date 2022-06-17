@@ -1,6 +1,7 @@
 package Entity;
 import Main.*;
 import Main.Utils.Directions;
+import Math.RectInt;
 import Math.Vector2;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -24,6 +25,7 @@ public class Player extends Entity
         setDefaultValues();
         readPlayerSprites();
         screenPosition = new Vector2(gp.screenWidth / 2 - gp.tileSize / 2, gp.screenHeight / 2 - gp.tileSize / 2);
+        collisionArea = new RectInt(new Vector2(8, 16), 32, 32);  
         //up: print character at the exact centre of the screen
     }
 
@@ -83,6 +85,9 @@ public class Player extends Entity
                 worldPosition.x += velocity;
             }
     
+            collisionOn = false;
+            gp.collision.checkForCollision_Tile(this);
+        
             spriteCounter++;
             if(spriteCounter > 15) // sostanzialmente 10 è la "velocità" di change dello sprite, più è alto, e più gli sprite ci mettono a cambiare
             {                      // quindi in questo caso cambia ogni 10 frame, poiché questa funzione è chiamata ad ogni frame

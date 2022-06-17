@@ -1,6 +1,8 @@
 package Entity;
 import Math.*;
 import java.awt.image.BufferedImage;
+import java.text.CollationElementIterator;
+
 import Main.Utils.*;
 
 public abstract class Entity 
@@ -22,5 +24,8 @@ public abstract class Entity
 
     public int spriteCounter = 0;
     public int spriteNum = 1;
+
+    public RectInt collisionArea;
+    public Boolean collisionOn = false;
     
 }
