@@ -13,7 +13,7 @@ public class Main {
         JFrame window = new JFrame();
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // il programma si conclude quando l'utente chiude la finestra con la x
         window.setResizable(false);
-        window.setTitle("Sabbie 2");
+        window.setTitle("Sands");
 
         gp = new GamePanel();
         window.add(gp); //aggiungo gamePanel come componente di window, mi servirà dopo
