@@ -64,7 +64,7 @@ public class GamePanel extends JPanel implements Runnable
         //TESTING
         map = new Map(this, maxWorldColumn, maxWorldRow);
         map.fillMapWithOneTile(new Tile(Utils.loadSprite("/Sprites/world/sand/sand3.png")));
-        Room newRoom = new Room(new RectInt(new Vector2(0, 0), 5, 5));
+        Room newRoom = new Room(new RectInt(new Vector2(10, 10), 5, 5));
         newRoom.drawRoomOnMap(map, this);
         player = new Player(this, kh);
         //END OF TESTING

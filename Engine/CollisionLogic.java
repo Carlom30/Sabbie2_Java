@@ -63,9 +63,19 @@ public class CollisionLogic
                 break;
             }
 
+
+            //il resto ha la stessa logica di sopra
             case down:
             {
                 entityBottomRow = (bottomCollisionY + entity.velocity) / gp.tileSize;
+                offsetTileOne = entityBottomRow * map.width + entityLeftCol;
+                offsetTileTwo = entityBottomRow * map.width + entityRightCol;
+
+                if(map.tiles[offsetTileOne].collision == true || map.tiles[offsetTileTwo].collision == true)
+                {
+                    entity.collisionOn = true;
+                }
+
                 break;
             }
 
