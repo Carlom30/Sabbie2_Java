@@ -64,30 +64,46 @@ public class Player extends Entity
             if(kh.upPressed)
             {
                 direction = Directions.up;
-                worldPosition.y -= velocity;
+                gp.collision.checkForCollision_Tile(this);
+                if(collisionOn == false)
+                {
+                    worldPosition.y -= velocity;
+                }
             }
     
-            if(kh.downPressed)
+            else if(kh.downPressed)
             {
                 direction = Directions.down;
-                worldPosition.y += velocity;
+                gp.collision.checkForCollision_Tile(this);
+                if(collisionOn == false)
+                {
+                    worldPosition.y += velocity;
+                }
             }
             
-            if(kh.leftPressed)
+            else if(kh.leftPressed)
             {
                 direction = Directions.left;
-                worldPosition.x -= velocity;
+                gp.collision.checkForCollision_Tile(this);
+                if(collisionOn == false)
+                {
+                    worldPosition.x -= velocity;
+                }
             }
     
-            if(kh.rightPressed)
+            else if(kh.rightPressed)
             {
                 direction = Directions.right;
-                worldPosition.x += velocity;
+                gp.collision.checkForCollision_Tile(this);
+                if(collisionOn == false)
+                {
+                    worldPosition.x += velocity;
+                }
             }
     
             collisionOn = false;
-            gp.collision.checkForCollision_Tile(this);
-        
+
+
             spriteCounter++;
             if(spriteCounter > 15) // sostanzialmente 10 è la "velocità" di change dello sprite, più è alto, e più gli sprite ci mettono a cambiare
             {                      // quindi in questo caso cambia ogni 10 frame, poiché questa funzione è chiamata ad ogni frame
