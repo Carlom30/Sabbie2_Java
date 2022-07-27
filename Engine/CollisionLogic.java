@@ -32,8 +32,8 @@ public class CollisionLogic
         int entityTopRow = topCollisionY / gp.tileSize;
         int entityBottomRow = bottomCollisionY / gp.tileSize;
 
-        int offsetTileOne;
-        int offsetTileTwo;
+        int offsetTileOne = 0;
+        int offsetTileTwo = 0;
         
         //per il paradigma generato dai pixel e la grandezza dell'area di collisione, il player può intersecare ALPIU' due tile nello stesso momento
 
@@ -46,23 +46,17 @@ public class CollisionLogic
                 //quello che faccio è predictare dove finirà il giocatore quando si muove nelle 4 direzioni cardinali. 
             /*
                 in questo caso, ad esempio, quello che faccio è 
-                rimovere dalla topcollisiony la velocità del player
+                rimuovere dalla topcollisiony la velocità del player
                 questo perché, per convenzione, l'origine degli assi
                 in java è in alto a sinistra, quindi se il player
                 si muove in alto, la Y diminuisce
             */
-                entityTopRow = (topCollisionY - entity.velocity) / gp.tileSize; 
+                entityTopRow = (topCollisionY - entity.velocity) / gp.tileSize; //il rounding non fa differenza, mi troverò sempre nella stessa tile
                 offsetTileOne = entityTopRow * map.width + entityLeftCol;
                 offsetTileTwo = entityTopRow * map.width + entityRightCol;
 
-                if(map.tiles[offsetTileOne].collision == true || map.tiles[offsetTileTwo].collision == true)
-                {
-                    entity.collisionOn = true;
-                }
-
                 break;
             }
-
 
             //il resto ha la stessa logica di sopra
             case down:
@@ -71,25 +65,32 @@ public class CollisionLogic
                 offsetTileOne = entityBottomRow * map.width + entityLeftCol;
                 offsetTileTwo = entityBottomRow * map.width + entityRightCol;
 
-                if(map.tiles[offsetTileOne].collision == true || map.tiles[offsetTileTwo].collision == true)
-                {
-                    entity.collisionOn = true;
-                }
-
                 break;
             }
 
             case right:
             {
+                entityRightCol = (rightCollisionX + entity.velocity) / gp.tileSize;
+                offsetTileOne = entityTopRow * map.width + entityRightCol;
+                offsetTileTwo = entityBottomRow * map.width + entityRightCol;
+
                 break;
             }
 
             case left:
             {
+                entityLeftCol = (leftCollisionX - entity.velocity) / gp.tileSize;
+                offsetTileOne = entityTopRow * map.width + entityLeftCol;
+                offsetTileTwo = entityBottomRow * map.width + entityLeftCol;
+
                 break;
             }
         }
 
+        if(map.tiles[offsetTileOne].collision == true || map.tiles[offsetTileTwo].collision == true)
+        {
+            entity.collisionOn = true;
+        }
 
         //if(entity.direction == Directions.up)
 

@@ -50,7 +50,7 @@ public class GamePanel extends JPanel implements Runnable
     Map map;
 
     //--------------------------------    
-    public CollisionLogic collision = new CollisionLogic(this);
+    public CollisionLogic collision = new CollisionLogic(this); //dioporco
     Player player;
 
     public GamePanel()

@@ -8,7 +8,7 @@ import java.awt.Graphics2D;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
-import Engine.GamePanel;
+import Engine.*;
 
 import java.awt.image.BufferedImage;
 
