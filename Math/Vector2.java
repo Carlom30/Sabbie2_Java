@@ -15,5 +15,4 @@ public class Vector2
     {
         return (a.x * b.x) + (a.y * b.y);
     }
-
 }
