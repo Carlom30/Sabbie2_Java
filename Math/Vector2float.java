@@ -11,7 +11,7 @@ public class Vector2float
         this.y = y;
     }
 
-    public static float dotProduct(Vector2 a, Vector2 b)
+    public static float dotProduct(Vector2float a, Vector2float b)
     {
         return (a.x * b.x) + (a.y * b.y);
     }

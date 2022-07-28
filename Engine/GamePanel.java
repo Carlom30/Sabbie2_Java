@@ -65,8 +65,8 @@ public class GamePanel extends JPanel implements Runnable
         map = new Map(this, maxWorldColumn, maxWorldRow);
         map.fillMapWithOneTile(new Tile(Utils.loadSprite("/Sprites/world/sand/sand3.png")));
         PerlinNoise.generateNoise(map);
-        Room newRoom = new Room(new RectInt(new Vector2(10, 10), 5, 5));
-        newRoom.drawRoomOnMap(map, this);
+        //Room newRoom = new Room(new RectInt(new Vector2(10, 10), 5, 5));
+        //newRoom.drawRoomOnMap(map, this);
         player = new Player(this, kh);
         //END OF TESTING
     } 

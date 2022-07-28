@@ -50,6 +50,7 @@ public class PerlinNoise
         else
         {
             System.out.println("something went wrong\n");
+            return;
         }
         
         map.tiles[offset] = tile;
@@ -73,8 +74,8 @@ public class PerlinNoise
         //*in modo che si trovi sempre compresa tra 0 e 1, e che abbia come origine degli assi il centro della mappa (o del chunk), invece che in alto a sinistra
         
         //per testing faccio solo mezza mappa
-        int yValue = 3;
-        int xValue = 3;
+        int yValue = 9;
+        int xValue = 9;
         for(int i = 0; i < yValue; i++)
         {
             float percentageX = (((float)(i) / (float)(yValue - 1)) - 0.5f) * 2.0f; //*guarda riga asteriscata commenti sopra
@@ -83,12 +84,15 @@ public class PerlinNoise
             {
                 float percentageY = (((float)(j) / (float)(xValue - 1)) - 0.5f) * 2.0f;
                 Vector2float unitTileVector = new Vector2float(percentageX, percentageY);
+                Vector2float gradient = new Vector2float(1.0f, 1.0f);
 
                 float valueY = interpolate(percentageY);
 
-                int value = Math.round(valueX * valueY);
-
-                assigneSprite(value, map, i * map.width + j);
+                float value = Vector2float.dotProduct(gradient, unitTileVector);
+                int roundedValue = Math.round(valueX * valueY);
+                
+                
+                assigneSprite(Math.round(value), map, i * map.width + j);
 
             }
         }
