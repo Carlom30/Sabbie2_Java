@@ -10,4 +10,10 @@ public class Vector2
         this.x = x;
         this.y = y;
     }
+
+    public static int dotProduct(Vector2 a, Vector2 b)
+    {
+        return (a.x * b.x) + (a.y * b.y);
+    }
+
 }
