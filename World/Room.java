@@ -2,10 +2,13 @@ package World;
 
 import Math.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
 import Engine.GamePanel;
 import Engine.Tile;
 import Main.Utils;
+import Main.Utils.Directions;
 
 
 public class Room 
@@ -13,6 +16,8 @@ public class Room
 
     RectInt bounds;
     Tile[] tiles;
+    List<Directions> doors;
+
     public BufferedImage wall;
     public BufferedImage floor;
     public BufferedImage doorUp;
@@ -27,9 +32,10 @@ public class Room
         //garbagecollector or shit like that i dunno why there's no free() function?
     }
 
-    public Room(RectInt bounds)
+    public Room(RectInt bounds, List<Directions> doorDirections)
     {
         this.bounds = bounds;
+        doors = new ArrayList<Utils.Directions>();
         //ora serve di creare la stanza e (altra funzione) "disegnarla" sulla mappa
         /*
             NB: il rendering funzionerà in questo modo:
@@ -52,6 +58,46 @@ public class Room
                 }
             }
         }
+
+        if(doorDirections != null)
+        {
+            addDoors(doorDirections);
+        }
+    }
+
+    void addDoors(List<Directions> directions) //list perché potrebbe arrivarne anche solo una
+    {
+        int offset = 0;
+        //non utilizzo loop poichè le direzioni sono sempre 4 e le porte compaiono sempre nelle stesse posizioni
+        if(directions.contains(Directions.up) && !this.doors.contains(Directions.up))
+        {
+            doors.add(Directions.up);
+            offset = (0 * bounds.width + (bounds.width / 2)); //che equivale a bounds.width / 2 ma lo lascio per completismo
+            tiles[offset] = new Tile(floor);
+            //la linearizzazione dell'array è lasciata come esercizio al lettore XD
+        }
+
+        if(directions.contains(Directions.down) && !this.doors.contains(Directions.down))
+        {
+            doors.add(Directions.down);
+            offset = (bounds.height - 1) * bounds.width + (bounds.width / 2);
+            tiles[offset] = new Tile(floor);
+        }
+
+        if(directions.contains(Directions.right) && !this.doors.contains(Directions.right))
+        {
+            doors.add(Directions.right);
+            offset = (bounds.height / 2) * bounds.width + (bounds.width - 1);
+            tiles[offset] = new Tile(floor);
+        }
+
+        if(directions.contains(Directions.down) && !this.doors.contains(Directions.left))
+        {
+            doors.add(Directions.left);
+            offset = (bounds.height / 2) * bounds.width + 0; // sisisisisisi il + 0 si lascia fare.
+            tiles[offset] = new Tile(floor);
+        }
+        return;
     }
 
     public void drawRoomOnMap(Map map, GamePanel gp) //print data only, no rendering
