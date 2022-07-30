@@ -7,8 +7,8 @@ import Main.Utils;
 import javax.swing.JFrame;
 
 import Engine.GamePanel;
+import Engine.Tile;
 import World.Map;
-import World.Tile;
 
 public class PerlinNoise 
 {
@@ -21,6 +21,11 @@ public class PerlinNoise
     //partendo con la funzione di interpolazione, si userà una funzione derivante dall'originale
     //f(t) = 1 − (3 − 2|t|)t^2
 
+    private static void init(Map map)
+    {
+        return;
+    }
+
     private static float interpolate(float t)
     {
         float a = Math.abs(t);
@@ -28,21 +33,26 @@ public class PerlinNoise
         return value;
     }
 
-    private static void assigneSprite(int roundedValue, Map map, int offset)
+    private static void assigneSprite(float value, Map map, int offset)
     {
         Tile tile = new Tile(null);
 
-        if(roundedValue == -1)
+        /*if(roundedValue == -1)
         {
             tile.sprite = negative;
-        }
+        }*/
 
-        else if(roundedValue == 0)
+        if(value <= 0.01f)
         {
             tile.sprite = zero;
         }
 
-        else if(roundedValue == 1)
+        else if(value > 0.01f && value < 1.0f)
+        {
+            tile.sprite = positive;
+        }
+
+        else if(value == 1)
         {
             tile.sprite = positive;
         }
@@ -56,7 +66,7 @@ public class PerlinNoise
         map.tiles[offset] = tile;
     }
 
-    public static void generateNoise(Map map)
+    public static void noise(Map map)
     {
         if(positive == null) //solo se non le ho ancora caricate
         {
@@ -83,16 +93,16 @@ public class PerlinNoise
             for(int j = 0; j < xValue; j++)
             {
                 float percentageY = (((float)(j) / (float)(xValue - 1)) - 0.5f) * 2.0f;
-                Vector2float unitTileVector = new Vector2float(percentageX, percentageY);
-                Vector2float gradient = new Vector2float(1.0f, 1.0f);
-
                 float valueY = interpolate(percentageY);
+                
+                Vector2float unitTileVector = new Vector2float(percentageX, percentageY);
+                Vector2float arbitraryVector = new Vector2float(0.0f, 1.0f);
 
-                float value = Vector2float.dotProduct(gradient, unitTileVector);
-                int roundedValue = Math.round(valueX * valueY);
+                float gradient = Vector2float.dotProduct(arbitraryVector, unitTileVector);
+                //int roundedValue = Math.round(valueX * valueY * gradient);
+                float finalValue = valueX * valueY * gradient;
                 
-                
-                assigneSprite(Math.round(value), map, i * map.width + j);
+                assigneSprite(Math.abs(finalValue), map, i * map.width + j);
 
             }
         }

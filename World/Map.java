@@ -3,6 +3,8 @@ import Math.RectInt;
 
 import java.awt.image.BufferedImage;
 import Engine.GamePanel;
+import Engine.Tile;
+
 import java.awt.Graphics2D; 
 
 public class Map 
@@ -17,7 +19,6 @@ public class Map
 
     public Map(GamePanel gp, int width, int height)
     {
-        //NOTA FUCKING BENE, le dimenzioni effetive della mappa non saranno mai queste, ma ben più grandi
         this.gp = gp;
         area = width * height;
         tiles = new Tile[area];

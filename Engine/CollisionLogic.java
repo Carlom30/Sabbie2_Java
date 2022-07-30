@@ -95,4 +95,34 @@ public class CollisionLogic
         //if(entity.direction == Directions.up)
 
     }
+
+    //funzione ch ritorna 
+    Tile[] onCollisionEnter(Entity entity)
+    {
+        Tile[] collidedTiles = new Tile[2];
+
+        Map map = gp.map;
+
+        int leftCollisionX =  entity.worldPosition.x + entity.collisionArea.min.x; 
+        int rightCollisionX = entity.worldPosition.x + entity.collisionArea.min.x + entity.collisionArea.width;
+                                                       
+        int topCollisionY = entity.worldPosition.y + entity.collisionArea.min.y; 
+        int bottomCollisionY = entity.worldPosition.y + entity.collisionArea.min.y + entity.collisionArea.height;
+        
+        int entityLeftCol = leftCollisionX / gp.tileSize;
+        int entityRightCol = rightCollisionX / gp.tileSize;
+
+        int entityTopRow = topCollisionY / gp.tileSize;
+        int entityBottomRow = bottomCollisionY / gp.tileSize;
+
+        int offsetTileOne = 0;
+        int offsetTileTwo = 0;
+        
+        //ritorno solamente due tile, non questioni di tempo non posso fare collisioni troppo precise
+        
+
+        
+
+        return collidedTiles;
+    }
 }

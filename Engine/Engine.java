@@ -3,7 +3,7 @@ import java.awt.image.BufferedImage;
 import Entity.Player;
 import Main.*;
 import World.Map;
-import World.Tile;
+
 import java.awt.Graphics2D;
 
 
@@ -20,6 +20,7 @@ public class Engine
             for(int x = 0; x < gp.maxWorldColumn; x++)
             {
                 int offset = y * gp.maxWorldColumn + x;
+
                 Tile tile = map.tiles[offset];
                 
                 /* supponiamo che mapcolm e maprow siano 0, allora mapxy sarà 0, 0 e così via.

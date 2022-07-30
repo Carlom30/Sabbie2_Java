@@ -4,6 +4,7 @@ import Math.*;
 import java.awt.image.BufferedImage;
 
 import Engine.GamePanel;
+import Engine.Tile;
 import Main.Utils;
 
 
@@ -22,7 +23,7 @@ public class Room
     void loadRoomSprite()
     {
         wall = Utils.loadSprite("/Sprites/wallme.png");
-        floor = Utils.loadSprite("/Sprites/world/sand0.png");
+        floor = Utils.loadSprite("/Sprites/world/sand/sand0.png");
         //garbagecollector or shit like that i dunno why there's no free() function?
     }
 

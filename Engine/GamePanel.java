@@ -47,7 +47,7 @@ public class GamePanel extends JPanel implements Runnable
     Thread gameThread;
     
     //-------- TESTING ---------------
-    Map map;
+    public Map map;
 
     //--------------------------------    
     public CollisionLogic collision = new CollisionLogic(this); //dioporco
@@ -64,10 +64,20 @@ public class GamePanel extends JPanel implements Runnable
         //TESTING
         map = new Map(this, maxWorldColumn, maxWorldRow);
         map.fillMapWithOneTile(new Tile(Utils.loadSprite("/Sprites/world/sand/sand3.png")));
-        PerlinNoise.generateNoise(map);
+        PerlinNoise.noise(map);
+
+        //--------TESTING DUNGEON------
+
+        Dungeon newDungeon = new Dungeon();
+        map = newDungeon.area;
+        map.fillMapWithOneTile(new Tile(Utils.loadSprite("/Sprites/nullGrey.png")));
+        newDungeon.generateDungeonRooms();
+
+        //--------FINE TESTING DUNGEON-
+
         //Room newRoom = new Room(new RectInt(new Vector2(10, 10), 5, 5));
         //newRoom.drawRoomOnMap(map, this);
-        player = new Player(this, kh);
+        player = new Player(this, kh, null);
         //END OF TESTING
     } 
 
