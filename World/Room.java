@@ -7,6 +7,7 @@ import java.util.List;
 
 import Engine.GamePanel;
 import Engine.Tile;
+import Main.Main;
 import Main.Utils;
 import Main.Utils.Directions;
 
@@ -17,6 +18,8 @@ public class Room
     RectInt bounds;
     Tile[] tiles;
     List<Directions> doors;
+
+    Vector2 onDungeonMemPosition;
 
     public BufferedImage wall;
     public BufferedImage floor;
@@ -91,12 +94,13 @@ public class Room
             tiles[offset] = new Tile(floor);
         }
 
-        if(directions.contains(Directions.down) && !this.doors.contains(Directions.left))
+        if(directions.contains(Directions.left) && !this.doors.contains(Directions.left))
         {
             doors.add(Directions.left);
             offset = (bounds.height / 2) * bounds.width + 0; // sisisisisisi il + 0 si lascia fare.
             tiles[offset] = new Tile(floor);
         }
+
         return;
     }
 

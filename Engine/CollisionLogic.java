@@ -10,7 +10,7 @@ import World.Map;
 public class CollisionLogic 
 {
     GamePanel gp;
-    
+
     public CollisionLogic(GamePanel gp)
     {
         this.gp = gp;

@@ -1,13 +1,16 @@
 package Main;
 import javax.swing.JFrame;
+import java.util.Random;
 
 import Engine.GamePanel;
 
 public class Main {
     
     public static GamePanel gp;
+    public static Random rand = new Random();
     public static void main(String[] args) 
     {
+        rand = new Random();
         //fix stuttering and lagging problems with linux gpu scheduling
         System.setProperty("sun.java2d.opengl", "true");
         JFrame window = new JFrame();

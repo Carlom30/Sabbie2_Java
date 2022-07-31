@@ -1,7 +1,12 @@
 package Main;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
+import javax.lang.model.util.ElementScanner6;
+
 import java.io.IOException;
+import java.util.List;
+import java.util.Vector;
+import Math.Vector2;
 
 public class Utils 
 {
@@ -13,14 +18,14 @@ public class Utils
         left,
         idle,
 
-        ALL_DIRECTIONS
-
+        ALL_DIRECTIONS;
+        
         /* Java
          * 
          * 
          *  Java
          */
-        
+     
     };
 
     public static BufferedImage loadSprite(String path)
@@ -37,6 +42,34 @@ public class Utils
         }
 
         return sprite;
+    }
+
+    public static Directions getOppositeDirection(Directions direction)
+    {
+        if(direction == Directions.up)
+        {
+            return Directions.down;
+        }
+
+        else if(direction == Directions.down)
+        {
+            return Directions.up;
+        }
+
+        else if(direction == Directions.right)
+        {
+            return Directions.left;
+        }
+
+        else if(direction == Directions.left)
+        {
+            return Directions.right;
+        }
+
+        else
+        {
+            return Directions.ALL_DIRECTIONS;
+        }
     }
 
 }
