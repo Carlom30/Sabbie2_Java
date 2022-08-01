@@ -11,6 +11,10 @@ public class Main {
     public static void main(String[] args) 
     {
         rand = new Random();
+        long seed = rand.nextLong();
+        Utils.printf("seed: " + seed);
+        rand.setSeed(seed);
+
         //fix stuttering and lagging problems with linux gpu scheduling
         System.setProperty("sun.java2d.opengl", "true");
         JFrame window = new JFrame();

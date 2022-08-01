@@ -33,7 +33,12 @@ public class Map
         for(int i = 0; i < area; i++)
         {
             tiles[i] = tile;
+            if(i == (810000 - 1))
+            {
+                int a = 0;
+            }
         }
+
     }
 
 }

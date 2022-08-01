@@ -87,7 +87,7 @@ public class CollisionLogic
             }
         }
 
-        if(map.tiles[offsetTileOne].collision == true || map.tiles[offsetTileTwo].collision == true)
+        if((map.tiles[offsetTileOne].collision == true || map.tiles[offsetTileTwo].collision == true) && gp.player.DEV_MODE == false)
         {
             entity.collisionOn = true;
         }

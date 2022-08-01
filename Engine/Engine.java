@@ -15,12 +15,12 @@ public class Engine
     {
         GamePanel gp = Main.gp;
 
-        for(int y = 0; y < gp.maxWorldRow; y++)
+        for(int y = 0; y < map.height; y++)
         {
-            for(int x = 0; x < gp.maxWorldColumn; x++)
+            for(int x = 0; x < map.width; x++)
             {
-                int offset = y * gp.maxWorldColumn + x;
-
+                int offset = y * map.width + x;
+                // SE C'È SEGM FAULT TI PREGO SONO LE VARIABILI DEL PORCODIO SU gamepanel
                 Tile tile = map.tiles[offset];
                 
                 /* supponiamo che mapcolm e maprow siano 0, allora mapxy sarà 0, 0 e così via.
@@ -54,10 +54,6 @@ public class Engine
                 int screenX = mapX - gp.player.worldPosition.x + gp.player.screenPosition.x;
                 int screenY = mapY - gp.player.worldPosition.y + gp.player.screenPosition.y;
 
-                if(offset == 191)
-                {
-                    int a = 0;
-                }
 
                 BufferedImage sprite = tile.sprite;
                 if(mapX + gp.tileSize < gp.player.worldPosition.x - gp.player.screenPosition.x ||

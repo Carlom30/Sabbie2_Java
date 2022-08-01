@@ -50,7 +50,7 @@ public class GamePanel extends JPanel implements Runnable
     public Map map;
 
     //--------------------------------    
-    public CollisionLogic collision = new CollisionLogic(this); //dioporco
+    public CollisionLogic collision = new CollisionLogic(this);
     Player player;
 
     public GamePanel()
@@ -62,9 +62,9 @@ public class GamePanel extends JPanel implements Runnable
         this.setFocusable(true);
 
         //TESTING
-        map = new Map(this, maxWorldColumn, maxWorldRow);
-        map.fillMapWithOneTile(new Tile(Utils.loadSprite("/Sprites/world/sand/sand3.png")));
-        PerlinNoise.noise(map);
+        //map = new Map(this, maxWorldColumn, maxWorldRow);
+        //map.fillMapWithOneTile(new Tile(Utils.loadSprite("/Sprites/world/sand/sand3.png")));
+        //PerlinNoise.noise(map);
 
         //--------TESTING DUNGEON------
 

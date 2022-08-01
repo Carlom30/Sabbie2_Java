@@ -18,8 +18,11 @@ public class Player extends Entity
     KeyHandler kh; //input manager (sarà comunque una classe a parte)
     public Vector2 screenPosition;
 
+    public boolean DEV_MODE;
+
     public Player(GamePanel gp, KeyHandler kh, Vector2 worldPos)
     {
+        DEV_MODE = false;
         this.gp = gp;
         this.kh = kh;
         setDefaultValues();
@@ -35,9 +38,15 @@ public class Player extends Entity
 
     public void setDefaultValues()
     {
-        worldPosition = new Vector2(gp.worldWidth / 2, gp.worldHeight / 2); //new Vector2(gp.tileSize * 23, gp.tileSize * 21);
-        velocity = 4;
-        direction = Directions.idle;
+        worldPosition = new Vector2((gp.map.width / 2) * gp.tileSize, (gp.map.height / 2) * gp.tileSize); //new Vector2(gp.tileSize * 23, gp.tileSize * 21);
+        velocity = 4; //velocity = 4 ma metto di più per testing
+        direction = Directions.down;
+        
+        if(DEV_MODE)
+        {
+            velocity = velocity * 10;
+            collisionArea = new RectInt(new Vector2(0, 0), 0, 0);
+        }
     }
 
     public void readPlayerSprites()

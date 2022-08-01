@@ -28,6 +28,11 @@ public class Utils
      
     };
 
+    public static void printf(String string)
+    {
+        System.out.println(string);
+    }
+
     public static BufferedImage loadSprite(String path)
     {
         BufferedImage sprite = null;

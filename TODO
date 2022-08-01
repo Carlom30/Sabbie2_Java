@@ -1,2 +1,3 @@
-boh c'è un loop infinito in dungeonGeneration
-fixalo, io mo sono troppo stanco XD
+la generazione dei dungeon ora funziona come previsto
+ora bisogna perdere tempo dietro alla modularizzazione del gamepanel, perché adesso come adesso non va bene
+
