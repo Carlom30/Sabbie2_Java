@@ -11,6 +11,8 @@ import Main.KeyHandler;
 import Main.Utils;
 import Math.*;
 import World.*;
+import World.Map.MapType;
+
 import javax.imageio.ImageIO;
 
 /*  
@@ -48,7 +50,7 @@ public class GamePanel extends JPanel implements Runnable
     
     //-------- TESTING ---------------
     public Map map;
-
+    public MapType currentMap;
     //--------------------------------    
     public CollisionLogic collision = new CollisionLogic(this);
     Player player;
@@ -62,16 +64,17 @@ public class GamePanel extends JPanel implements Runnable
         this.setFocusable(true);
 
         //TESTING
-        //map = new Map(this, maxWorldColumn, maxWorldRow);
-        //map.fillMapWithOneTile(new Tile(Utils.loadSprite("/Sprites/world/sand/sand3.png")));
-        //PerlinNoise.noise(map);
+        map = new Map(this, maxWorldColumn, maxWorldRow);
+        map.fillMapWithOneTile(new Tile(Utils.loadSprite("/Sprites/world/sand/sand3.png")));
+        PerlinNoise.noise(map);
 
+        currentMap = MapType.outside;
         //--------TESTING DUNGEON------
-
-        Dungeon newDungeon = new Dungeon();
-        map = newDungeon.area;
-        map.fillMapWithOneTile(new Tile(Utils.loadSprite("/Sprites/nullGrey.png")));
-        newDungeon.generateDungeonRooms();
+        
+        //Dungeon newDungeon = new Dungeon();
+        //map = newDungeon.area;
+        //map.fillMapWithOneTile(new Tile(Utils.loadSprite("/Sprites/nullGrey.png")));
+        //newDungeon.generateDungeonRooms();
 
         //--------FINE TESTING DUNGEON-
 

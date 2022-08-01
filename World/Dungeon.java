@@ -29,8 +29,8 @@ public class Dungeon
     final int roomWidth = 9;
     final int roomHeight = 9;
 
-    final int maxAreaWidth = 100;
-    final int maxAreaHeight = 100;
+    final int maxAreaWidth = 200;
+    final int maxAreaHeight = 200;
 
     Directions[] allDirections;
 

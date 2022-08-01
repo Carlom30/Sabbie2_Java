@@ -4,6 +4,7 @@ import Math.RectInt;
 import java.awt.image.BufferedImage;
 import Engine.GamePanel;
 import Engine.Tile;
+import Main.Main;
 
 import java.awt.Graphics2D; 
 
@@ -16,6 +17,12 @@ public class Map
     public final int height;
     public final int area;
 
+    public enum MapType
+    {
+        outside,
+        dungeon
+    };
+
 
     public Map(GamePanel gp, int width, int height)
     {
@@ -27,6 +34,7 @@ public class Map
     }
 
     //qualche funzione di utility immagino
+
 
     public void fillMapWithOneTile(Tile tile)
     {

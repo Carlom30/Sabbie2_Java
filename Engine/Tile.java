@@ -1,5 +1,6 @@
 package Engine;
 
+import World.Map;
 import Math.Vector2;
 import Math.Vector2float;
 
@@ -21,6 +22,8 @@ public class Tile
     public boolean collision = false;
     public boolean isElevated; //terza dimenzione per il perlin noise
 
+    Map connectedMap;
+
     public Vector2float UR;
     public Vector2float UL;
     public Vector2float DR;
@@ -29,5 +32,15 @@ public class Tile
     public Tile(BufferedImage sprite)
     {
         this.sprite = sprite;
+    }
+
+    public void setConnectedMap(Map map)
+    {
+        connectedMap = map;
+    }
+
+    public Map getConnectedMap()
+    {
+        return connectedMap;
     }
 }
