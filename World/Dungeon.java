@@ -1,6 +1,7 @@
 package World;
 
 import World.Map;
+import World.Room.RoomType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,7 @@ import Math.Vector2;
 public class Dungeon 
 {
     public int roomNumb;
+    public int chestRoomNumb;
     public Room[] memArea;
     public Map area;
 
@@ -26,6 +28,8 @@ public class Dungeon
     final int maxRoom = 15;
     final int minRoom = 3;
 
+    final int maxChestRoom = 3;
+
     final int roomWidth = 9;
     final int roomHeight = 9;
 
@@ -37,6 +41,7 @@ public class Dungeon
     Vector2[] directionsVector;
 
     int ALL_DIRECTIONS;
+
 
     public Dungeon()
     {
@@ -57,6 +62,15 @@ public class Dungeon
         ALL_DIRECTIONS = allDirections.length;
 
         roomNumb = Main.rand.nextInt((maxRoom - minRoom)) + minRoom;
+
+        //se ci sono più di metà del massimo delle stanza, aumento autmaticamente le chestRoom di 1
+        chestRoomNumb = (Main.rand.nextInt(maxChestRoom) + 1) + Math.round((roomNumb / maxRoom) * 10);
+
+        if(chestRoomNumb > maxChestRoom)
+        {
+            chestRoomNumb = maxChestRoom;
+        }
+
         Utils.printf("roomNumb: " + roomNumb);
         //rooms = new Room[roomNumb]; 
         memArea = new Room[memWidth * memHeight]; // area logica delle stanze
@@ -185,7 +199,7 @@ public class Dungeon
 
         int i = 0;
         Room mainRoom = null;
-        while(i < roomNumb) //for intralcerebbe, ci sono dei casi in cui mi serve continuare senza incrementare i
+        while(i < roomNumb + chestRoomNumb) //for intralcerebbe, ci sono dei casi in cui mi serve continuare senza incrementare i
         {
             if(i == 0 && mainRoom == null)
             {
@@ -197,7 +211,7 @@ public class Dungeon
                 //doorDir.add(Directions.right);
 
                 Room room = new Room(new RectInt(new Vector2
-                    (area.width / 2 - roomWidth / 2, area.height / 2 - roomHeight / 2), roomWidth, roomHeight), doorDir);
+                    (area.width / 2 - roomWidth / 2, area.height / 2 - roomHeight / 2), roomWidth, roomHeight), doorDir, RoomType.normal);
                 
                 room.drawRoomOnMap(area, Main.gp); //questo dovrebbe avvenire fuori dal costruttore (testing)                
                 memArea[memHeight / 2 * memWidth + memWidth / 2] = room;
@@ -240,22 +254,25 @@ public class Dungeon
                 }
                 continue; //direzione già in uso, ritento
             }
-
-
-
+            
             List<Directions> newRoomDoors = new ArrayList<Directions>();
             List<Directions> mainRoomNewDoors = new ArrayList<Directions>();
 
-            newRoomDoors.add(Utils.getOppositeDirection(randDir));
-            mainRoomNewDoors.add(randDir);
-            
-            mainRoom.addDoors(mainRoomNewDoors);
+            if(i < roomNumb)
+            {
+    
+                newRoomDoors.add(Utils.getOppositeDirection(randDir));
+                mainRoomNewDoors.add(randDir);
+                
+                mainRoom.addDoors(mainRoomNewDoors);
+            }
+
             mainRoom.drawRoomOnMap(area, Main.gp);
 
             //RectInt newRoomBounds = new RectInt(, width, height)
             
             //ora creo una stanza nuova
-            Room newRoom = new Room(new RectInt(calculateRoomMin(mainRoom, randDir), roomWidth, roomHeight), newRoomDoors);
+            Room newRoom = new Room(new RectInt(calculateRoomMin(mainRoom, randDir), roomWidth, roomHeight), newRoomDoors, (i < roomNumb) ? RoomType.normal : RoomType.chest);
             addRoomToMemArea(mainRoom, newRoom, randDir);
             newRoom.drawRoomOnMap(area, Main.gp);
 
@@ -272,6 +289,9 @@ public class Dungeon
 
         //NB FARE DROW DI TUTTE LE STANZE
         Utils.printf("numero stanze effettive: " + rooms.size());
+
+        //ora aggiungo un random di 1/3 "stanze del tesoro", avranno una chest ma non saranno mai accessibili se non facendo "abbatti"
+        //su di un muro adiacente
         return;
     }
 

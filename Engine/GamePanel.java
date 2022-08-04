@@ -10,6 +10,8 @@ import Entity.*;
 import Main.KeyHandler;
 import Main.Utils;
 import Math.*;
+import Object.SuperObject;
+import Object.remoteTnt;
 import World.*;
 import World.Map.MapType;
 
@@ -42,18 +44,18 @@ public class GamePanel extends JPanel implements Runnable
     public final int worldWidth = tileSize * maxWorldColumn;
     public final int worldHeight = tileSize * maxWorldRow;
 
+    public final int maxPrintableObject = 10;
 
     // and so, 48 pixels * 16 = 768 pixel for width and 48 * 12 = 576 pixels for height
     int fps = 60;
     KeyHandler kh = new KeyHandler();
     Thread gameThread;
     
-    //-------- TESTING ---------------
     public Map map;
     public MapType currentMap;
-    //--------------------------------    
     public CollisionLogic collision = new CollisionLogic(this);
-    Player player;
+    public Player player;
+    public SuperObject printedObj[] = new SuperObject[maxPrintableObject];
 
     public GamePanel()
     {
@@ -62,27 +64,27 @@ public class GamePanel extends JPanel implements Runnable
         this.setDoubleBuffered(true);
         this.addKeyListener(kh);
         this.setFocusable(true);
+        init();
+    } 
 
-        //TESTING
+    public void init()
+    {
+        //here goes the game setup
         map = new Map(this, maxWorldColumn, maxWorldRow);
         map.fillMapWithOneTile(new Tile(Utils.loadSprite("/Sprites/world/sand/sand3.png")));
         PerlinNoise.noise(map);
 
         currentMap = MapType.outside;
-        //--------TESTING DUNGEON------
+        //TESTING
+        /*Dungeon newDungeon = new Dungeon();
+        map = newDungeon.area;
+        map.fillMapWithOneTile(new Tile(Utils.loadSprite("/Sprites/nullGrey.png")));
+        newDungeon.generateDungeonRooms();*/
         
-        //Dungeon newDungeon = new Dungeon();
-        //map = newDungeon.area;
-        //map.fillMapWithOneTile(new Tile(Utils.loadSprite("/Sprites/nullGrey.png")));
-        //newDungeon.generateDungeonRooms();
-
-        //--------FINE TESTING DUNGEON-
-
-        //Room newRoom = new Room(new RectInt(new Vector2(10, 10), 5, 5));
-        //newRoom.drawRoomOnMap(map, this);
         player = new Player(this, kh, null);
-        //END OF TESTING
-    } 
+         //ITS FUCKING TESTING OK??
+        //di seguito un array di max oggetti che si possono stampare a schermo
+    }
 
     public void startGameThread()
     {
@@ -140,6 +142,9 @@ public class GamePanel extends JPanel implements Runnable
         Graphics2D g2 = (Graphics2D)g; //ofc graphics2d che fa override di graphics
                                        //grpahics2d è ottimo per il 2d ofc, ha più funzioni inerenti
         Engine.printMap(map, g2);
+
+        //TESTING
+        printedObj[0].draw(g2, this);
         Engine.printPlayer(g2, player);
         
         //g2.dispose();

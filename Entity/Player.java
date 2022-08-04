@@ -3,6 +3,9 @@ import Main.*;
 import Main.Utils.Directions;
 import Math.RectInt;
 import Math.Vector2;
+import Object.SuperObject;
+import Object.remoteTnt;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.io.IOException;
@@ -41,7 +44,7 @@ public class Player extends Entity
         worldPosition = new Vector2((gp.map.width / 2) * gp.tileSize, (gp.map.height / 2) * gp.tileSize); //new Vector2(gp.tileSize * 23, gp.tileSize * 21);
         velocity = 4; //velocity = 4 ma metto di più per testing
         direction = Directions.down;
-        
+
         if(DEV_MODE)
         {
             velocity = velocity * 10;
@@ -112,6 +115,11 @@ public class Player extends Entity
                 {
                     worldPosition.x += velocity;
                 }
+            }
+
+            else if(kh.E_Pressed)
+            {
+                Main.gp.printedObj[0] = new remoteTnt();
             }
     
             collisionOn = false;

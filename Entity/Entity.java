@@ -1,5 +1,7 @@
 package Entity;
 import Math.*;
+import Object.SuperObject;
+
 import java.awt.image.BufferedImage;
 import java.text.CollationElementIterator;
 
@@ -27,5 +29,7 @@ public abstract class Entity
 
     public RectInt collisionArea;
     public Boolean collisionOn = false;
+
+    public SuperObject[] inventory;
     
 }

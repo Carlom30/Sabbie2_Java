@@ -14,10 +14,17 @@ import Main.Utils.Directions;
 
 public class Room 
 {
+    enum RoomType
+    {
+        normal,
+        chest
+    };
 
     RectInt bounds;
     Tile[] tiles;
     List<Directions> doors;
+
+    RoomType type;
 
     Vector2 onDungeonMemPosition;
 
@@ -35,8 +42,9 @@ public class Room
         //garbagecollector or shit like that i dunno why there's no free() function?
     }
 
-    public Room(RectInt bounds, List<Directions> doorDirections)
+    public Room(RectInt bounds, List<Directions> doorDirections, RoomType type)
     {
+        this.type = type;
         this.bounds = bounds;
         doors = new ArrayList<Utils.Directions>();
         //ora serve di creare la stanza e (altra funzione) "disegnarla" sulla mappa
@@ -53,6 +61,7 @@ public class Room
             {
                 int offset = i * bounds.width + j; 
                 tiles[offset] = new Tile(floor);
+                tiles[offset].linkedRoom = this;
                 
                 if(i == 0 || i == (bounds.height - 1) || j == 0 || j == (bounds.width - 1))
                 {

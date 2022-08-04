@@ -1,6 +1,6 @@
 package Engine;
 
-import World.Map;
+import World.*;
 import Math.Vector2;
 import Math.Vector2float;
 
@@ -23,6 +23,7 @@ public class Tile
     public boolean isElevated; //terza dimenzione per il perlin noise
 
     Map connectedMap;
+    public Room linkedRoom;
 
     public Vector2float UR;
     public Vector2float UL;

@@ -64,7 +64,7 @@ public class Engine
                     continue;
                 }
 
-                g2D.drawImage(sprite, screenX, screenY , gp.tileSize, gp.tileSize, null);
+                g2D.drawImage(sprite, screenX, screenY, gp.tileSize, gp.tileSize, null);
             }
         }
     } 

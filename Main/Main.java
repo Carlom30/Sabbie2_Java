@@ -3,6 +3,7 @@ import javax.swing.JFrame;
 import java.util.Random;
 
 import Engine.GamePanel;
+import Object.remoteTnt;
 
 public class Main {
     
@@ -23,13 +24,14 @@ public class Main {
         window.setTitle("Sands");
 
         gp = new GamePanel();
+        gp.printedObj[0] = new remoteTnt();
         window.add(gp); //aggiungo gamePanel come componente di window, mi servirà dopo
 
         window.pack();
         
         window.setLocationRelativeTo(null); //la finestra viene creata la centro dello schermo
         window.setVisible(true);
-
+        //gp.init();
         gp.startGameThread();
     }
 }
