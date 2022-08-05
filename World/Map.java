@@ -1,16 +1,12 @@
 package World;
 import Math.RectInt;
 import Math.Vector2;
-
 import java.awt.image.BufferedImage;
-
 import javax.swing.text.Utilities;
-
 import Engine.GamePanel;
 import Engine.Tile;
 import Main.Main;
 import Main.Utils;
-
 import java.awt.Graphics2D; 
 
 public class Map 
@@ -40,16 +36,11 @@ public class Map
 
     //qualche funzione di utility immagino
 
-
     public void fillMapWithOneTile(Tile tile)
     {
         for(int i = 0; i < area; i++)
         {
             tiles[i] = tile;
-            if(i == (810000 - 1))
-            {
-                int a = 0;
-            }
         }
 
     }

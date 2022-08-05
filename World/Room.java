@@ -15,15 +15,16 @@ import Main.Utils.Directions;
 
 public class Room 
 {
-    enum RoomType
+    public enum RoomType
     {
         normal,
         chest
     };
 
-    RectInt bounds;
+    public RectInt bounds;
     Tile[] tiles;
     List<Directions> doors;
+    List<Integer> doorsVector;
 
     RoomType type;
 
@@ -48,6 +49,7 @@ public class Room
         this.type = type;
         this.bounds = bounds;
         doors = new ArrayList<Utils.Directions>();
+        doorsVector = new ArrayList<Integer>();
         //ora serve di creare la stanza e (altra funzione) "disegnarla" sulla mappa
         /*
             NB: il rendering funzionerà in questo modo:

@@ -13,9 +13,11 @@ public class remoteTnt extends SuperObject
         attachedTile = directedTile;
         Vector2 vector = Main.gp.map.getGlobalTileVector(attachedTile);
 
+        this.type = objecType.remoteTnt;
         this.sprite = Utils.loadSprite("/Sprites/objects/remoteTnt.png");
         this.worldPos = new Vector2(vector.x * Main.gp.tileSize, vector.y * Main.gp.tileSize);
         this.name = "remoteTnt";
         addObjToList();
+        directedTile.hasTnt = true;
     }
 }

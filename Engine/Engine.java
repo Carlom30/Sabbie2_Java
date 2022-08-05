@@ -57,6 +57,8 @@ public class Engine
 
 
                 BufferedImage sprite = tile.sprite;
+
+                //easlly, se è furoi dallo schermo non faccio print
                 if(mapX + gp.tileSize < gp.player.worldPosition.x - gp.player.screenPosition.x ||
                    mapX - gp.tileSize > gp.player.worldPosition.x + gp.player.screenPosition.x ||
                    mapY + gp.tileSize < gp.player.worldPosition.y - gp.player.screenPosition.y ||

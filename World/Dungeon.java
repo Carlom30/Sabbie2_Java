@@ -30,20 +30,17 @@ public class Dungeon
 
     final int maxChestRoom = 3;
 
-    final int roomWidth = 9;
-    final int roomHeight = 9;
+    final public int roomWidth = 9;
+    final public int roomHeight = 9;
 
     final int maxAreaWidth = 200;
     final int maxAreaHeight = 200;
 
-    Directions[] allDirections;
+    public static Directions[] allDirections;
 
-    Vector2[] directionsVector;
+    public static Vector2[] directionsVector;
 
-    int ALL_DIRECTIONS;
-
-
-    public Dungeon()
+    public static void allocateDirections()
     {
         allDirections = new Directions[4];
             
@@ -51,13 +48,20 @@ public class Dungeon
         allDirections[1] = Directions.down;
         allDirections[2] = Directions.right;
         allDirections[3] = Directions.left;
-
+    
         directionsVector = new Vector2[4];
-
+    
         directionsVector[0] = new Vector2(0, -1);   //up
         directionsVector[1] = new Vector2(0, 1); //down
         directionsVector[2] = new Vector2(1, 0); //right
         directionsVector[3] = new Vector2(-1, 0);  //left
+    }
+
+    int ALL_DIRECTIONS;
+
+
+    public Dungeon()
+    {
 
         ALL_DIRECTIONS = allDirections.length;
 
@@ -159,7 +163,7 @@ public class Dungeon
         //ora vado a controllare se per caso intorno 
     }
 
-    void addRoomToMemArea(Room mainRoom, Room newRoom, Directions dir)
+    public void addRoomToMemArea(Room mainRoom, Room newRoom, Directions dir)
     {
         for(int i = 0; i < allDirections.length; i++)
         {

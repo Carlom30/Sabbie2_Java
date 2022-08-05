@@ -8,19 +8,21 @@ import Main.Main;
 public abstract class SuperObject 
 {
 
-    enum objecType
+    public enum objecType
     {
         gold,
         explosive,
         electronicComponent,
         remoteTnt,
-        potion;
+        potion,
+        Ladder;
     }
 
     public String name;
     public boolean collision = false;
     public BufferedImage sprite;
     public Vector2 worldPos;
+    public objecType type;
 
     //in genere questo è lo script per printare qualcosa a schermo che non sia già in mappa
     public void draw(Graphics2D g2D, GamePanel gp)

@@ -4,6 +4,7 @@ import java.util.Random;
 
 import Engine.GamePanel;
 import Object.remoteTnt;
+import World.Dungeon;
 
 public class Main {
     
@@ -15,6 +16,8 @@ public class Main {
         long seed = rand.nextLong();
         Utils.printf("seed: " + seed);
         rand.setSeed(seed);
+
+        Dungeon.allocateDirections();
 
         //fix stuttering and lagging problems with linux gpu scheduling
         System.setProperty("sun.java2d.opengl", "true");

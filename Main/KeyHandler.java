@@ -12,6 +12,7 @@ public class KeyHandler implements KeyListener
     public boolean nothingIsPressed;
     
     public boolean E_Pressed;
+    public boolean R_Pressed;
     
 
     public boolean keyIsPressed = false;
@@ -45,6 +46,11 @@ public class KeyHandler implements KeyListener
         {
             E_Pressed = true;
         }
+
+        else if(code == KeyEvent.VK_R)
+        {
+            R_Pressed = true;
+        }
     }
 
     @Override
@@ -75,6 +81,11 @@ public class KeyHandler implements KeyListener
         else if(code == KeyEvent.VK_E)
         {
             E_Pressed = false;
+        }
+
+        else if(code == KeyEvent.VK_R)
+        {
+            R_Pressed = false;
         }
         
     }

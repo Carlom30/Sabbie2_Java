@@ -81,10 +81,13 @@ public class GamePanel extends JPanel implements Runnable
         //TESTING
         Dungeon newDungeon = new Dungeon();
         map = newDungeon.area;
-        map.fillMapWithOneTile(new Tile(Utils.loadSprite("/Sprites/nullGrey.png")));
+        Tile nullGrey = new Tile(Utils.loadSprite("/Sprites/nullGrey.png"));
+        nullGrey.collision = true;
+        map.fillMapWithOneTile(nullGrey);
         newDungeon.generateDungeonRooms();
         
         player = new Player(this, kh, null);
+        player.linkedDungeon = newDungeon;
          //ITS FUCKING TESTING OK??
         //di seguito un array di max oggetti che si possono stampare a schermo
     }

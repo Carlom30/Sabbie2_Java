@@ -5,13 +5,20 @@ import Math.RectInt;
 import Math.Vector2;
 import Object.SuperObject;
 import Object.remoteTnt;
+import Object.SuperObject.objecType;
+import World.Dungeon;
+import World.Map;
+import World.Room;
+import World.Room.RoomType;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
+import javax.swing.text.DocumentFilter;
 import javax.swing.text.Utilities;
 
 import Engine.*;
@@ -23,6 +30,8 @@ public class Player extends Entity
     public GamePanel gp; //rendering part
     KeyHandler kh; //input manager (sarà comunque una classe a parte)
     public Vector2 screenPosition;
+    public Map linkedMap;
+    public Dungeon linkedDungeon;
 
     public boolean DEV_MODE;
 
@@ -156,12 +165,122 @@ public class Player extends Entity
                     Utils.printf("no wall detected");
                     return;
                 }
+                if(tileArray[0].hasTnt)
+                {
+                    return;
+                }
+                
                 //se il giocatore ha tnt, allora ne posiziono una nella tile designata
+
                 remoteTnt newTnt = new remoteTnt(tileArray[0]);
                 kh.E_Pressed = false;
             }
             
             Utils.timeIsPassed(Utils.currentTime, 1000);
+        }
+
+        else if(kh.R_Pressed)
+        {
+
+            if(Utils.currentTime == -1)
+            {
+                Utils.currentTime = System.currentTimeMillis();
+                Utils.printf("r pressed");
+                abbatti();
+            }
+            Utils.timeIsPassed(Utils.currentTime, 1000);
+        }
+        
+    }
+
+    public void abbatti() //nome legacy non sostituibile
+    {
+        //abbatti sostanzialmente attiva tutte le tnt che ci sono in mappa (quindi dovrà esserci un limite generale di 2/3)
+        //quello che fa la tnt è semplice, la tile dove è presente la tnt e le adiacenti perpendiolari "crollano" e 
+        //diventano camminabili
+        //se in una direzione, alla parte opposta, non c'è già una stanza, allora viene creata e aggiunta.
+        //quindi per prima cosa creo una lista di tile che hanno effettivamente la tnt
+        List<remoteTnt> tntList = new ArrayList<remoteTnt>();
+
+        int length = 0;
+
+        if(Main.gp.printableObj.isEmpty())
+        {
+            Utils.printf("list is empty, no Tnt found");
+            return;
+        }
+
+        for(SuperObject obj : Main.gp.printableObj)
+        {
+            if(obj.type == objecType.remoteTnt)
+            {
+                tntList.add((remoteTnt)obj);
+                
+            }
+
+            
+        }
+
+        for(remoteTnt obj : tntList)
+        {
+            //per prima cosa tutti i dati utili
+            Utils.printf("remote n: " + obj);
+            Dungeon dungeon = this.linkedDungeon;
+            Map map = Main.gp.map;
+            Tile mainTile = obj.attachedTile;
+            Room mainRoom = mainTile.linkedRoom;
+            Vector2 tileVector = map.getGlobalTileVector(mainTile);
+
+            //enum che però funziona diversamente da quello di java che fa un po c***** :))
+
+            //recupero adesso la direzione verso la quale la tnt dovrebbe abbattere
+            Directions boomDirection = Directions.ALL_DIRECTIONS;
+            if(tileVector.x == mainRoom.bounds.min.x)
+            {
+                boomDirection = Directions.left;
+            }
+
+            else if(tileVector.x == mainRoom.bounds.min.x + mainRoom.bounds.width - 1)
+            {  
+                boomDirection = Directions.right;
+            }
+
+            else if(tileVector.y == mainRoom.bounds.min.y)
+            {
+                boomDirection = Directions.up;
+            }
+
+            else if(tileVector.y == mainRoom.bounds.min.y + mainRoom.bounds.height - 1)
+            {
+                boomDirection = Directions.down;
+            }
+            
+            Utils.printf("BOOM!! at: " + boomDirection.toString());
+            List<Directions> busyDir = new ArrayList<Directions>();
+            List<Room> nearRooms = dungeon.checkForNeighbors(mainRoom, busyDir);
+
+            //DEBUG
+            for(Room room : nearRooms)
+            {
+                Utils.printf("near room: " + room);
+            }
+
+            if(!(busyDir.contains(boomDirection)))
+            {
+                //code for add room
+                RectInt bounds = new RectInt(dungeon.calculateRoomMin(mainRoom, boomDirection), dungeon.roomWidth, dungeon.roomHeight);
+                List<Directions> doorDir = new ArrayList<Directions>();
+                doorDir.add(Utils.getOppositeDirection(boomDirection));
+                Room newRoom = new Room(bounds, doorDir, Main.rand.nextInt(100) <= 25 ? RoomType.normal : RoomType.chest);
+                dungeon.addRoomToMemArea(mainRoom, newRoom, boomDirection);
+                newRoom.drawRoomOnMap(map, gp);
+            }
+
+            map.tiles[tileVector.y * map.width + tileVector.x] = new Tile(Utils.loadSprite("/Sprites/world/sand/sand0.png"));
+            map.tiles[tileVector.y * map.width + tileVector.x].collision = false;
+
+            Main.gp.printableObj.remove(obj);
+            //then destroy near tiles
         }
     }
 

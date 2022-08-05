@@ -25,12 +25,8 @@ public class Tile
     Map connectedMap;
     public Room linkedRoom;
 
-    public Vector2float UR;
-    public Vector2float UL;
-    public Vector2float DR;
-    public Vector2float DL;
-
     public TileType type;
+    public boolean hasTnt;
 
     public Tile(BufferedImage sprite)
     {

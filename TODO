@@ -1,2 +1,2 @@
-piccolo appunto, sono riuscito a "disegnare" un oggetto pixel by pixel e non basandomi unicamente sulle tile, quindi ottimo successo.
-in ogni caso, domani dobbiamo cominciare -> finire "abbatti"
+abbatti finito ma va aggiustato leggermente, inoltre, aggiungere ad ogni stanza una lista di offset delle porte, in questo modo
+sarà più semplice gestire i crolli
