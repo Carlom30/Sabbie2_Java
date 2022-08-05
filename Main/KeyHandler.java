@@ -2,7 +2,8 @@ package Main;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class KeyHandler implements KeyListener{
+public class KeyHandler implements KeyListener
+{
 
     public boolean upPressed;
     public boolean downPressed;
@@ -11,6 +12,7 @@ public class KeyHandler implements KeyListener{
     public boolean nothingIsPressed;
     
     public boolean E_Pressed;
+    
 
     public boolean keyIsPressed = false;
     

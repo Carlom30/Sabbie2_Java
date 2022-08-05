@@ -192,7 +192,7 @@ public class Dungeon
 
         return arrayRoom[Main.rand.nextInt(arrayRoom.length)];
     }
-
+    
     public void generateDungeonRooms()
     {
         //siccome gli enum in questo linguaggio sono delle abominazioni ancestrali, una random direction la prenderò da questo array

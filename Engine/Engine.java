@@ -2,6 +2,7 @@ package Engine;
 import java.awt.image.BufferedImage;
 import Entity.Player;
 import Main.*;
+import Object.SuperObject;
 import World.Map;
 
 import java.awt.Graphics2D;
@@ -68,6 +69,14 @@ public class Engine
             }
         }
     } 
+
+    public static void printObjects(Graphics2D g2D)
+    {
+        for(SuperObject obj : Main.gp.printableObj)
+        {
+            obj.draw(g2D, Main.gp);
+        }
+    }
     
     public static void printPlayer(Graphics2D g2D, Player player)
     {

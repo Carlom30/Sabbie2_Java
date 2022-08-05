@@ -30,6 +30,8 @@ public class Tile
     public Vector2float DR;
     public Vector2float DL;
 
+    public TileType type;
+
     public Tile(BufferedImage sprite)
     {
         this.sprite = sprite;

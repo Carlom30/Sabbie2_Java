@@ -1,7 +1,10 @@
 package Engine;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
+import Engine.Tile.TileType;
 import Entity.Entity;
 import Main.Utils.Directions;
 import Math.Vector2;
@@ -16,8 +19,10 @@ public class CollisionLogic
         this.gp = gp;
     }
 
-    public void checkForCollision_Tile(Entity entity)
+    //questa funzione setta collisionOn al player, ma ritorna pure le due tile avanti alla direzione dove punta l'avatar
+    public List<Tile> checkForCollision_Tile(Entity entity)
     {
+        List<Tile> collisionTiles = new ArrayList<Tile>();
         Map map = gp.map;
 
         int leftCollisionX =  entity.worldPosition.x + entity.collisionArea.min.x; 
@@ -90,7 +95,21 @@ public class CollisionLogic
         if((map.tiles[offsetTileOne].collision == true || map.tiles[offsetTileTwo].collision == true) && gp.player.DEV_MODE == false)
         {
             entity.collisionOn = true;
+            
         }
+
+        //aggiungo un if identico per semplicità
+        if(map.tiles[offsetTileOne].type == TileType.wall)
+        {
+            collisionTiles.add(map.tiles[offsetTileOne]);
+        }
+
+        if(map.tiles[offsetTileTwo].type == TileType.wall)
+        {
+            collisionTiles.add(map.tiles[offsetTileTwo]);
+        }
+
+        return collisionTiles;
 
         //if(entity.direction == Directions.up)
 

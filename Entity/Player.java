@@ -9,7 +9,10 @@ import Object.remoteTnt;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.io.IOException;
+import java.util.List;
+
 import javax.imageio.ImageIO;
+import javax.swing.text.Utilities;
 
 import Engine.*;
 
@@ -116,11 +119,6 @@ public class Player extends Entity
                     worldPosition.x += velocity;
                 }
             }
-
-            else if(kh.E_Pressed)
-            {
-                Main.gp.printedObj[0] = new remoteTnt();
-            }
     
             collisionOn = false;
 
@@ -139,6 +137,31 @@ public class Player extends Entity
                 }
                 spriteCounter = 0;
             }
+        }
+
+        if(kh.E_Pressed)
+        {
+            //it just fucking works!
+            if(Utils.currentTime == -1)
+            {
+                Utils.currentTime = System.currentTimeMillis();
+                Utils.printf("e pressed");
+                
+                List<Tile> nextTiles = gp.collision.checkForCollision_Tile(this);
+                Tile[] tileArray = new Tile[2]; //max element is 2
+                nextTiles.toArray(tileArray);
+                
+                if(nextTiles.isEmpty())
+                {
+                    Utils.printf("no wall detected");
+                    return;
+                }
+                //se il giocatore ha tnt, allora ne posiziono una nella tile designata
+                remoteTnt newTnt = new remoteTnt(tileArray[0]);
+                kh.E_Pressed = false;
+            }
+            
+            Utils.timeIsPassed(Utils.currentTime, 1000);
         }
     }
 

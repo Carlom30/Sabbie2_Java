@@ -2,6 +2,7 @@ package Main;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import javax.lang.model.util.ElementScanner6;
+import javax.swing.text.Utilities;
 
 import java.io.IOException;
 import java.util.List;
@@ -10,6 +11,22 @@ import Math.Vector2;
 
 public class Utils 
 {
+    public static long currentTime = -1; //the cursed "-1 second has passed"
+    public static void main(String[] args) 
+    {
+        long timeToPass = 1000;
+        Utils.currentTime = System.currentTimeMillis();
+        int counter = 0;
+        while(true)
+        {
+            if(Utils.timeIsPassed(Utils.currentTime, timeToPass))
+            {
+                counter++;
+                printf("" + counter);
+                //Utilities = System.currentTimeMillis();
+            }
+        }    
+    }
     public static enum Directions
     {
         up,
@@ -75,6 +92,19 @@ public class Utils
         {
             return Directions.ALL_DIRECTIONS;
         }
+    }
+
+    public static boolean timeIsPassed(long lastTime, long timeToWait) //time to wait must be in millisec
+    {
+        long currentTime = System.currentTimeMillis();
+        long delta = currentTime - lastTime;
+        if(delta >= timeToWait)
+        {
+            Utils.currentTime = -1;
+            return true;
+        }
+
+        return false;
     }
 
 }

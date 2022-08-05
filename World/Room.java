@@ -7,6 +7,7 @@ import java.util.List;
 
 import Engine.GamePanel;
 import Engine.Tile;
+import Engine.Tile.TileType;
 import Main.Main;
 import Main.Utils;
 import Main.Utils.Directions;
@@ -62,11 +63,13 @@ public class Room
                 int offset = i * bounds.width + j; 
                 tiles[offset] = new Tile(floor);
                 tiles[offset].linkedRoom = this;
+                tiles[offset].type = TileType.floor;
                 
                 if(i == 0 || i == (bounds.height - 1) || j == 0 || j == (bounds.width - 1))
                 {
                     tiles[offset].sprite = wall;
-                    tiles[offset].collision = true;    
+                    tiles[offset].collision = true;  
+                    tiles[offset].type = TileType.wall;  
                 }
             }
         }

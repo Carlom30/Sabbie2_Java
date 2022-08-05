@@ -5,6 +5,9 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.JPanel;
 import Entity.*;
 import Main.KeyHandler;
@@ -44,7 +47,7 @@ public class GamePanel extends JPanel implements Runnable
     public final int worldWidth = tileSize * maxWorldColumn;
     public final int worldHeight = tileSize * maxWorldRow;
 
-    public final int maxPrintableObject = 10;
+    public final int maxPrintableObject = 999;
 
     // and so, 48 pixels * 16 = 768 pixel for width and 48 * 12 = 576 pixels for height
     int fps = 60;
@@ -55,7 +58,7 @@ public class GamePanel extends JPanel implements Runnable
     public MapType currentMap;
     public CollisionLogic collision = new CollisionLogic(this);
     public Player player;
-    public SuperObject printedObj[] = new SuperObject[maxPrintableObject];
+    public List<SuperObject> printableObj = new ArrayList<SuperObject>();
 
     public GamePanel()
     {
@@ -76,10 +79,10 @@ public class GamePanel extends JPanel implements Runnable
 
         currentMap = MapType.outside;
         //TESTING
-        /*Dungeon newDungeon = new Dungeon();
+        Dungeon newDungeon = new Dungeon();
         map = newDungeon.area;
         map.fillMapWithOneTile(new Tile(Utils.loadSprite("/Sprites/nullGrey.png")));
-        newDungeon.generateDungeonRooms();*/
+        newDungeon.generateDungeonRooms();
         
         player = new Player(this, kh, null);
          //ITS FUCKING TESTING OK??
@@ -142,9 +145,7 @@ public class GamePanel extends JPanel implements Runnable
         Graphics2D g2 = (Graphics2D)g; //ofc graphics2d che fa override di graphics
                                        //grpahics2d è ottimo per il 2d ofc, ha più funzioni inerenti
         Engine.printMap(map, g2);
-
-        //TESTING
-        printedObj[0].draw(g2, this);
+        Engine.printObjects(g2);
         Engine.printPlayer(g2, player);
         
         //g2.dispose();

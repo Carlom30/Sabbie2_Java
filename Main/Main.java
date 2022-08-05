@@ -24,7 +24,6 @@ public class Main {
         window.setTitle("Sands");
 
         gp = new GamePanel();
-        gp.printedObj[0] = new remoteTnt();
         window.add(gp); //aggiungo gamePanel come componente di window, mi servirà dopo
 
         window.pack();
