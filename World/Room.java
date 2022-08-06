@@ -1,6 +1,8 @@
 package World;
 
 import Math.*;
+import Object.Chest;
+
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -79,6 +81,15 @@ public class Room
         if(doorDirections != null)
         {
             addDoors(doorDirections);
+        }
+
+        if(type == RoomType.chest)
+        {
+            Vector2 globalChestPosition = new Vector2(0, 0);
+            globalChestPosition.x = bounds.min.x + bounds.width / 2;
+            globalChestPosition.y = bounds.min.y + bounds.height / 2;
+
+            Chest roomChest = new Chest(globalChestPosition);
         }
     }
 

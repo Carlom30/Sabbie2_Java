@@ -188,6 +188,7 @@ public class Player extends Entity
                 Utils.printf("r pressed");
                 abbatti();
             }
+            
             Utils.timeIsPassed(Utils.currentTime, 1000);
         }
         
@@ -231,6 +232,8 @@ public class Player extends Entity
             Room mainRoom = mainTile.linkedRoom;
             Vector2 tileVector = map.getGlobalTileVector(mainTile);
 
+            int ALL_DIRECTIONS = 4;
+
             //enum che però funziona diversamente da quello di java che fa un po c***** :))
 
             //recupero adesso la direzione verso la quale la tnt dovrebbe abbattere
@@ -269,18 +272,29 @@ public class Player extends Entity
             {
                 //code for add room
                 RectInt bounds = new RectInt(dungeon.calculateRoomMin(mainRoom, boomDirection), dungeon.roomWidth, dungeon.roomHeight);
-                List<Directions> doorDir = new ArrayList<Directions>();
-                doorDir.add(Utils.getOppositeDirection(boomDirection));
-                Room newRoom = new Room(bounds, doorDir, Main.rand.nextInt(100) <= 25 ? RoomType.normal : RoomType.chest);
+                /*List<Directions> doorDir = new ArrayList<Directions>();
+                doorDir.add(Utils.getOppositeDirection(boomDirection));*/
+                Room newRoom = new Room(bounds, null, (Main.rand.nextInt(100) + 1) <= 35 ? RoomType.normal : RoomType.chest);
                 dungeon.addRoomToMemArea(mainRoom, newRoom, boomDirection);
                 newRoom.drawRoomOnMap(map, gp);
             }
 
-            map.tiles[tileVector.y * map.width + tileVector.x] = new Tile(Utils.loadSprite("/Sprites/world/sand/sand0.png"));
-            map.tiles[tileVector.y * map.width + tileVector.x].collision = false;
+            Tile floor = new Tile(Utils.loadSprite("/Sprites/world/sand/sand0.png"));
+
+            map.tiles[tileVector.y * map.width + tileVector.x] = floor;
+            map.tiles[tileVector.y * map.width + tileVector.x].collision = false; //jsut declaration of intent
+
+            //do l'idea di esplosione distruggendo le tile perpendicolari
+            for(int i = 0; i < ALL_DIRECTIONS; i++) 
+            {
+                map.tiles[(tileVector.y + dungeon.directionsVector[i].y) * map.width + (tileVector.x + dungeon.directionsVector[i].x)] = floor;
+            }
 
             Main.gp.printableObj.remove(obj);
+
             //then destroy near tiles
+
+            //aggiungere poi i crolli, forse...
         }
     }
 

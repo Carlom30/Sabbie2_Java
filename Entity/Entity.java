@@ -12,6 +12,8 @@ public abstract class Entity
     public Vector2 worldPosition;
     public int velocity;
 
+    int lifePoints;
+
     public BufferedImage idle;
     public BufferedImage up_1;
     public BufferedImage up_2;
@@ -30,6 +32,18 @@ public abstract class Entity
     public RectInt collisionArea;
     public Boolean collisionOn = false;
 
-    public SuperObject[] inventory;
+
+    //in questo caso è piuttosto importante lasciare lifePoint private, poiché è sempre meglio, nei videogiochi, 
+    //avere una funzione che rimuova o aggiunga hp, invece di toccare il parametro direttamente al di fuori della classe 
+    public int getLifePoints()
+    {
+        return this.lifePoints;
+    }
+
+    public void setLifePoints(int value)
+    {
+        //per adesso is just:
+        lifePoints += value; //value può essere positivo o negativo
+    }
     
 }

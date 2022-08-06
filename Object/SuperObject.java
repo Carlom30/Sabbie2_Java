@@ -23,6 +23,7 @@ public abstract class SuperObject
     public BufferedImage sprite;
     public Vector2 worldPos;
     public objecType type;
+    public Vector2 collsionAreaMin = new Vector2(0, 0);
 
     //in genere questo è lo script per printare qualcosa a schermo che non sia già in mappa
     public void draw(Graphics2D g2D, GamePanel gp)

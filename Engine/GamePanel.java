@@ -30,15 +30,15 @@ public class GamePanel extends JPanel implements Runnable
     //screen settings
 
     //tilesize è la dimenzione finale di una tile (in pixel ovviamente)
-    final public int originalTileSize = 16; // 16 x 16 tiles
+    final public static int originalTileSize = 16; // 16 x 16 tiles
     //16x16 è comunque un po piccolo in generale per i monitor moderni quindi
     //posso scalare 
-    final public int scale = 3;
-    final public int tileSize = originalTileSize * scale; // quindi 48x48 tile
-    final public int maxScreenColumn = 16;
-    final public int maxScreenRow = 12;  // 4:3 hehe
-    final public int screenWidth = tileSize * maxScreenColumn;
-    final public int screenHeight = tileSize * maxScreenRow;
+    final public static int scale = 3;
+    final public static int tileSize = originalTileSize * scale; // quindi 48x48 tile
+    final public static int maxScreenColumn = 16;
+    final public static int maxScreenRow = 12;  // 4:3 hehe
+    final public static int screenWidth = tileSize * maxScreenColumn;
+    final public static int screenHeight = tileSize * maxScreenRow;
 
     //settings world
 
@@ -58,8 +58,9 @@ public class GamePanel extends JPanel implements Runnable
     public MapType currentMap;
     public CollisionLogic collision = new CollisionLogic(this);
     public Player player;
-    public List<SuperObject> printableObj = new ArrayList<SuperObject>();
-
+    
+    public static List<SuperObject> printableObj;
+    
     public GamePanel()
     {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -72,6 +73,7 @@ public class GamePanel extends JPanel implements Runnable
 
     public void init()
     {
+        printableObj = new ArrayList<SuperObject>();
         //here goes the game setup
         map = new Map(this, maxWorldColumn, maxWorldRow);
         map.fillMapWithOneTile(new Tile(Utils.loadSprite("/Sprites/world/sand/sand3.png")));
