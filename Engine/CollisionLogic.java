@@ -4,10 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import javax.swing.text.Utilities;
+
 import Engine.Tile.TileType;
 import Entity.Entity;
+import Main.Utils;
 import Main.Utils.Directions;
+import Math.RectInt;
 import Math.Vector2;
+import Object.SuperObject;
 import World.Map;
 
 public class CollisionLogic 
@@ -116,32 +121,52 @@ public class CollisionLogic
     }
 
     //funzione ch ritorna 
-    Tile[] onCollisionEnter(Entity entity)
-    {
-        Tile[] collidedTiles = new Tile[2];
-
-        Map map = gp.map;
-
-        int leftCollisionX =  entity.worldPosition.x + entity.collisionArea.min.x; 
-        int rightCollisionX = entity.worldPosition.x + entity.collisionArea.min.x + entity.collisionArea.width;
-                                                       
-        int topCollisionY = entity.worldPosition.y + entity.collisionArea.min.y; 
-        int bottomCollisionY = entity.worldPosition.y + entity.collisionArea.min.y + entity.collisionArea.height;
+    public static SuperObject checkForCollision_Obj(Entity entity, boolean isPlayer)
+    {   
+        //nonostante i due for, il costo di questa funzione è sempre O(4n) in quanto il secondo for annidato ha lunghezza sempre di 4,
+        //4 è una costante trascurabile, quindi il costo rimane lineare: O(n)
+        SuperObject checkObj = null;
         
-        int entityLeftCol = leftCollisionX / gp.tileSize;
-        int entityRightCol = rightCollisionX / gp.tileSize;
+        for(SuperObject obj : GamePanel.printableObj)
+        {
+            //get the entity and obj solid area positions
+            entity.collisionArea.min = 
+                new Vector2(entity.collisionArea.min.x + entity.worldPosition.x, entity.collisionArea.min.y + entity.worldPosition.y);
 
-        int entityTopRow = topCollisionY / gp.tileSize;
-        int entityBottomRow = bottomCollisionY / gp.tileSize;
+            obj.collisionArea.min =  
+                new Vector2(obj.collisionArea.min.x + obj.worldPos.x, obj.collisionArea.min.y + obj.worldPos.y);
+            
+            /* questo for, (che ha un costo trascurabile, in quanto length è sempre 4, quindi O(1)) mi permette di evitare 
+             * dei check direction by direction con if, switch o roba simile. Quello che faccio è:
+             * 
+             * - trovare la direzione dell'entità, 
+             * - prendo la sua direzione vettoriale,
+             * - moltiplico il vettore per lo scalare velocità dell'entità.
+             * 
+             * in questo modo, ho il vettore direzione non unitario che posso usare per fare check di intersezione
+             *  
+            */
+            for(int i = 0; i < Utils.allDirections.length; i++)
+            {
+                if(Utils.allDirections[i] == entity.direction)
+                {
+                    Vector2 entityDirection = Vector2.scalarPerVector(Vector2.directionsVector[i], entity.velocity);
+                    entity.collisionArea.min = Vector2.vectorSumm(entity.collisionArea.min, entityDirection);
+                    if(RectInt.intersect(entity.collisionArea, obj.collisionArea))
+                    {
+                        Utils.printf("Obj collision on: " + Utils.allDirections[i]);
+                    }
+                    checkObj = obj;
+                    obj.collisionArea.min = obj.collsionAreaMin_Default;
+                }
 
-        int offsetTileOne = 0;
-        int offsetTileTwo = 0;
+                Utils.printf("direction not found in obj collision");
+
+                return null;
+            }
+        }
+        entity.collisionArea.min = entity.collisionAreaMin_Default;
         
-        //ritorno solamente due tile, non questioni di tempo non posso fare collisioni troppo precise
-        
-
-        
-
-        return collidedTiles;
+        return checkObj;
     }
 }

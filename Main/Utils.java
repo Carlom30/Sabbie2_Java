@@ -45,6 +45,14 @@ public class Utils
      
     };
 
+    public static Directions[] allDirections = new Directions[]
+    {
+        Directions.up,
+        Directions.down,
+        Directions.right,
+        Directions.left
+    };
+
     public static void printf(String string)
     {
         System.out.println(string);

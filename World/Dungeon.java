@@ -36,34 +36,13 @@ public class Dungeon
     final int maxAreaWidth = 200;
     final int maxAreaHeight = 200;
 
-    public static Directions[] allDirections;
-
-    public static Vector2[] directionsVector;
-
-    public static void allocateDirections()
-    {
-        allDirections = new Directions[4];
-            
-        allDirections[0] = Directions.up;
-        allDirections[1] = Directions.down;
-        allDirections[2] = Directions.right;
-        allDirections[3] = Directions.left;
-    
-        directionsVector = new Vector2[4];
-    
-        directionsVector[0] = new Vector2(0, -1);   //up
-        directionsVector[1] = new Vector2(0, 1); //down
-        directionsVector[2] = new Vector2(1, 0); //right
-        directionsVector[3] = new Vector2(-1, 0);  //left
-    }
-
     int ALL_DIRECTIONS;
 
 
     public Dungeon()
     {
 
-        ALL_DIRECTIONS = allDirections.length;
+        ALL_DIRECTIONS = Utils.allDirections.length;
 
         roomNumb = Main.rand.nextInt((maxRoom - minRoom)) + minRoom;
 
@@ -165,18 +144,18 @@ public class Dungeon
 
     public void addRoomToMemArea(Room mainRoom, Room newRoom, Directions dir)
     {
-        for(int i = 0; i < allDirections.length; i++)
+        for(int i = 0; i < Utils.allDirections.length; i++)
         {
-            if(allDirections[i] == dir)
+            if(Utils.allDirections[i] == dir)
             {
-                int x = mainRoom.onDungeonMemPosition.x + directionsVector[i].x;
-                int y = mainRoom.onDungeonMemPosition.y + directionsVector[i].y;
+                int x = mainRoom.onDungeonMemPosition.x + Vector2.directionsVector[i].x;
+                int y = mainRoom.onDungeonMemPosition.y + Vector2.directionsVector[i].y;
 
                 int offset = 
-                    (mainRoom.onDungeonMemPosition.y + directionsVector[i].y) * memWidth + (mainRoom.onDungeonMemPosition.x + directionsVector[i].x); 
+                    (mainRoom.onDungeonMemPosition.y + Vector2.directionsVector[i].y) * memWidth + (mainRoom.onDungeonMemPosition.x + Vector2.directionsVector[i].x); 
                 
                 newRoom.onDungeonMemPosition = 
-                    new Vector2(mainRoom.onDungeonMemPosition.x + directionsVector[i].x, mainRoom.onDungeonMemPosition.y + directionsVector[i].y);
+                    new Vector2(mainRoom.onDungeonMemPosition.x + Vector2.directionsVector[i].x, mainRoom.onDungeonMemPosition.y + Vector2.directionsVector[i].y);
                 
                     memArea[offset] = newRoom;
 
@@ -235,7 +214,7 @@ public class Dungeon
             // - in base alla direzioni scelta, aggiungo una porta alla stanza principale e alla secondaria nella direzione opposta
             // - la secondaria diventa la primaria
             // - se non ci sono direzioni libere ne prendo una a caso dalla lista delle stanze
-            Directions randDir = allDirections[Main.rand.nextInt(allDirections.length)];
+            Directions randDir = Utils.allDirections[Main.rand.nextInt(Utils.allDirections.length)];
             System.out.println("random direction: " + randDir.toString());
             
             //sorry for this im a C programmer :D

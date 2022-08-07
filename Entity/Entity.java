@@ -30,6 +30,7 @@ public abstract class Entity
     public int spriteNum = 1;
 
     public RectInt collisionArea;
+    public Vector2 collisionAreaMin_Default;
     public Boolean collisionOn = false;
 
 

@@ -48,6 +48,7 @@ public class Player extends Entity
         readPlayerSprites();
         screenPosition = new Vector2(gp.screenWidth / 2 - gp.tileSize / 2, gp.screenHeight / 2 - gp.tileSize / 2);
         collisionArea = new RectInt(new Vector2(8, 16), 32, 32); // 32 x 32  
+        collisionAreaMin_Default = collisionArea.min;
         //up: print character at the exact centre of the screen
     }
 
@@ -130,6 +131,7 @@ public class Player extends Entity
             }
     
             collisionOn = false;
+            CollisionLogic.checkForCollision_Obj(this, true);
 
 
             spriteCounter++;
@@ -287,7 +289,7 @@ public class Player extends Entity
             //do l'idea di esplosione distruggendo le tile perpendicolari
             for(int i = 0; i < ALL_DIRECTIONS; i++) 
             {
-                map.tiles[(tileVector.y + dungeon.directionsVector[i].y) * map.width + (tileVector.x + dungeon.directionsVector[i].x)] = floor;
+                map.tiles[(tileVector.y + Vector2.directionsVector[i].y) * map.width + (tileVector.x + Vector2.directionsVector[i].x)] = floor;
             }
 
             Main.gp.printableObj.remove(obj);

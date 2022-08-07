@@ -17,8 +17,6 @@ public class Main {
         Utils.printf("seed: " + seed);
         rand.setSeed(seed);
 
-        Dungeon.allocateDirections();
-
         //fix stuttering and lagging problems with linux gpu scheduling
         System.setProperty("sun.java2d.opengl", "true");
         JFrame window = new JFrame();

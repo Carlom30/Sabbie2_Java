@@ -1,5 +1,7 @@
 package Object;
 import java.awt.image.BufferedImage;
+
+import Math.RectInt;
 import Math.Vector2;
 import java.awt.Graphics2D;
 import Engine.GamePanel;
@@ -20,10 +22,12 @@ public abstract class SuperObject
 
     public String name;
     public boolean collision = false;
+    public RectInt collisionArea = new RectInt(new Vector2(0, 0), GamePanel.tileSize, GamePanel.tileSize);
     public BufferedImage sprite;
     public Vector2 worldPos;
     public objecType type;
-    public Vector2 collsionAreaMin = new Vector2(0, 0);
+
+    public Vector2 collsionAreaMin_Default = new Vector2(0, 0);
 
     //in genere questo è lo script per printare qualcosa a schermo che non sia già in mappa
     public void draw(Graphics2D g2D, GamePanel gp)
@@ -49,4 +53,6 @@ public abstract class SuperObject
             Main.gp.printableObj.add(this);
         }
     }
+
+
 }
