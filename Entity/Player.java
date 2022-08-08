@@ -3,6 +3,7 @@ import Main.*;
 import Main.Utils.Directions;
 import Math.RectInt;
 import Math.Vector2;
+import Object.Ladder;
 import Object.SuperObject;
 import Object.remoteTnt;
 import Object.SuperObject.objecType;
@@ -35,11 +36,12 @@ public class Player extends Entity
 
     public boolean DEV_MODE;
 
-    public Player(GamePanel gp, KeyHandler kh, Vector2 worldPos)
+    public Player(GamePanel gp, KeyHandler kh, Vector2 worldPos, Map startingMap)
     {
         DEV_MODE = false;
         this.gp = gp;
         this.kh = kh;
+        linkedMap = startingMap;
         setDefaultValues();
         if(worldPos != null)
         {
@@ -54,7 +56,7 @@ public class Player extends Entity
 
     public void setDefaultValues()
     {
-        worldPosition = new Vector2((gp.map.width / 2) * gp.tileSize, (gp.map.height / 2) * gp.tileSize); //new Vector2(gp.tileSize * 23, gp.tileSize * 21);
+        worldPosition = new Vector2((linkedMap.width / 2) * gp.tileSize, (linkedMap.height / 2) * gp.tileSize); //new Vector2(gp.tileSize * 23, gp.tileSize * 21);
         velocity = 4; //velocity = 4 ma metto di più per testing
         direction = Directions.down;
 
@@ -85,11 +87,15 @@ public class Player extends Entity
             e.printStackTrace();
         }
     }
-
+    
     public void update()
     {
+        SuperObject onCollisionObject = null;
+
         if(kh.downPressed || kh.leftPressed || kh.rightPressed || kh.upPressed)
         {
+            onCollisionObject = CollisionLogic.checkForCollision_Obj(this, true);
+            
             if(kh.upPressed)
             {
                 direction = Directions.up;
@@ -131,7 +137,6 @@ public class Player extends Entity
             }
     
             collisionOn = false;
-            CollisionLogic.checkForCollision_Obj(this, true);
 
 
             spriteCounter++;
@@ -193,6 +198,29 @@ public class Player extends Entity
             
             Utils.timeIsPassed(Utils.currentTime, 1000);
         }
+
+        else if(kh.C_Pressed)
+        {
+            if(Utils.currentTime == -1)
+            {
+                onCollisionObject = CollisionLogic.checkForCollision_Obj(this, true);
+                if(onCollisionObject == null)
+                {
+                    Utils.currentTime = System.currentTimeMillis();
+                    Utils.printf("c pressed");
+                    Dungeon.digDungeon(this);
+                }
+
+                else if(onCollisionObject != null && onCollisionObject.type == objecType.Ladder)
+                {
+                    //funzione climb()
+                    Ladder ladder = (Ladder)onCollisionObject;
+                    ladder.climbLadder(this);
+                }
+            }
+            
+            Utils.timeIsPassed(Utils.currentTime, 1000);
+        }
         
     }
 
@@ -221,7 +249,6 @@ public class Player extends Entity
                 
             }
 
-            
         }
 
         for(remoteTnt obj : tntList)
@@ -229,7 +256,7 @@ public class Player extends Entity
             //per prima cosa tutti i dati utili
             Utils.printf("remote n: " + obj);
             Dungeon dungeon = this.linkedDungeon;
-            Map map = Main.gp.map;
+            Map map = Main.gp.player.linkedMap;
             Tile mainTile = obj.attachedTile;
             Room mainRoom = mainTile.linkedRoom;
             Vector2 tileVector = map.getGlobalTileVector(mainTile);

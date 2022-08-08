@@ -12,7 +12,7 @@ import Math.Vector2;
 public class Utils 
 {
     public static long currentTime = -1; //the cursed "-1 second has passed"
-    public static void main(String[] args) 
+    /*public static void main(String[] args) 
     {
         long timeToPass = 1000;
         Utils.currentTime = System.currentTimeMillis();
@@ -26,7 +26,7 @@ public class Utils
                 //Utilities = System.currentTimeMillis();
             }
         }    
-    }
+    }*/
     public static enum Directions
     {
         up,

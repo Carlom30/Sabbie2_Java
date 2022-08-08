@@ -1,16 +1,25 @@
 package World;
 
 import World.Map;
+import World.Map.MapType;
 import World.Room.RoomType;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import Engine.GamePanel;
+import Entity.Entity;
+import Entity.Player;
 import Main.Main;
 import Main.Utils;
 import Main.Utils.Directions;
 import Math.RectInt;
 import Math.Vector2;
+import Object.Ladder;
+import Object.SuperObject;
+import Object.Ladder.LadderType;
+import Engine.Tile;
 
 public class Dungeon 
 {
@@ -21,6 +30,7 @@ public class Dungeon
 
     //aggiungo una lista di rooms per tenere traccia di tutte le stanze, anche quelle allocate in game
     public List<Room> rooms= new ArrayList<Room>();
+    public List<SuperObject> onDungeonObjects = new ArrayList<>();
 
     final int memWidth = 10;
     final int memHeight = 10;
@@ -38,27 +48,27 @@ public class Dungeon
 
     int ALL_DIRECTIONS;
 
-
     public Dungeon()
     {
-
         ALL_DIRECTIONS = Utils.allDirections.length;
-
         roomNumb = Main.rand.nextInt((maxRoom - minRoom)) + minRoom;
-
+        
         //se ci sono più di metà del massimo delle stanza, aumento autmaticamente le chestRoom di 1
         chestRoomNumb = (Main.rand.nextInt(maxChestRoom) + 1) + Math.round((roomNumb / maxRoom) * 10);
-
+        
         if(chestRoomNumb > maxChestRoom)
         {
             chestRoomNumb = maxChestRoom;
         }
-
+        
         Utils.printf("roomNumb: " + roomNumb);
         //rooms = new Room[roomNumb]; 
         memArea = new Room[memWidth * memHeight]; // area logica delle stanze
         area = new Map(Main.gp, maxAreaWidth, maxAreaHeight); // area effettiva di rendering
-
+        
+        Tile nullGrey = new Tile(Utils.loadSprite("/Sprites/nullGrey.png"));
+        nullGrey.collision = true;
+        area.fillMapWithOneTile(nullGrey);
         //generateDungeonRooms();
         
     }
@@ -231,7 +241,8 @@ public class Dungeon
                     do
                     {
                         randRoom = pickRandomRoom();
-                    } while(mainRoom == randRoom); //ne prendo una a caso fino a che non ne prendo una che non sia la mainRoom
+                    } 
+                    while(mainRoom == randRoom); //ne prendo una a caso fino a che non ne prendo una che non sia la mainRoom
     
                     mainRoom = randRoom;
                 }
@@ -278,4 +289,27 @@ public class Dungeon
         return;
     }
 
+    public static void digDungeon(Player player)
+    {
+        if(Main.gp.currentMap == MapType.dungeon)
+        {
+            Utils.printf("you cant dig inside a fucking dungeon");
+            return;
+        }
+
+        Vector2 ladderPosition = new Vector2(0, 0);
+        for(int i = 0; i < Utils.allDirections.length; i++)
+        {
+            if(Utils.allDirections[i] == player.direction)
+            {
+                ladderPosition = (Vector2.vectorSumm(player.worldPosition, Vector2.scalarPerVector((Vector2.directionsVector[i]), GamePanel.tileSize)));
+                break;
+            }
+        }
+
+        Dungeon dungeon = new Dungeon();
+        dungeon.generateDungeonRooms();
+
+        Ladder ladder = new Ladder(ladderPosition, LadderType.goesDown, player.linkedMap, dungeon);
+    } 
 }

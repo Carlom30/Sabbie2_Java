@@ -15,6 +15,8 @@ import Math.Vector2;
 import Object.SuperObject;
 import World.Map;
 
+import java.awt.Rectangle;
+
 public class CollisionLogic 
 {
     GamePanel gp;
@@ -27,8 +29,9 @@ public class CollisionLogic
     //questa funzione setta collisionOn al player, ma ritorna pure le due tile avanti alla direzione dove punta l'avatar
     public List<Tile> checkForCollision_Tile(Entity entity)
     {
+        entity.collisionArea.min = entity.collisionAreaMin_Default;
         List<Tile> collisionTiles = new ArrayList<Tile>();
-        Map map = gp.map;
+        Map map = gp.player.linkedMap;
 
         int leftCollisionX =  entity.worldPosition.x + entity.collisionArea.min.x; 
         int rightCollisionX = entity.worldPosition.x + entity.collisionArea.min.x + entity.collisionArea.width;
@@ -131,10 +134,10 @@ public class CollisionLogic
         {
             //get the entity and obj solid area positions
             entity.collisionArea.min = 
-                new Vector2(entity.collisionArea.min.x + entity.worldPosition.x, entity.collisionArea.min.y + entity.worldPosition.y);
+                new Vector2((entity.collisionArea.min.x + entity.worldPosition.x), (entity.collisionArea.min.y + entity.worldPosition.y));
 
             obj.collisionArea.min =  
-                new Vector2(obj.collisionArea.min.x + obj.worldPos.x, obj.collisionArea.min.y + obj.worldPos.y);
+                new Vector2((obj.collisionArea.min.x + obj.worldPos.x), (obj.collisionArea.min.y + obj.worldPos.y));
             
             /* questo for, (che ha un costo trascurabile, in quanto length è sempre 4, quindi O(1)) mi permette di evitare 
              * dei check direction by direction con if, switch o roba simile. Quello che faccio è:
@@ -152,20 +155,27 @@ public class CollisionLogic
                 {
                     Vector2 entityDirection = Vector2.scalarPerVector(Vector2.directionsVector[i], entity.velocity);
                     entity.collisionArea.min = Vector2.vectorSumm(entity.collisionArea.min, entityDirection);
+
                     if(RectInt.intersect(entity.collisionArea, obj.collisionArea))
                     {
-                        Utils.printf("Obj collision on: " + Utils.allDirections[i]);
+                        Utils.printf("Obj: " + obj + " collision on: " + Utils.allDirections[i]);
+                        
+                        checkObj = obj;
+
+                        if(obj.collision)
+                            entity.collisionOn = true;
                     }
-                    checkObj = obj;
-                    obj.collisionArea.min = obj.collsionAreaMin_Default;
+                    
+                    break;
                 }
-
-                Utils.printf("direction not found in obj collision");
-
-                return null;
+                
+                //Utils.printf("direction not found in obj collision");
+                
+                //return null;
             }
+            obj.collisionArea.min = obj.collsionAreaMin_Default;
+            entity.collisionArea.min = entity.collisionAreaMin_Default;
         }
-        entity.collisionArea.min = entity.collisionAreaMin_Default;
         
         return checkObj;
     }

@@ -12,7 +12,9 @@ import javax.swing.JPanel;
 import Entity.*;
 import Main.KeyHandler;
 import Main.Utils;
+import Main.Main.GameState;
 import Math.*;
+import Object.Chest;
 import Object.SuperObject;
 import Object.remoteTnt;
 import World.*;
@@ -51,9 +53,11 @@ public class GamePanel extends JPanel implements Runnable
 
     // and so, 48 pixels * 16 = 768 pixel for width and 48 * 12 = 576 pixels for height
     int fps = 60;
-    KeyHandler kh = new KeyHandler();
+    public KeyHandler kh = new KeyHandler();
     Thread gameThread;
     
+    GameState gameState;
+
     public Map map;
     public MapType currentMap;
     public CollisionLogic collision = new CollisionLogic(this);
@@ -73,23 +77,28 @@ public class GamePanel extends JPanel implements Runnable
 
     public void init()
     {
+        gameState = GameState.inGame;
         printableObj = new ArrayList<SuperObject>();
         //here goes the game setup
         map = new Map(this, maxWorldColumn, maxWorldRow);
         map.fillMapWithOneTile(new Tile(Utils.loadSprite("/Sprites/world/sand/sand3.png")));
         PerlinNoise.noise(map);
+        printableObj = map.onMapObjects;
 
         currentMap = MapType.outside;
         //TESTING
-        Dungeon newDungeon = new Dungeon();
+        /*Dungeon newDungeon = new Dungeon();
         map = newDungeon.area;
         Tile nullGrey = new Tile(Utils.loadSprite("/Sprites/nullGrey.png"));
         nullGrey.collision = true;
         map.fillMapWithOneTile(nullGrey);
-        newDungeon.generateDungeonRooms();
+        newDungeon.generateDungeonRooms();*/
         
-        player = new Player(this, kh, null);
-        player.linkedDungeon = newDungeon;
+        player = new Player(this, kh, null, map);
+
+        //per testing creo una chest accanto al player
+        Chest chest = new Chest(new Vector2((player.worldPosition.x / GamePanel.tileSize) + 1, player.worldPosition.y / GamePanel.tileSize));
+
          //ITS FUCKING TESTING OK??
         //di seguito un array di max oggetti che si possono stampare a schermo
     }
@@ -149,11 +158,18 @@ public class GamePanel extends JPanel implements Runnable
         super.paintComponent(g); //questo va fatto ogni volta che si utilizza paintComponent
         Graphics2D g2 = (Graphics2D)g; //ofc graphics2d che fa override di graphics
                                        //grpahics2d è ottimo per il 2d ofc, ha più funzioni inerenti
-        Engine.printMap(map, g2);
+        Engine.printMap(player.linkedMap, g2);
         Engine.printObjects(g2);
         Engine.printPlayer(g2, player);
         
         //g2.dispose();
+    }
+
+    public void changeRenderedMap(Map map)
+    {
+        player.linkedMap.onMapObjects = printableObj;
+        player.linkedMap = map;
+        printableObj = map.onMapObjects;
     }
 
     public void update()

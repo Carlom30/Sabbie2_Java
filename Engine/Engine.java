@@ -3,6 +3,7 @@ import java.awt.image.BufferedImage;
 import Entity.Player;
 import Main.*;
 import Object.SuperObject;
+import Object.SuperObject.objecType;
 import World.Map;
 
 import java.awt.Graphics2D;
@@ -76,6 +77,7 @@ public class Engine
     {
         for(SuperObject obj : Main.gp.printableObj)
         {
+
             obj.draw(g2D, Main.gp);
         }
     }

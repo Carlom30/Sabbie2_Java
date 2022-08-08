@@ -1,13 +1,18 @@
 package World;
 import Math.RectInt;
 import Math.Vector2;
+import Object.SuperObject;
+
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+
 import javax.swing.text.Utilities;
 import Engine.GamePanel;
 import Engine.Tile;
 import Main.Main;
 import Main.Utils;
 import java.awt.Graphics2D; 
+import java.util.List;
 
 public class Map 
 {
@@ -18,12 +23,13 @@ public class Map
     public final int height;
     public final int area;
 
+    public List<SuperObject> onMapObjects;
+
     public enum MapType
     {
         outside,
         dungeon
     };
-
 
     public Map(GamePanel gp, int width, int height)
     {
@@ -32,6 +38,7 @@ public class Map
         tiles = new Tile[area];
         this.width = width;
         this.height = height;
+        onMapObjects = new ArrayList<SuperObject>();
     }
 
     //qualche funzione di utility immagino

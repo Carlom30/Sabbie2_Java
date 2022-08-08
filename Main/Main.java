@@ -6,7 +6,15 @@ import Engine.GamePanel;
 import Object.remoteTnt;
 import World.Dungeon;
 
-public class Main {
+public class Main 
+{
+    public enum GameState
+    {
+        inMenu,
+        inGame,
+        onInventory,
+        onLootMenu,
+    }
     
     public static GamePanel gp;
     public static Random rand = new Random();
