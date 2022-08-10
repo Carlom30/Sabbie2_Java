@@ -22,7 +22,7 @@ public class Tile
     public boolean collision = false;
     public boolean isElevated; //terza dimenzione per il perlin noise
 
-    Map connectedMap;
+    public Map connectedMap;
     public Room linkedRoom;
 
     public TileType type;

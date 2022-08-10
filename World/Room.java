@@ -46,7 +46,7 @@ public class Room
         //garbagecollector or shit like that i dunno why there's no free() function?
     }
 
-    public Room(RectInt bounds, List<Directions> doorDirections, RoomType type)
+    public Room(RectInt bounds, List<Directions> doorDirections, RoomType type, Map map)
     {
         this.type = type;
         this.bounds = bounds;
@@ -89,7 +89,7 @@ public class Room
             globalChestPosition.x = bounds.min.x + bounds.width / 2;
             globalChestPosition.y = bounds.min.y + bounds.height / 2;
 
-            Chest roomChest = new Chest(globalChestPosition);
+            Chest roomChest = new Chest(globalChestPosition, map);
         }
     }
 

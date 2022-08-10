@@ -1,7 +1,11 @@
 package Engine;
 import java.awt.image.BufferedImage;
+import java.nio.Buffer;
+
+import Entity.Inventory;
 import Entity.Player;
 import Main.*;
+import Math.Vector2;
 import Object.SuperObject;
 import Object.SuperObject.objecType;
 import World.Map;
@@ -13,6 +17,8 @@ public class Engine
 {
     //could be great to make a function that load all sprites. So the game doesn't need to do it every time 
     //a struct is allocated
+    public static int HUDoffset = 2;
+
     public static void printMap(Map map,  Graphics2D g2D)
     {
         GamePanel gp = Main.gp;
@@ -142,4 +148,73 @@ public class Engine
         g2D.drawImage(image, player.screenPosition.x, player.screenPosition.y, player.gp.tileSize, player.gp.tileSize, null);
     }
     
+    public static void printInventory(Graphics2D g2D, Player player)
+    {
+
+        for(int i = 0; i < Inventory.allItemsSprite.length; i++)
+        {
+            
+            Vector2 spritePosition = new Vector2(GamePanel.screenWidth - HUDoffset * (GamePanel.tileSize), (i * GamePanel.tileSize) + GamePanel.tileSize /*+1*/);
+
+            BufferedImage image = Inventory.allItemsSprite[i];
+            BufferedImage value = Inventory.allNumbers[player.inventory.getValuesInOrder()[i]];
+
+            g2D.drawImage(image, spritePosition.x, spritePosition.y, GamePanel.tileSize, GamePanel.tileSize, null);
+            g2D.drawImage(value, spritePosition.x + GamePanel.tileSize, spritePosition.y, GamePanel.tileSize, GamePanel.tileSize, null);
+        }
+    }
+
+    public static void printStatus(Graphics2D g2D, Player player)
+    {
+        Vector2 heartPosition = new Vector2(0, 0);
+        g2D.drawImage(player.heart, heartPosition.x, heartPosition.y, GamePanel.tileSize, GamePanel.tileSize, null);
+        
+        Vector2 barPosition = new Vector2(0, 0);
+        BufferedImage sprite;
+
+        int i = 0;
+        
+        for(int j = 0; j < player.getLifePoints(); j++)
+        {
+            //qui ci vano i pieni
+            barPosition = new Vector2(GamePanel.tileSize * (j + 1), 0);
+            sprite = player.healtBar_base;
+            if(j == (player.lifePoints_max - 1))
+            {
+                sprite = player.healtBar_end;
+                i = j;
+                g2D.drawImage(sprite, barPosition.x, barPosition.y, GamePanel.tileSize, GamePanel.tileSize, null);
+                break;
+            }
+            g2D.drawImage(sprite, barPosition.x, barPosition.y, GamePanel.tileSize, GamePanel.tileSize, null);
+            i = j;
+        }
+
+        if(i == player.lifePoints_max - 1)
+        {
+            //vuol dire full hp, ritorno
+            return;    
+        }
+
+        for(; i < player.lifePoints_max; i++)
+        {
+            barPosition = new Vector2(GamePanel.tileSize * (i + 1), 0);
+            sprite = player.healtBar_base_empty;
+            if(i == (player.lifePoints_max - 1))
+            {
+                sprite = player.healtBar_end_empty;
+                g2D.drawImage(sprite, barPosition.x, barPosition.y, GamePanel.tileSize, GamePanel.tileSize, null);
+                break;
+            }
+            g2D.drawImage(sprite, barPosition.x, barPosition.y, GamePanel.tileSize, GamePanel.tileSize, null);
+        }
+
+        return;
+    }
+
+    public static void printHUD(Graphics2D g2D, Player player)
+    {
+        printInventory(g2D, player);
+        printStatus(g2D, player);
+    }
 }

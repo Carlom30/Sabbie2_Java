@@ -11,6 +11,7 @@ import World.Dungeon;
 import World.Map;
 import World.Room;
 import World.Room.RoomType;
+import Entity.Inventory;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -33,8 +34,17 @@ public class Player extends Entity
     public Vector2 screenPosition;
     public Map linkedMap;
     public Dungeon linkedDungeon;
+    public Vector2 lastKnownOutsidePosition;
+    public Inventory inventory;
+    final public int lifePoints_max = 5;
 
     public boolean DEV_MODE;
+
+    public BufferedImage heart;
+    public BufferedImage healtBar_base;
+    public BufferedImage healtBar_end;
+    public BufferedImage healtBar_base_empty;
+    public BufferedImage healtBar_end_empty;
 
     public Player(GamePanel gp, KeyHandler kh, Vector2 worldPos, Map startingMap)
     {
@@ -56,15 +66,28 @@ public class Player extends Entity
 
     public void setDefaultValues()
     {
-        worldPosition = new Vector2((linkedMap.width / 2) * gp.tileSize, (linkedMap.height / 2) * gp.tileSize); //new Vector2(gp.tileSize * 23, gp.tileSize * 21);
+        lifePoints = 4;
         velocity = 4; //velocity = 4 ma metto di più per testing
+        
+        worldPosition = new Vector2((linkedMap.width / 2) * gp.tileSize, (linkedMap.height / 2) * gp.tileSize); //new Vector2(gp.tileSize * 23, gp.tileSize * 21);
+        lastKnownOutsidePosition = new Vector2(Integer.MIN_VALUE, Integer.MIN_VALUE);
         direction = Directions.down;
+        inventory = new Inventory();
 
         if(DEV_MODE)
         {
             velocity = velocity * 10;
             collisionArea = new RectInt(new Vector2(0, 0), 0, 0);
         }
+    }
+
+    void readStatusSprites()
+    {
+        heart = Utils.loadSprite("/Sprites/character/health/heart.png");
+        healtBar_base = Utils.loadSprite("/Sprites/character/health/healtbar_base.png");
+        healtBar_end = Utils.loadSprite("/Sprites/character/health/healtbar_end.png");
+        healtBar_base_empty = Utils.loadSprite("/Sprites/character/health/healtbar_base_empty.png");
+        healtBar_end_empty = Utils.loadSprite("/Sprites/character/health/healtbar_end_empty.png");
     }
 
     public void readPlayerSprites()
@@ -80,17 +103,22 @@ public class Player extends Entity
             right_1 = ImageIO.read(getClass().getResourceAsStream("/Sprites/character/char_right1.png"));
             left_idle = ImageIO.read(getClass().getResourceAsStream("/Sprites/character/char_left_idle.png"));
             left_1 = ImageIO.read(getClass().getResourceAsStream("/Sprites/character/char_left1.png"));
+
         }
 
         catch(IOException e)
         {
             e.printStackTrace();
         }
+
+        readStatusSprites();
     }
     
     public void update()
     {
         SuperObject onCollisionObject = null;
+
+        inventory.updateInventory();
 
         if(kh.downPressed || kh.leftPressed || kh.rightPressed || kh.upPressed)
         {
@@ -170,9 +198,11 @@ public class Player extends Entity
                 if(nextTiles.isEmpty())
                 {
                     Utils.printf("no wall detected");
+                    abbatti();
                     return;
                 }
-                if(tileArray[0].hasTnt)
+
+                if(tileArray[0].hasTnt || !inventory.modifyValue_tnt(-1))
                 {
                     return;
                 }
@@ -193,7 +223,10 @@ public class Player extends Entity
             {
                 Utils.currentTime = System.currentTimeMillis();
                 Utils.printf("r pressed");
-                abbatti();
+                if(inventory.modifyValue_healthPotion(-1) && lifePoints < lifePoints_max)
+                {
+                    this.setLifePoints(lifePoints_max - lifePoints);
+                }
             }
             
             Utils.timeIsPassed(Utils.currentTime, 1000);
@@ -203,11 +236,12 @@ public class Player extends Entity
         {
             if(Utils.currentTime == -1)
             {
+                Utils.currentTime = System.currentTimeMillis();
                 onCollisionObject = CollisionLogic.checkForCollision_Obj(this, true);
                 if(onCollisionObject == null)
                 {
-                    Utils.currentTime = System.currentTimeMillis();
                     Utils.printf("c pressed");
+                    lastKnownOutsidePosition = this.worldPosition;
                     Dungeon.digDungeon(this);
                 }
 
@@ -303,7 +337,7 @@ public class Player extends Entity
                 RectInt bounds = new RectInt(dungeon.calculateRoomMin(mainRoom, boomDirection), dungeon.roomWidth, dungeon.roomHeight);
                 /*List<Directions> doorDir = new ArrayList<Directions>();
                 doorDir.add(Utils.getOppositeDirection(boomDirection));*/
-                Room newRoom = new Room(bounds, null, (Main.rand.nextInt(100) + 1) <= 35 ? RoomType.normal : RoomType.chest);
+                Room newRoom = new Room(bounds, null, (Main.rand.nextInt(100) + 1) <= 35 ? RoomType.normal : RoomType.chest, linkedDungeon.area);
                 dungeon.addRoomToMemArea(mainRoom, newRoom, boomDirection);
                 newRoom.drawRoomOnMap(map, gp);
             }

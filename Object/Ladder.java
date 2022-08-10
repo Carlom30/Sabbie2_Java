@@ -20,6 +20,7 @@ public class Ladder extends SuperObject
         goesUp,
         goesDown
     }
+
     //union, uno dei due è sempre null
     LadderType ladderType;
     Dungeon linkedDungeon;
@@ -29,7 +30,7 @@ public class Ladder extends SuperObject
 
     //da finire
     public Ladder(Vector2 worldPosition, LadderType lType, Map linkedMap, Dungeon linkedDungeon)
-    {
+    {   
         BufferedImage spriteGoesDown = Utils.loadSprite("/Sprites/world/ladder/ladder_godown.png");
         BufferedImage spriteGoesUp = Utils.loadSprite("/Sprites/world/ladder/ladder_goup.png");
         collision = false;
@@ -43,9 +44,11 @@ public class Ladder extends SuperObject
         this.linkedMap = linkedDungeon == null ? Main.gp.map : linkedDungeon.area;
         sprite = ladderType == ladderType.goesUp ? spriteGoesUp : spriteGoesDown;
         
-        
-        GamePanel.printableObj.add(this);
+        if(lType == LadderType.goesDown) 
+            GamePanel.printableObj.add(this);
 
+        else
+            linkedDungeon.area.onMapObjects.add(this);
         //NB la connessioni con eventuali mappe o dungeon va fatta da remoto
     }
 
@@ -53,21 +56,25 @@ public class Ladder extends SuperObject
     {
         //questa funzione cambia la mappa principale del gamepanel e sposta il player
         Map toRenderMap = null;
+        Vector2 newPlayerPosition = new Vector2(0, 0);
+
         if(ladderType == LadderType.goesDown)
         {
             toRenderMap = this.linkedDungeon.area;
             Main.gp.currentMap = MapType.dungeon;
             player.linkedDungeon = this.linkedDungeon;
+            newPlayerPosition.x = (toRenderMap.width / 2) * Main.gp.tileSize;
+            newPlayerPosition.y = (toRenderMap.height / 2) * Main.gp.tileSize;
         }
-
+        
         else if(ladderType == LadderType.goesUp)
         {
             toRenderMap = Main.gp.map;
             Main.gp.currentMap = MapType.outside;
+            newPlayerPosition = player.lastKnownOutsidePosition;
         }
-
-        Main.gp.changeRenderedMap(toRenderMap);
-        player.setDefaultValues();
+        
+        Main.gp.changeRenderedMap(toRenderMap, newPlayerPosition);
         
     }
 }

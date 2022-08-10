@@ -97,7 +97,7 @@ public class GamePanel extends JPanel implements Runnable
         player = new Player(this, kh, null, map);
 
         //per testing creo una chest accanto al player
-        Chest chest = new Chest(new Vector2((player.worldPosition.x / GamePanel.tileSize) + 1, player.worldPosition.y / GamePanel.tileSize));
+        //Chest chest = new Chest(new Vector2((player.worldPosition.x / GamePanel.tileSize) + 1, player.worldPosition.y / GamePanel.tileSize));
 
          //ITS FUCKING TESTING OK??
         //di seguito un array di max oggetti che si possono stampare a schermo
@@ -160,16 +160,19 @@ public class GamePanel extends JPanel implements Runnable
                                        //grpahics2d è ottimo per il 2d ofc, ha più funzioni inerenti
         Engine.printMap(player.linkedMap, g2);
         Engine.printObjects(g2);
+        Engine.printHUD(g2, player);
         Engine.printPlayer(g2, player);
         
         //g2.dispose();
     }
 
-    public void changeRenderedMap(Map map)
+    public void changeRenderedMap(Map map, Vector2 playerPosition)
     {
         player.linkedMap.onMapObjects = printableObj;
         player.linkedMap = map;
         printableObj = map.onMapObjects;
+
+        player.worldPosition = playerPosition;
     }
 
     public void update()

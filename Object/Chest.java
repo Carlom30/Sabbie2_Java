@@ -3,24 +3,24 @@ package Object;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
-
 import Engine.GamePanel;
 import Main.Main;
 import Main.Utils;
 import Math.Vector2;
+import World.Map;
 
 public class Chest extends SuperObject 
 {
     List<SuperObject> loot;
 
-    public Chest(Vector2 worldPos)
+    public Chest(Vector2 worldPos, Map map)
     {
         loot = new ArrayList<SuperObject>();
         sprite = Utils.loadSprite("/Sprites/objects/chest.png");
         collision = true;
         generateLoot();
         this.worldPos = new Vector2(worldPos.x * GamePanel.tileSize, worldPos.y * GamePanel.tileSize);
-        Main.gp.printableObj.add(this);
+        map.onMapObjects.add(this);
     }
 
     //per ora farò della matematica semplice, ma nel caso decidessi di continuare questo gioco come side project dovrò fare 

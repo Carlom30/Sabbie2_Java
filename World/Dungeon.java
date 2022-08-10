@@ -28,6 +28,7 @@ public class Dungeon
     public Room[] memArea;
     public Map area;
 
+
     //aggiungo una lista di rooms per tenere traccia di tutte le stanze, anche quelle allocate in game
     public List<Room> rooms= new ArrayList<Room>();
     public List<SuperObject> onDungeonObjects = new ArrayList<>();
@@ -43,13 +44,14 @@ public class Dungeon
     final public int roomWidth = 9;
     final public int roomHeight = 9;
 
-    final int maxAreaWidth = 200;
-    final int maxAreaHeight = 200;
+    final int maxAreaWidth = 300;
+    final int maxAreaHeight = 300;
 
     int ALL_DIRECTIONS;
 
     public Dungeon()
     {
+
         ALL_DIRECTIONS = Utils.allDirections.length;
         roomNumb = Main.rand.nextInt((maxRoom - minRoom)) + minRoom;
         
@@ -194,6 +196,7 @@ public class Dungeon
         Room mainRoom = null;
         while(i < roomNumb + chestRoomNumb) //for intralcerebbe, ci sono dei casi in cui mi serve continuare senza incrementare i
         {
+            //firstRoom, qui ci va la ladder per tornare nella outside map
             if(i == 0 && mainRoom == null)
             {
                 //la prima stanza la posiziono estattamente al centro della map
@@ -204,7 +207,7 @@ public class Dungeon
                 //doorDir.add(Directions.right);
 
                 Room room = new Room(new RectInt(new Vector2
-                    (area.width / 2 - roomWidth / 2, area.height / 2 - roomHeight / 2), roomWidth, roomHeight), doorDir, RoomType.normal);
+                    (area.width / 2 - roomWidth / 2, area.height / 2 - roomHeight / 2), roomWidth, roomHeight), doorDir, RoomType.normal, area);
                 
                 room.drawRoomOnMap(area, Main.gp); //questo dovrebbe avvenire fuori dal costruttore (testing)                
                 memArea[memHeight / 2 * memWidth + memWidth / 2] = room;
@@ -214,8 +217,11 @@ public class Dungeon
 
                 mainRoom = room;
 
-                i++;
+                Ladder upLadder = new Ladder(new Vector2((room.bounds.min.x + room.bounds.width / 2) * GamePanel.tileSize,
+                    (room.bounds.min.y + room.bounds.height / 2) * GamePanel.tileSize), LadderType.goesUp, this.area, this);
 
+
+                i++;
                 continue;
             }
             
@@ -266,7 +272,7 @@ public class Dungeon
             //RectInt newRoomBounds = new RectInt(, width, height)
             
             //ora creo una stanza nuova
-            Room newRoom = new Room(new RectInt(calculateRoomMin(mainRoom, randDir), roomWidth, roomHeight), newRoomDoors, (i < roomNumb) ? RoomType.normal : RoomType.chest);
+            Room newRoom = new Room(new RectInt(calculateRoomMin(mainRoom, randDir), roomWidth, roomHeight), newRoomDoors, (i < roomNumb) ? RoomType.normal : RoomType.chest, area);
             addRoomToMemArea(mainRoom, newRoom, randDir);
             newRoom.drawRoomOnMap(area, Main.gp);
 

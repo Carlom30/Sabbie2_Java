@@ -41,10 +41,10 @@ public abstract class Entity
         return this.lifePoints;
     }
 
-    public void setLifePoints(int value)
+    public void setLifePoints(int summValue)
     {
         //per adesso is just:
-        lifePoints += value; //value può essere positivo o negativo
+        lifePoints += summValue; //value può essere positivo o negativo
     }
     
 }
