@@ -21,6 +21,8 @@ public class CollisionLogic
 {
     GamePanel gp;
 
+    //IMPORTANTE TODO: FARE FUNZIONE CHE SETTA COLLISION TRUE SE UNA TILE TOCCA UN OGGETTO.
+
     public CollisionLogic(GamePanel gp)
     {
         this.gp = gp;

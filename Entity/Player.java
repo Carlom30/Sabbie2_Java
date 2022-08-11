@@ -51,6 +51,7 @@ public class Player extends Entity
         DEV_MODE = false;
         this.gp = gp;
         this.kh = kh;
+        
         linkedMap = startingMap;
         setDefaultValues();
         if(worldPos != null)
@@ -59,7 +60,7 @@ public class Player extends Entity
         }
         readPlayerSprites();
         screenPosition = new Vector2(gp.screenWidth / 2 - gp.tileSize / 2, gp.screenHeight / 2 - gp.tileSize / 2);
-        collisionArea = new RectInt(new Vector2(8, 16), 32, 32); // 32 x 32  
+        collisionArea = new RectInt(new Vector2(8, 16), 32, 32); 
         collisionAreaMin_Default = collisionArea.min;
         //up: print character at the exact centre of the screen
     }

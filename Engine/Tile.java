@@ -28,6 +28,7 @@ public class Tile
     public TileType type;
     public boolean hasTnt;
 
+
     public Tile(BufferedImage sprite)
     {
         this.sprite = sprite;

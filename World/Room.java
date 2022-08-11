@@ -24,7 +24,7 @@ public class Room
     };
 
     public RectInt bounds;
-    Tile[] tiles;
+    public Tile[] tiles;
     List<Directions> doors;
     List<Integer> doorsVector;
 

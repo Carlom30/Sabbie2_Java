@@ -13,6 +13,7 @@ public abstract class Entity
     public int velocity;
 
     int lifePoints;
+    public String name;
 
     public BufferedImage idle;
     public BufferedImage up_1;
