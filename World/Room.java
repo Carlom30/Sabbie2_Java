@@ -6,10 +6,12 @@ import Object.Chest;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import Engine.GamePanel;
 import Engine.Tile;
 import Engine.Tile.TileType;
+import Entity.Monster;
 import Main.Main;
 import Main.Utils;
 import Main.Utils.Directions;
@@ -27,6 +29,8 @@ public class Room
     public Tile[] tiles;
     List<Directions> doors;
     List<Integer> doorsVector;
+    public List<Monster> onRoomMonsters;
+    public Monster[] onRoomMonsterArray;
 
     RoomType type;
 
@@ -52,6 +56,7 @@ public class Room
         this.bounds = bounds;
         doors = new ArrayList<Utils.Directions>();
         doorsVector = new ArrayList<Integer>();
+        onRoomMonsters = new ArrayList<Monster>();
         //ora serve di creare la stanza e (altra funzione) "disegnarla" sulla mappa
         /*
             NB: il rendering funzionerà in questo modo:
@@ -66,6 +71,8 @@ public class Room
             {
                 int offset = i * bounds.width + j; 
                 tiles[offset] = new Tile(floor);
+
+                tiles[offset].onRoomPosition = new Vector2(j, i);
                 tiles[offset].linkedRoom = this;
                 tiles[offset].type = TileType.floor;
                 
@@ -129,7 +136,49 @@ public class Room
         return;
     }
 
-    public void drawRoomOnMap(Map map, GamePanel gp) //print data only, no rendering
+    public void addMonsters(int numb, Vector2[] positions)
+    {
+        if(positions != null && positions.length != numb)
+        {
+            Utils.printf("numb and positions length on addMonsters are different");
+            return;
+        }
+
+        Vector2[] pos = positions;
+
+        if(pos == null)
+        {
+            pos = new Vector2[numb];
+            for(int i = 0; i < numb; i++)
+            {
+                pos[i] = new Vector2(Main.rand.nextInt(bounds.width) + 1, Main.rand.nextInt(bounds.height) + 1);
+                pos[i].x = pos[i].x >= bounds.width - 1 ? bounds.width - 2 : pos[i].x;
+                pos[i].y = pos[i].y >= bounds.height - 1 ? bounds.height - 2 : pos[i].x;
+
+                //bugged
+                for(int k = 0; k < i - 1; k++)
+                {
+                    if(pos[i].x == pos[k].x && pos[i].y == pos[k].y)
+                    {
+                        i--;
+                        break;
+                    }
+                }
+
+            }
+        }
+        
+        for(int j = 0; j < pos.length; j++)
+        {
+            Monster monster = new Monster(null, new Vector2(2, 2) /*pos[j]*/, this);
+            onRoomMonsters.add(monster);
+            //Utils.printf("monster: " + monster + " positions: (" + pos[j].x + ", " + pos[j].y + ")");
+        }
+        onRoomMonsterArray = new Monster[onRoomMonsters.size()];
+        onRoomMonsters.toArray(onRoomMonsterArray);
+    }
+
+    public void drawRoomOnMap(Map map) //print data only, no rendering
     {
         int k = 0;
         for(int i = bounds.min.y; i < bounds.min.y + bounds.height; i++)
@@ -142,4 +191,5 @@ public class Room
             }
         }
     }
+
 }

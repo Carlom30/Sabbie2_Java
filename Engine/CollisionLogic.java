@@ -21,6 +21,12 @@ public class CollisionLogic
 {
     GamePanel gp;
 
+    public enum CollisionType
+    {
+        nextTiles,
+        onStepTile;
+    }
+
     //IMPORTANTE TODO: FARE FUNZIONE CHE SETTA COLLISION TRUE SE UNA TILE TOCCA UN OGGETTO.
 
     public CollisionLogic(GamePanel gp)
@@ -28,8 +34,9 @@ public class CollisionLogic
         this.gp = gp;
     }
 
+
     //questa funzione setta collisionOn al player, ma ritorna pure le due tile avanti alla direzione dove punta l'avatar
-    public List<Tile> checkForCollision_Tile(Entity entity)
+    public List<Tile> checkForCollision_Tile(Entity entity, CollisionType type)
     {
         entity.collisionArea.min = entity.collisionAreaMin_Default;
         List<Tile> collisionTiles = new ArrayList<Tile>();
@@ -49,6 +56,37 @@ public class CollisionLogic
 
         int offsetTileOne = 0;
         int offsetTileTwo = 0;
+
+
+        if(type == CollisionType.onStepTile)
+        {
+            //nel caso peggiore, l'area di collisione del pg sta calpestando 4 tile, e quindi ogni lato ne toccherà 2,
+            //per essere estremamente sicuri ciò che si sta toccando, necessitano 8 offset (4 * 2) ma alla fine se ne avranno solo 4
+            int[] onStepOffset = 
+            {
+                entityTopRow * map.width + entityLeftCol,
+                entityTopRow * map.width + entityRightCol,
+
+                entityBottomRow * map.width + entityLeftCol,
+                entityBottomRow * map.width + entityRightCol,
+
+                entityTopRow * map.width + entityRightCol,
+                entityBottomRow * map.width + entityRightCol,
+
+                entityTopRow * map.width + entityLeftCol,
+                entityBottomRow * map.width + entityLeftCol
+            };
+
+            for(int i = 0; i < Utils.allDirections.length; i++)
+            {
+                Tile tile = map.tiles[onStepOffset[i]];
+                if(!collisionTiles.contains(tile))
+                {
+                    collisionTiles.add(tile);
+                }
+            }
+            return collisionTiles;
+        }
         
         //per il paradigma generato dai pixel e la grandezza dell'area di collisione, il player può intersecare ALPIU' due tile nello stesso momento
 

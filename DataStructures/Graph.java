@@ -21,33 +21,64 @@ public class Graph
         room.tiles[3 * room.bounds.width + 4].collision = true;
 
         Graph graph = new Graph(room); 
-        Utils.printf("done\n");
-        for(int i = 0; i < room.bounds.height; i++)
-        {
-            for(int j = 0; j < room.bounds.height; j++)
-            {
-                int offset = i * room.bounds.width + j;
-                if(graph.unconnectedNodeMatrix[offset] == null)
-                {
-                    Utils.printf("#");
-                }
-                else
-                {
-                    Utils.printf(".");
-                }
+        Utils.printf("Graph: Done\n");
+        int sourceOffset = (room.bounds.height - 2) * room.bounds.width + (room.bounds.width - 2);
 
-                if(j == room.bounds.width - 1)
+        Vector2 monster = new Vector2(1, 1);
+
+        while(true)
+        {
+            for(int i = 0; i < room.bounds.height; i++)
+            {
+                for(int j = 0; j < room.bounds.width; j++)
                 {
-                    Utils.printf("\n");
+                    int offset = i * room.bounds.width + j;
+
+                    if(i == monster.y && j == monster.x)
+                    {
+                        System.out.print("M");
+                    }
+
+                    if(offset == sourceOffset)
+                    {
+                        System.out.print("S");
+                    }
+    
+                    else if(graph.unconnectedNodeMatrix[offset] == null)
+                    {
+                        System.out.print("#");
+                    }
+    
+                    else
+                    {
+                        System.out.print(".");
+                    }
+    
+                    if(j == room.bounds.width - 1)
+                    {
+                        System.out.print("\n");
+                    }
                 }
+            }   
+    
+            Dijkstra(graph, graph.unconnectedNodeMatrix[sourceOffset]);
+            Utils.printf("Dijkstra: Done"); 
+            try
+            {
+                System.in.read();
             }
-        }   
+            catch (Exception e) 
+            {
+                e.printStackTrace();
+            }
+        }
+
     }
 
-    Node[] unconnectedNodeMatrix; //grafo senza archi relativo alla stanza
-    Node[] V; //grafo effettivamente connesso (nome legacy)
+    public Node[] unconnectedNodeMatrix; //grafo senza archi relativo alla stanza
+    public Node[] V; //grafo effettivamente connesso (nome legacy)
 
-    int Vcount; //numero di nodi
+    public int Vcount; //numero di nodi
 
     public Graph(Room room) //essendo una funzione srtutturata, l'argomento non è generico ma specifico al problema
     {
@@ -119,7 +150,7 @@ public class Graph
                         node.neighbors[node.neighborsCount] = unconnectedNodeMatrix[perimeterOffset];
 
                         float randomWeight = Main.rand.nextFloat();
-                        int weight = Math.round(1 + randomWeight);
+                        int weight = 1; //Math.round(1 + randomWeight);
                         node.archValuesList[node.neighborsCount] = weight;
                         node.neighborsCount++;
 

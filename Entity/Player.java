@@ -24,6 +24,7 @@ import javax.swing.text.DocumentFilter;
 import javax.swing.text.Utilities;
 
 import Engine.*;
+import Engine.CollisionLogic.CollisionType;
 
 import java.awt.image.BufferedImage;
 
@@ -34,6 +35,7 @@ public class Player extends Entity
     public Vector2 screenPosition;
     public Map linkedMap;
     public Dungeon linkedDungeon;
+    public Room linkedRoom;
     public Vector2 lastKnownOutsidePosition;
     public Inventory inventory;
     final public int lifePoints_max = 5;
@@ -71,7 +73,12 @@ public class Player extends Entity
         velocity = 4; //velocity = 4 ma metto di più per testing
         
         worldPosition = new Vector2((linkedMap.width / 2) * gp.tileSize, (linkedMap.height / 2) * gp.tileSize); //new Vector2(gp.tileSize * 23, gp.tileSize * 21);
+        //Testing
+        
+        
         lastKnownOutsidePosition = new Vector2(Integer.MIN_VALUE, Integer.MIN_VALUE);
+        
+
         direction = Directions.down;
         inventory = new Inventory();
 
@@ -128,7 +135,7 @@ public class Player extends Entity
             if(kh.upPressed)
             {
                 direction = Directions.up;
-                gp.collision.checkForCollision_Tile(this);
+                gp.collision.checkForCollision_Tile(this, CollisionType.nextTiles);
                 if(collisionOn == false)
                 {
                     worldPosition.y -= velocity;
@@ -138,7 +145,7 @@ public class Player extends Entity
             else if(kh.downPressed)
             {
                 direction = Directions.down;
-                gp.collision.checkForCollision_Tile(this);
+                gp.collision.checkForCollision_Tile(this, CollisionType.nextTiles);
                 if(collisionOn == false)
                 {
                     worldPosition.y += velocity;
@@ -148,7 +155,7 @@ public class Player extends Entity
             else if(kh.leftPressed)
             {
                 direction = Directions.left;
-                gp.collision.checkForCollision_Tile(this);
+                gp.collision.checkForCollision_Tile(this, CollisionType.nextTiles);
                 if(collisionOn == false)
                 {
                     worldPosition.x -= velocity;
@@ -158,7 +165,7 @@ public class Player extends Entity
             else if(kh.rightPressed)
             {
                 direction = Directions.right;
-                gp.collision.checkForCollision_Tile(this);
+                gp.collision.checkForCollision_Tile(this, CollisionType.nextTiles);
                 if(collisionOn == false)
                 {
                     worldPosition.x += velocity;
@@ -192,7 +199,8 @@ public class Player extends Entity
                 Utils.currentTime = System.currentTimeMillis();
                 Utils.printf("e pressed");
                 
-                List<Tile> nextTiles = gp.collision.checkForCollision_Tile(this);
+                List<Tile> nextTiles = gp.collision.checkForCollision_Tile(this, CollisionType.nextTiles);
+                
                 Tile[] tileArray = new Tile[2]; //max element is 2
                 nextTiles.toArray(tileArray);
                 
@@ -255,6 +263,17 @@ public class Player extends Entity
             }
             
             Utils.timeIsPassed(Utils.currentTime, 1000);
+        }
+
+        if(linkedDungeon != null)
+        {
+            List<Tile> tilesList =  gp.collision.checkForCollision_Tile(this, CollisionType.onStepTile);
+            Tile[] tiles = new Tile[tilesList.size()];
+            tilesList.toArray(tiles);
+            int a = Main.rand.nextInt(tiles.length);
+
+            this.linkedRoom = tiles[a].linkedRoom == null ? this.linkedRoom : tiles[a].linkedRoom;
+            //Utils.printf(linkedRoom.toString());
         }
         
     }
@@ -340,7 +359,7 @@ public class Player extends Entity
                 doorDir.add(Utils.getOppositeDirection(boomDirection));*/
                 Room newRoom = new Room(bounds, null, (Main.rand.nextInt(100) + 1) <= 35 ? RoomType.normal : RoomType.chest, linkedDungeon.area);
                 dungeon.addRoomToMemArea(mainRoom, newRoom, boomDirection);
-                newRoom.drawRoomOnMap(map, gp);
+                newRoom.drawRoomOnMap(map);
             }
 
             Tile floor = new Tile(Utils.loadSprite("/Sprites/world/sand/sand0.png"));

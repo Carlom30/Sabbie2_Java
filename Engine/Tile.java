@@ -28,6 +28,8 @@ public class Tile
     public TileType type;
     public boolean hasTnt;
 
+    public Vector2 onRoomPosition;
+
 
     public Tile(BufferedImage sprite)
     {

@@ -3,6 +3,7 @@ import java.awt.image.BufferedImage;
 import java.nio.Buffer;
 
 import Entity.Inventory;
+import Entity.Monster;
 import Entity.Player;
 import Main.*;
 import Math.Vector2;
@@ -83,9 +84,18 @@ public class Engine
     {
         for(SuperObject obj : Main.gp.printableObj)
         {
-
             obj.draw(g2D, Main.gp);
         }
+    }
+
+    //per testing gli passo sono un mostro
+    public static void printMonsters(Graphics2D g2D, Monster[] monsters)
+    {
+        if(monsters == null)
+            return;
+            
+        for(int i = 0; i < monsters.length; i++)
+            monsters[i].draw(g2D);
     }
     
     public static void printPlayer(Graphics2D g2D, Player player)

@@ -10,6 +10,7 @@ import java.util.Random;
 
 import Engine.GamePanel;
 import Entity.Entity;
+import Entity.Monster;
 import Entity.Player;
 import Main.Main;
 import Main.Utils;
@@ -32,6 +33,9 @@ public class Dungeon
     //aggiungo una lista di rooms per tenere traccia di tutte le stanze, anche quelle allocate in game
     public List<Room> rooms= new ArrayList<Room>();
     public List<SuperObject> onDungeonObjects = new ArrayList<>();
+
+    //testing 
+    public Room firstRoom = null;
 
     final int memWidth = 10;
     final int memHeight = 10;
@@ -209,7 +213,7 @@ public class Dungeon
                 Room room = new Room(new RectInt(new Vector2
                     (area.width / 2 - roomWidth / 2, area.height / 2 - roomHeight / 2), roomWidth, roomHeight), doorDir, RoomType.normal, area);
                 
-                room.drawRoomOnMap(area, Main.gp); //questo dovrebbe avvenire fuori dal costruttore (testing)                
+                room.drawRoomOnMap(area); //questo dovrebbe avvenire fuori dal costruttore (testing)                
                 memArea[memHeight / 2 * memWidth + memWidth / 2] = room;
 
                 room.onDungeonMemPosition = new Vector2(memHeight / 2, memWidth / 2);
@@ -220,6 +224,9 @@ public class Dungeon
                 Ladder upLadder = new Ladder(new Vector2((room.bounds.min.x + room.bounds.width / 2) * GamePanel.tileSize,
                     (room.bounds.min.y + room.bounds.height / 2) * GamePanel.tileSize), LadderType.goesUp, this.area, this);
 
+                //testing
+                firstRoom = room;
+                firstRoom.addMonsters(1, null);
 
                 i++;
                 continue;
@@ -267,15 +274,15 @@ public class Dungeon
                 mainRoom.addDoors(mainRoomNewDoors);
             }
 
-            mainRoom.drawRoomOnMap(area, Main.gp);
+            mainRoom.drawRoomOnMap(area);
 
             //RectInt newRoomBounds = new RectInt(, width, height)
             
             //ora creo una stanza nuova
             Room newRoom = new Room(new RectInt(calculateRoomMin(mainRoom, randDir), roomWidth, roomHeight), newRoomDoors, (i < roomNumb) ? RoomType.normal : RoomType.chest, area);
             addRoomToMemArea(mainRoom, newRoom, randDir);
-            newRoom.drawRoomOnMap(area, Main.gp);
-
+            newRoom.drawRoomOnMap(area);
+            newRoom.addMonsters(1, null);
             //e adesso la aggiungo alle varie struture dati
             rooms.add(newRoom);
             

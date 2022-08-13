@@ -58,13 +58,17 @@ public class GamePanel extends JPanel implements Runnable
     
     GameState gameState;
 
+    //testing
+    Dungeon dungeon;
+
     public Map map;
     public MapType currentMap;
     public CollisionLogic collision = new CollisionLogic(this);
     public Player player;
     
     public static List<SuperObject> printableObj;
-    
+    public static Monster[] onMapMonsters;
+
     public GamePanel()
     {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -87,20 +91,22 @@ public class GamePanel extends JPanel implements Runnable
 
         currentMap = MapType.outside;
         //TESTING
-        /*Dungeon newDungeon = new Dungeon();
+        Dungeon newDungeon = new Dungeon();
+        dungeon = newDungeon;
         map = newDungeon.area;
         Tile nullGrey = new Tile(Utils.loadSprite("/Sprites/nullGrey.png"));
         nullGrey.collision = true;
         map.fillMapWithOneTile(nullGrey);
-        newDungeon.generateDungeonRooms();*/
+        newDungeon.generateDungeonRooms();
         
         player = new Player(this, kh, null, map);
+        player.linkedDungeon = dungeon;
+        player.worldPosition.x = (dungeon.firstRoom.bounds.min.x + (dungeon.firstRoom.bounds.width / 2)) * GamePanel.tileSize;
+        player.worldPosition.y = (dungeon.firstRoom.bounds.min.y + (dungeon.firstRoom.bounds.height / 2)) * GamePanel.tileSize;
+
 
         //per testing creo una chest accanto al player
         //Chest chest = new Chest(new Vector2((player.worldPosition.x / GamePanel.tileSize) + 1, player.worldPosition.y / GamePanel.tileSize));
-
-         //ITS FUCKING TESTING OK??
-        //di seguito un array di max oggetti che si possono stampare a schermo
     }
 
     public void startGameThread()
@@ -161,6 +167,7 @@ public class GamePanel extends JPanel implements Runnable
         Engine.printMap(player.linkedMap, g2);
         Engine.printObjects(g2);
         Engine.printHUD(g2, player);
+        Engine.printMonsters(g2, player.linkedRoom.onRoomMonsterArray);
         Engine.printPlayer(g2, player);
         
         //g2.dispose();
@@ -175,8 +182,29 @@ public class GamePanel extends JPanel implements Runnable
         player.worldPosition = playerPosition;
     }
 
+    public void updateWorld()
+    {
+        for(Monster m : player.linkedRoom.onRoomMonsters)
+        {
+            m.ComandareUnSeguace(player);
+        }
+
+        /*for(Room r : player.linkedDungeon.rooms)
+        {
+            if(r != player.linkedRoom)
+            {
+                for(Monster m : r.onRoomMonsters)
+                {
+                    //reset monsters position if player is out of room
+                    m.worldPosition = m.spawnPoint;
+                }
+            }
+        }*/
+    }
+
     public void update()
     {
         player.update();
+        updateWorld();
     }
 }
