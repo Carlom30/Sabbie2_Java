@@ -184,10 +184,7 @@ public class GamePanel extends JPanel implements Runnable
 
     public void updateWorld()
     {
-        for(Monster m : player.linkedRoom.onRoomMonsters)
-        {
-            m.ComandareUnSeguace(player);
-        }
+
 
         /*for(Room r : player.linkedDungeon.rooms)
         {

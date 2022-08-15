@@ -1,39 +1,41 @@
 package Entity;
-
 import java.util.List;
-import java.util.Vector;
-
-import javax.swing.text.Utilities;
-
 import DataStructures.*;
 import Engine.GamePanel;
 import Engine.Tile;
 import Engine.CollisionLogic.CollisionType;
 import Main.Main;
 import Math.Vector2;
-import World.Map;
 import World.Room;
-import Engine.CollisionLogic;
 import Main.Utils;
-import Main.Main.GameState;
 import Math.RectInt;
 import java.awt.Graphics2D;
 
-public class Monster extends Entity
+public class Monster extends Entity implements Runnable
 {
+    GamePanel gp;
+    Thread monsterThread;
+    
     public static int lifePoints_Range = 5;
     public Room room;
-    GamePanel gp;
-
     public Vector2 spawnPoint;
+
+    //ai
+    Player player;
+    int goalSteps; 
+    int numberOfStep;
+    Vector2 onMoveDirection = new Vector2(0, 0);
+
+    int a = 0;
 
     final int lifePoint_max = Main.rand.nextInt(lifePoints_Range) + 1;
     public Monster(GamePanel gp, Vector2 roomPosition, Room room)
     {
         this.room = room;
 
-        velocity = 4; //as fast as character
+        velocity = 2; //as fast as character
         lifePoints = lifePoint_max;
+        numberOfStep = 0;
         collisionArea = new RectInt(new Vector2(8, 16), 32, 32); 
         collisionAreaMin_Default = collisionArea.min;
         worldPosition = new Vector2(roomPosition.x + room.bounds.min.x, roomPosition.y + room.bounds.min.y);
@@ -44,6 +46,7 @@ public class Monster extends Entity
         
         this.idle = Utils.loadSprite("/Sprites/monster/monster_idle.png");
         this.gp = gp;
+
     }
 
     public static Vector2 roomToGlobalPosition(Vector2 localPosition, Room room)
@@ -111,8 +114,6 @@ public class Monster extends Entity
             }
         }
 
-        int b = 0;
-
         if(source == null)
         {
             Utils.printf("monster not found");
@@ -125,33 +126,69 @@ public class Monster extends Entity
         
         //per ora faccio che il mostro si teletrasporta da tile a tile una volta al secondo
         Node searchNode = playerNode;
-        if(Utils.currentTime == -1)
-        {
-            Utils.currentTime = System.currentTimeMillis();
+        //if(Utils.currentTime == -1)
+        //{
+            //Utils.currentTime = System.currentTimeMillis();
             Graph.Dijkstra(graph, source);
     
-    
+            //cerco il figlio della source (monster)
             while(searchNode.pi != source)
             {
                 if(searchNode.pi == null)
                 {
-                    Utils.printf("pi is null");
+                    //Utils.printf("pi is null");
                     return;
                 }
     
                 searchNode = searchNode.pi;
             }
+
+            for(int i = 0; i < Utils.allDirections.length; i++)
+            {
+                //onMoveDirection = new Vector2(0, 0);
+                Vector2 direction = Vector2.directionsVector[i];
+                int offset = (source.coordinates.y + direction.y) * room.bounds.width + (source.coordinates.x + direction.x);
+                if(graph.unconnectedNodeMatrix[offset] != null && graph.unconnectedNodeMatrix[offset] == searchNode)
+                {
+                    Utils.printf("searchNode found: " + graph.unconnectedNodeMatrix[offset].coordinates.x + ", " + graph.unconnectedNodeMatrix[offset].coordinates.y);
+                    onMoveDirection = Vector2.scalarPerVector(direction, 1);
+                }
+
+            }
     
-            if(!Vector2.areEqual(searchNode.coordinates, playerNode.coordinates))
+            /*if(!Vector2.areEqual(searchNode.coordinates, playerNode.coordinates))
             {
                 this.worldPosition = roomToGlobalPosition(searchNode.coordinates, room);
                 
-            }
-        }
-        Utils.timeIsPassed(Utils.currentTime, 500);
+            }*/
+        //}
+        //Utils.timeIsPassed(Utils.currentTime, 500);
         return;
     }
-    
+
+    public void moveMonster(Player player)
+    {
+        //potrei mettere questo conto nel costruttore, ma preferisco metterlo qui per chiarezza
+        goalSteps = GamePanel.tileSize / velocity;
+        
+        if(numberOfStep >= goalSteps /*|| Vector2.areEqual(worldPosition, spawnPoint)*/)
+        {
+            //values reset
+            numberOfStep = 0;
+            onMoveDirection = new Vector2(0, 0);
+
+            Utils.printf("monster ended one tile movement");
+            ComandareUnSeguace(player);
+            onMoveDirection = Vector2.scalarPerVector(onMoveDirection, this.velocity);
+        }
+
+        this.worldPosition.x += onMoveDirection.x;
+        this.worldPosition.y += onMoveDirection.y;
+        numberOfStep++;
+        a++;
+
+    }
+
     public void draw(Graphics2D g2D)
     {
         if(gp == null)
@@ -163,15 +200,29 @@ public class Monster extends Entity
         int screenY = worldPosition.y - gp.player.worldPosition.y + gp.player.screenPosition.y;
 
 
-        if( worldPosition.x + gp.tileSize < gp.player.worldPosition.x - gp.player.screenPosition.x ||
-            worldPosition.x - gp.tileSize > gp.player.worldPosition.x + gp.player.screenPosition.x ||
-            worldPosition.y + gp.tileSize < gp.player.worldPosition.y - gp.player.screenPosition.y ||
-            worldPosition.y - gp.tileSize > gp.player.worldPosition.y + gp.player.screenPosition.y)
+        if( worldPosition.x + GamePanel.tileSize < gp.player.worldPosition.x - gp.player.screenPosition.x ||
+            worldPosition.x - GamePanel.tileSize > gp.player.worldPosition.x + gp.player.screenPosition.x ||
+            worldPosition.y + GamePanel.tileSize < gp.player.worldPosition.y - gp.player.screenPosition.y ||
+            worldPosition.y - GamePanel.tileSize > gp.player.worldPosition.y + gp.player.screenPosition.y)
         {
             return;
         }
 
-        g2D.drawImage(this.idle, screenX, screenY, gp.tileSize, gp.tileSize, null);
+        g2D.drawImage(this.idle, screenX, screenY, GamePanel.tileSize, GamePanel.tileSize, null);
     }
 
+    public void startMonsterThread(Player player)
+    {
+        Thread monstThread = new Thread(this);
+        monstThread.run();
+    }
+
+    @Override
+    public void run() 
+    {   
+        if(player.linkedRoom != this.room)
+            return;
+
+        moveMonster(player);    
+    }
 }

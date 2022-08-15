@@ -15,66 +15,7 @@ import World.Room.RoomType;
 public class Graph 
 {
 
-    public static void main(String[] args) 
-    {
-        Room room = new Room(new RectInt(new Vector2(0, 0), 9, 9), null, RoomType.normal, null);
-        room.tiles[3 * room.bounds.width + 4].collision = true;
-
-        Graph graph = new Graph(room); 
-        Utils.printf("Graph: Done\n");
-        int sourceOffset = (room.bounds.height - 2) * room.bounds.width + (room.bounds.width - 2);
-
-        Vector2 monster = new Vector2(1, 1);
-
-        while(true)
-        {
-            for(int i = 0; i < room.bounds.height; i++)
-            {
-                for(int j = 0; j < room.bounds.width; j++)
-                {
-                    int offset = i * room.bounds.width + j;
-
-                    if(i == monster.y && j == monster.x)
-                    {
-                        System.out.print("M");
-                    }
-
-                    if(offset == sourceOffset)
-                    {
-                        System.out.print("S");
-                    }
     
-                    else if(graph.unconnectedNodeMatrix[offset] == null)
-                    {
-                        System.out.print("#");
-                    }
-    
-                    else
-                    {
-                        System.out.print(".");
-                    }
-    
-                    if(j == room.bounds.width - 1)
-                    {
-                        System.out.print("\n");
-                    }
-                }
-            }   
-    
-            Dijkstra(graph, graph.unconnectedNodeMatrix[sourceOffset]);
-            Utils.printf("Dijkstra: Done"); 
-            try
-            {
-                System.in.read();
-            }
-            catch (Exception e) 
-            {
-                e.printStackTrace();
-            }
-        }
-
-    }
-
     public Node[] unconnectedNodeMatrix; //grafo senza archi relativo alla stanza
     public Node[] V; //grafo effettivamente connesso (nome legacy)
 
@@ -149,8 +90,8 @@ public class Graph
                     {
                         node.neighbors[node.neighborsCount] = unconnectedNodeMatrix[perimeterOffset];
 
-                        float randomWeight = Main.rand.nextFloat();
-                        int weight = 1; //Math.round(1 + randomWeight);
+                        int randomWeight = Main.rand.nextInt(10);
+                        int weight = 10 + randomWeight; //Math.round(1 + randomWeight);
                         node.archValuesList[node.neighborsCount] = weight;
                         node.neighborsCount++;
 
@@ -212,9 +153,9 @@ public class Graph
             }
         }
 
-        /* L'algoritmo di Dijkstra si basa sulla teoria del relax (e dimostrato da lui stesso) la quale specifica che:
-         * se per ogni vertici si rilassa ogni suo arco, allora, per definizione vk.d = d(s, vk), ovvero il cammino è il cammino minimo
-         * questo per ogni cammino p = (v0, v1, ... , vk)
+        /* L'algoritmo di Dijkstra si basa sulla teoria del rilassamento degli archi (e dimostrato da lui stesso) la quale specifica che:
+         * se per ogni vertice si rilassa ogni suo arco, allora, per definizione vk.d = d(s, vk), ovvero il cammino è il cammino minimo.
+         * questo per ogni cammino p = (v0, v1, ... ,vk)
         */ 
 
         return; 

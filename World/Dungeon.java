@@ -226,7 +226,7 @@ public class Dungeon
 
                 //testing
                 firstRoom = room;
-                firstRoom.addMonsters(1, null);
+                firstRoom.addMonsters(Main.rand.nextInt(2) + 1, null);
 
                 i++;
                 continue;

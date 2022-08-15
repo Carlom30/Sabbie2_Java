@@ -1,10 +1,5 @@
 package Entity;
-
-import java.util.List;
-
 import Main.Utils;
-import Object.HealtPotion;
-import Object.remoteTnt;
 import java.awt.image.BufferedImage;
 
 public class Inventory 

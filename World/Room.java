@@ -12,6 +12,7 @@ import Engine.GamePanel;
 import Engine.Tile;
 import Engine.Tile.TileType;
 import Entity.Monster;
+import Entity.Player;
 import Main.Main;
 import Main.Utils;
 import Main.Utils.Directions;
@@ -170,8 +171,9 @@ public class Room
         
         for(int j = 0; j < pos.length; j++)
         {
-            Monster monster = new Monster(null, new Vector2(2, 2) /*pos[j]*/, this);
+            Monster monster = new Monster(null, pos[j], this);
             onRoomMonsters.add(monster);
+            monster.startMonsterThread(Main.gp.player);
             //Utils.printf("monster: " + monster + " positions: (" + pos[j].x + ", " + pos[j].y + ")");
         }
         onRoomMonsterArray = new Monster[onRoomMonsters.size()];

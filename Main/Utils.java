@@ -1,17 +1,11 @@
 package Main;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
-import javax.lang.model.util.ElementScanner6;
-import javax.swing.text.Utilities;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Vector;
-import Math.Vector2;
 
 public class Utils 
 {
     public static long currentTime = -1; //the cursed "-1 second has passed"
+    public static long onCollision_currentTime = -1;
     /*public static void main(String[] args) 
     {
         long timeToPass = 1000;
@@ -52,6 +46,25 @@ public class Utils
         Directions.right,
         Directions.left
     };
+
+    public static int getOppositDirectionIndex(Directions direction)
+    {
+        if(direction == Directions.up)
+            return 1;
+
+        if(direction == Directions.down)
+            return 0;
+        
+        if(direction == Directions.right)
+            return 3;
+
+        if(direction == Directions.left)
+            return 2;
+
+        //assert 
+        return -1;
+
+    }
 
     public static void printf(String string)
     {
