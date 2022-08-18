@@ -1,5 +1,7 @@
 package Main;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+
 import java.util.Random;
 
 import Engine.GamePanel;
@@ -31,6 +33,8 @@ public class Main
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // il programma si conclude quando l'utente chiude la finestra con la x
         window.setResizable(false);
         window.setTitle("Sands");
+
+        //testing perlin noise
 
         gp = new GamePanel();
         window.add(gp); //aggiungo gamePanel come componente di window, mi servirà dopo

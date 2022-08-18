@@ -309,7 +309,7 @@ public class Dungeon
             Utils.printf("you cant dig inside a fucking dungeon");
             return;
         }
-
+        player.lastKnownOutsidePosition = player.worldPosition;
         Vector2 ladderPosition = new Vector2(0, 0);
         for(int i = 0; i < Utils.allDirections.length; i++)
         {
@@ -322,7 +322,7 @@ public class Dungeon
                 {
                     if(t.collision == true)
                     {
-                        Utils.printf("collision detected, no ladder, sorry");
+                        //Utils.printf("collision detected, no ladder, sorry");
                         return;
                     }
                 }

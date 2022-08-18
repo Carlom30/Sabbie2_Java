@@ -9,6 +9,7 @@ import World.Map;
 import World.Room;
 import World.Room.RoomType;
 import java.awt.image.BufferedImage;
+
 import java.awt.Graphics2D;
 
 
@@ -36,19 +37,23 @@ public class Merchant extends Entity
     {
         int randMinX = 0;
         int randMinY = 0;
+        RectInt bounds = null;
+        boolean boundsOK = true;
         do
         {
-            randMinX = Main.rand.nextInt(outside.width) - (roomWidth + 1);
-            randMinY = Main.rand.nextInt(outside.height) - (roomHeight + 1);
+            boundsOK = true;
+            randMinX = Main.rand.nextInt(outside.width - (roomWidth + 3)) + 3;
+            randMinY = Main.rand.nextInt(outside.height  - (roomHeight + 3)) + 3;
+            bounds = new RectInt(new Vector2(randMinX, randMinY), this.roomWidth, this.roomHeight);
+            RectInt virtualBounds = bounds;
+
+            if(RectInt.intersect(player.spawnArea, bounds))
+            {
+                boundsOK = false;
+            }
         }
         //questo while assicura che la stanza non intersechi mai il player
-        while(randMinX > outside.width - (player.worldPosition.x / GamePanel.tileSize) - roomWidth / 2 &&
-              randMinX < outside.width + (player.worldPosition.x / GamePanel.tileSize) + roomWidth / 2 &&
-              randMinY > outside.height - (player.worldPosition.y / GamePanel.tileSize) - roomHeight / 2 &&
-              randMinY < outside.height + (player.worldPosition.y / GamePanel.tileSize) + roomHeight / 2);
-        
-        Vector2 roomMin = new Vector2(randMinX, randMinY);
-        RectInt bounds = new RectInt(roomMin, roomWidth, roomHeight);
+        while(!boundsOK);
 
         Room merchantRoom = new Room(bounds, null, RoomType.merchant, outside);
         merchantRoom.drawRoomOnMap(outside);

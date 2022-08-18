@@ -20,8 +20,8 @@ public class Inventory
     int onInventory_gold;
     int onInventory_gold_max = 9;
 
-    int onInventory_ladder;
-    int onInventory_ladder_max = 1;
+    int onInventory_log;
+    int onInventory_log_max = 9;
 
     //enum ma che funzione :)
     public static int GOLD = 0;
@@ -38,7 +38,7 @@ public class Inventory
         Utils.loadSprite("/Sprites/objects/remoteTnt.png"),
         Utils.loadSprite("/Sprites/objects/electronic.png"),
         Utils.loadSprite("/Sprites/objects/explosive.png"),
-        Utils.loadSprite("/Sprites/world/ladder/ladder_oninventory.png")
+        Utils.loadSprite("/Sprites/objects/log.png")
     };
 
     public static BufferedImage[] allNumbers = new BufferedImage[]
@@ -62,7 +62,7 @@ public class Inventory
         onInventory_electronic = 0;
         onInventory_explosive = 0;
         onInventory_gold = 0;
-        onInventory_ladder = 0;
+        onInventory_log = 0;
     }
 
     public int[] getValuesInOrder()
@@ -74,7 +74,7 @@ public class Inventory
             onInventory_tnt,
             onInventory_electronic,
             onInventory_explosive,
-            onInventory_ladder
+            onInventory_log
         };
 
         return valuesInOrder;
@@ -95,7 +95,7 @@ public class Inventory
 
     public boolean modifyValue_healthPotion(int hltP)
     {
-        if(onInventory_healthPotion == onInventory_healthPotion_max || onInventory_healthPotion + hltP > onInventory_healthPotion_max || onInventory_healthPotion + hltP < 0)
+        if(onInventory_healthPotion + hltP > onInventory_healthPotion_max || onInventory_healthPotion + hltP < 0)
         {
             return false;
         }
@@ -107,12 +107,24 @@ public class Inventory
     public boolean modifyValue_gold(int gold)
     {
         //questo if mi permette di utilizzare la stessa funzione sia in positivi che in negativo
-        if(onInventory_gold == onInventory_gold_max || onInventory_gold + gold > onInventory_gold_max || onInventory_gold + gold < 0)
+        if(onInventory_gold + gold > onInventory_gold_max || onInventory_gold + gold < 0)
         {
             return false;
         }
 
         onInventory_gold += gold;
+        return true;
+    }
+
+    public boolean modifyValue_log(int log)
+    {
+        //questo if mi permette di utilizzare la stessa funzione sia in positivi che in negativo
+        if(onInventory_log + log > onInventory_log_max || onInventory_log + log < 0)
+        {
+            return false;
+        }
+
+        onInventory_log += log;
         return true;
     }
 
@@ -163,6 +175,6 @@ public class Inventory
 
     public void updateInventory()
     {
-        craftRemoteTnt();
+        
     }
 }

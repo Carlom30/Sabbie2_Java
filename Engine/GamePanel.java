@@ -18,6 +18,7 @@ import Object.Projectile;
 import Object.SuperObject;
 import World.*;
 import World.Map.MapType;
+import java.awt.image.BufferedImage;
 
 
 /*  
@@ -80,18 +81,37 @@ public class GamePanel extends JPanel implements Runnable
 
     public void init()
     {
+        Map pmap = new Map(this, screenWidth, screenHeight);
+        BufferedImage zero = Utils.loadSprite("/Sprites/gradient/zero.png");
+        BufferedImage one = Utils.loadSprite("/Sprites/gradient/positive.png");
+        for(int i = 0; i < screenHeight; i++)
+        {
+            for(int j = 0; j < screenWidth; j++)
+            {
+                int offset = i * screenWidth + j;
+                float value = PerlinNoise.perlin(j, i);
+                value = value * 0.5f + 0.5f;
+                int intValue = Math.round(value);
+
+                pmap.tiles[offset] = new Tile(intValue == 0 ? zero : one);
+
+                //pmap.tiles[offset]
+            }
+        }
+
+        //up is testing
         gameState = GameState.inGame;
         //here goes the game setup
         //map = new Map(this, maxWorldColumn, maxWorldRow);
         //map.fillMapWithOneTile(new Tile(Utils.loadSprite("/Sprites/world/sand/sand3.png")));
         //PerlinNoise.noise(map);
-        player.worldPosition = new Vector2((maxWorldColumn / 2) * GamePanel.tileSize, (maxWorldRow / 2) * GamePanel.tileSize);
+        player.worldPosition = new Vector2((maxWorldColumn / 2), (maxWorldRow / 2));
         map = Map.generateOutsideWorld(this);
         printableObj = map.onMapObjects;
 
         currentMap = MapType.outside;
         player.setDefaultValues(this, kh, map);
-        
+        map.addOutsideRooms(player, map);
     }
 
     public void startGameThread()
@@ -153,8 +173,8 @@ public class GamePanel extends JPanel implements Runnable
                                        //grpahics2d è ottimo per il 2d ofc, ha più funzioni inerenti
         Engine.printMap(player.linkedMap, g2);
         Engine.printMonsters(g2, player.linkedRoom == null ? null : player.linkedRoom.onRoomMonsters);
-        Engine.printPlayer(g2, player);
         Engine.printObjects(g2);
+        Engine.printPlayer(g2, player);
         Engine.printHUD(g2, player);
         
         //g2.dispose();

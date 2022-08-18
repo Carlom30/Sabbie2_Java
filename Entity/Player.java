@@ -25,6 +25,8 @@ import javax.imageio.ImageIO;
 import javax.swing.text.DocumentFilter;
 import javax.swing.text.Utilities;
 
+import org.w3c.dom.css.Rect;
+
 import Engine.*;
 import Engine.CollisionLogic.CollisionType;
 import Engine.Tile.TileType;
@@ -42,6 +44,8 @@ public class Player extends Entity
     public Vector2 lastKnownOutsidePosition;
     public Inventory inventory;
     public List<Projectile>shootedProjectile = new ArrayList<Projectile>();
+    public RectInt spawnArea;
+
     final public int lifePoints_max = 5;
 
     public boolean DEV_MODE;
@@ -70,6 +74,7 @@ public class Player extends Entity
         lifePoints = 4;
         velocity = 4; //velocity = 4 ma metto di più per testing
         worldPosition = new Vector2((linkedMap.width / 2) * GamePanel.tileSize, (linkedMap.height / 2) * GamePanel.tileSize); //new Vector2(gp.tileSize * 23, gp.tileSize * 21);
+        spawnArea = new RectInt(new Vector2((linkedMap.width / 2) - 5, (linkedMap.height / 2) - 5), (linkedMap.width / 2) + 5, (linkedMap.height / 2) + 5);
         collisionArea = new RectInt(new Vector2(8, 16), 32, 32); 
         collisionAreaMin_Default = collisionArea.min;
         lastKnownOutsidePosition = new Vector2(Integer.MIN_VALUE, Integer.MIN_VALUE);
@@ -121,6 +126,7 @@ public class Player extends Entity
     public void update()
     {
         SuperObject onCollisionObject = null;
+        List<Tile> onCollisionTiles = null;
 
         inventory.updateInventory();
 
@@ -243,11 +249,27 @@ public class Player extends Entity
             {
                 Utils.currentTime = System.currentTimeMillis();
                 onCollisionObject = CollisionLogic.checkForCollision_Obj(this, true);
+                onCollisionTiles = gp.collision.checkForCollision_Tile(this, CollisionType.nextTiles);
+
+                if(!onCollisionTiles.isEmpty())
+                {
+                    for(Tile t : onCollisionTiles)
+                    {
+                        if(t.type == TileType.tree)
+                        {
+                            cutTree(t, linkedMap);
+                            return;
+                        }
+                    }
+            
+                }
+                
                 if(onCollisionObject == null)
                 {
                     Utils.printf("c pressed");
-                    lastKnownOutsidePosition = this.worldPosition;
-                    Dungeon.digDungeon(this);
+                    if(inventory.modifyValue_log(-3))
+                        Dungeon.digDungeon(this);
+                    
                 }
 
                 else if(onCollisionObject != null && onCollisionObject.type == objecType.Ladder)
@@ -256,8 +278,8 @@ public class Player extends Entity
                     Ladder ladder = (Ladder)onCollisionObject;
                     ladder.climbLadder(this);
                 }
+
             }
-            
             Utils.timeIsPassed(Utils.currentTime, 1000);
         }
 
@@ -278,6 +300,16 @@ public class Player extends Entity
                     GamePanel.printableObj.remove(onCollisionObject);
                     onCollisionObject = null;
                 }
+            }
+            Utils.timeIsPassed(Utils.currentTime, 1000);
+        }
+
+        if(kh.R_Pressed)
+        {
+            if(Utils.currentTime == -1)
+            {
+                Utils.currentTime = System.currentTimeMillis();
+                inventory.craftRemoteTnt();
             }
             Utils.timeIsPassed(Utils.currentTime, 1000);
         }
@@ -446,4 +478,18 @@ public class Player extends Entity
         }
     }
 
+    public void cutTree(Tile tile, Map map)
+    {
+        for(int i = 0; i < map.tiles.length; i++)
+        {
+            if(map.tiles[i] == tile)
+            {
+                map.tiles[i] = new Tile(Utils.loadSprite("/Sprites/world/sand/sand3.png"));
+                map.tiles[i].collision = false;
+            }
+        }
+
+        inventory.modifyValue_log(+1);
+
+    }
 }

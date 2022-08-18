@@ -1,18 +1,17 @@
 package World;
+import Math.PerlinNoise;
 import Math.RectInt;
 import Math.Vector2;
 import Object.SuperObject;
-import Object.Tree;
 import World.Room.RoomType;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-
-import javax.swing.text.Utilities;
 import Engine.GamePanel;
 import Engine.Tile;
 import Engine.Tile.TileType;
 import Entity.Merchant;
+import Entity.Player;
 import Main.Main;
 import Main.Utils;
 import Main.Utils.Directions;
@@ -112,7 +111,11 @@ public class Map
             for(int j = 0; j < outside.width; j++)
             {
                 int offset = i * outside.width + j;
-                if(Main.rand.nextInt(100) <= 3) //1/3 di possibilità che ci sia un albero
+                float value = PerlinNoise.perlin((j + 0.7f) * 0.15f, (i + 0.7f) * 0.15f);
+                value = value * 0.5f + 0.5f;
+                float threshold = 0.38f;
+                Utils.printf("perlin noise value: " + value);
+                if(value <= threshold) 
                 {
                     outside.tiles[offset] = new Tile(treeSprite);
                     outside.tiles[offset].collision = true;
@@ -121,30 +124,55 @@ public class Map
             }
         }
 
+        return outside;
+    }
+
+    public void addOutsideRooms(Player player, Map outside)
+    {
         int maxRandRooms = 5;
         int randomOutsideRooms = Main.rand.nextInt(maxRandRooms);
 
         for(int i = 0; i < randomOutsideRooms; i++)
         {
-            int randDoors = Main.rand.nextInt(2) == 1 ? Main.rand.nextInt(Utils.allDirections.length) : -1; 
+            int randDoors = Main.rand.nextInt(Utils.allDirections.length); 
             List<Directions> dir = new ArrayList<Directions>();
-            if(randDoors > 0)
-            {
-                dir.add(Utils.allDirections[randDoors]);
-            }
+        
+            dir.add(Utils.allDirections[randDoors]);
 
             int width = Main.rand.nextInt(5) + 5;
             int height = Main.rand.nextInt(5) + 5;
-            Vector2 randMin = new Vector2(Main.rand.nextInt(outside.width - (width + 1)), Main.rand.nextInt(outside.height - (height + 1)));
-            Room room = new Room(new RectInt(randMin, width, height), dir ,RoomType.chest, outside);
+
+            RectInt bounds = null;
+            Boolean boundsOK = true;
+            Room room = null;
+            do
+            {
+                boundsOK = true;
+                Vector2 randMin = new Vector2(Main.rand.nextInt(outside.width - (width + 3)), Main.rand.nextInt(outside.height - (height + 3)));
+                bounds = new RectInt(randMin, width, height);
+                if(outside.onOutsideRooms.isEmpty())
+                {
+                    continue;
+                }
+
+                for(Room r : outside.onOutsideRooms)
+                {
+                    if(RectInt.intersect(r.bounds, bounds) || RectInt.intersect(player.spawnArea, bounds))
+                    {
+                        boundsOK = false;
+                    }
+                }
+            }
+            while(!boundsOK);
+
+            room = new Room(bounds, dir ,RoomType.chest, outside);
             outside.onOutsideRooms.add(room);
             room.drawRoomOnMap(outside);
         }
 
         outside.merchant = new Merchant(outside, GamePanel.player);
 
-
-        return outside;
     }
+
 
 }

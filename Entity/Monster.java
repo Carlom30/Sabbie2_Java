@@ -37,7 +37,7 @@ public class Monster extends Entity implements Runnable
     {
         this.room = room;
 
-        velocity = 3; //as fast as character
+        velocity = Main.rand.nextInt(5) + 1; //as fast as character
         lifePoints = lifePoint_max;
         numberOfStep = 0;
         collisionArea = new RectInt(new Vector2(8, 16), 32, 32); 
