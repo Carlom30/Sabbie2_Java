@@ -3,19 +3,16 @@ package DataStructures;
 import java.util.ArrayList;
 import java.util.List;
 
+import Engine.Tile.TileType;
 import Main.Main;
 import Main.Utils;
-import Math.RectInt;
 import Math.Vector2;
-import World.Map;
 import World.Room;
-import World.Room.RoomType;
 
 
 public class Graph 
 {
 
-    
     public Node[] unconnectedNodeMatrix; //grafo senza archi relativo alla stanza
     public Node[] V; //grafo effettivamente connesso (nome legacy)
 
@@ -34,7 +31,7 @@ public class Graph
         {
             for(int j = 0; j < width; j++)
             {
-                int offset = i * width +j;
+                int offset = i * width + j;
                 //first thing first, escludiamo i lati:
                 if(i == 0 || i == (height - 1) || j == 0 || j == (width - 1))
                 {
@@ -42,9 +39,9 @@ public class Graph
                     continue;
                 }
 
-                if(room.tiles[offset] != null)
+                if(room.tiles[offset] != null && room.tiles[offset].type != TileType.wall)
                 {
-                    if(room.tiles[offset].collision)
+                    if(room.tiles[offset].collision || room.tiles[offset].linkedRoom != room)
                     {
                         //la tile è un ostacolo quindi va ignorata
                         continue;

@@ -23,7 +23,8 @@ public class Room
     public enum RoomType
     {
         normal,
-        chest
+        chest,
+        merchant
     };
 
     public RectInt bounds;
@@ -173,7 +174,7 @@ public class Room
         {
             Monster monster = new Monster(null, pos[j], this);
             onRoomMonsters.add(monster);
-            monster.startMonsterThread(Main.gp.player);
+            //monster.startMonsterThread(GamePanel.player);
             //Utils.printf("monster: " + monster + " positions: (" + pos[j].x + ", " + pos[j].y + ")");
         }
         onRoomMonsterArray = new Monster[onRoomMonsters.size()];

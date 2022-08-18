@@ -20,6 +20,17 @@ public class Inventory
     int onInventory_gold;
     int onInventory_gold_max = 9;
 
+    int onInventory_ladder;
+    int onInventory_ladder_max = 1;
+
+    //enum ma che funzione :)
+    public static int GOLD = 0;
+    public static int HP = 1;
+    public static int TNT = 2;
+    public static int EC = 3;
+    public static int EXP = 4;
+    public static int LADD = 5;
+
     public static BufferedImage[] allItemsSprite = new BufferedImage[]
     {
         Utils.loadSprite("/Sprites/objects/gold.png"),
@@ -27,6 +38,7 @@ public class Inventory
         Utils.loadSprite("/Sprites/objects/remoteTnt.png"),
         Utils.loadSprite("/Sprites/objects/electronic.png"),
         Utils.loadSprite("/Sprites/objects/explosive.png"),
+        Utils.loadSprite("/Sprites/world/ladder/ladder_oninventory.png")
     };
 
     public static BufferedImage[] allNumbers = new BufferedImage[]
@@ -45,11 +57,12 @@ public class Inventory
 
     public Inventory()
     {
-        onInventory_tnt = 0;
-        onInventory_healthPotion = 1;
-        onInventory_electronic = 4;
-        onInventory_explosive = 2;
-        onInventory_gold = 1;
+        onInventory_tnt = 1;
+        onInventory_healthPotion = 0;
+        onInventory_electronic = 0;
+        onInventory_explosive = 0;
+        onInventory_gold = 0;
+        onInventory_ladder = 0;
     }
 
     public int[] getValuesInOrder()
@@ -60,7 +73,8 @@ public class Inventory
             onInventory_healthPotion,
             onInventory_tnt,
             onInventory_electronic,
-            onInventory_explosive
+            onInventory_explosive,
+            onInventory_ladder
         };
 
         return valuesInOrder;

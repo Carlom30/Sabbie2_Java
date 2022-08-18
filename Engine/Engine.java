@@ -1,15 +1,18 @@
 package Engine;
 import java.awt.image.BufferedImage;
 import java.nio.Buffer;
+import java.util.List;
 
 import Entity.Inventory;
 import Entity.Monster;
 import Entity.Player;
 import Main.*;
 import Math.Vector2;
+import Object.Projectile;
 import Object.SuperObject;
 import Object.SuperObject.objecType;
 import World.Map;
+import World.Map.MapType;
 
 import java.awt.Graphics2D;
 
@@ -31,6 +34,7 @@ public class Engine
                 int offset = y * map.width + x;
                 // SE C'È SEGM FAULT TI PREGO SONO LE VARIABILI DEL PORCODIO SU gamepanel
                 Tile tile = map.tiles[offset];
+
                 
                 /* supponiamo che mapcolm e maprow siano 0, allora mapxy sarà 0, 0 e così via.
                  * avremo quindi ogni tile nella sua posizione nel mondo.
@@ -60,8 +64,8 @@ public class Engine
                  //quindi, banalmente, queste 4 righe implementano la camera
                 int mapX = x * gp.tileSize;
                 int mapY = y * gp.tileSize;
-                int screenX = mapX - gp.player.worldPosition.x + gp.player.screenPosition.x;
-                int screenY = mapY - gp.player.worldPosition.y + gp.player.screenPosition.y;
+                int screenX = mapX - GamePanel.player.worldPosition.x + GamePanel.player.screenPosition.x;
+                int screenY = mapY - GamePanel.player.worldPosition.y + GamePanel.player.screenPosition.y;
 
 
                 BufferedImage sprite = tile.sprite;
@@ -78,6 +82,10 @@ public class Engine
                 g2D.drawImage(sprite, screenX, screenY, gp.tileSize, gp.tileSize, null);
             }
         }
+        if(map.merchant != null)
+        {
+            map.merchant.draw(g2D, gp);
+        }
     } 
 
     public static void printObjects(Graphics2D g2D)
@@ -86,16 +94,31 @@ public class Engine
         {
             obj.draw(g2D, Main.gp);
         }
+
+        if(GamePanel.player == null)
+        {
+            return;
+        }
+
+        for(Projectile p : GamePanel.player.shootedProjectile)
+        {
+            p.draw(g2D, Main.gp);
+        }
     }
 
     //per testing gli passo sono un mostro
-    public static void printMonsters(Graphics2D g2D, Monster[] monsters)
+    public static void printMonsters(Graphics2D g2D, List<Monster> monsters)
     {
         if(monsters == null)
             return;
-            
-        for(int i = 0; i < monsters.length; i++)
-            monsters[i].draw(g2D);
+        
+        Monster[] ms = new Monster[monsters.size()];
+        monsters.toArray(ms);
+
+        for(int i = 0; i < ms.length; i++)
+        {
+            ms[i].draw(g2D);
+        }
     }
     
     public static void printPlayer(Graphics2D g2D, Player player)

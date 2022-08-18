@@ -5,6 +5,9 @@ import Object.SuperObject;
 import java.awt.image.BufferedImage;
 import java.text.CollationElementIterator;
 
+import Engine.GamePanel;
+
+
 import Main.Utils.*;
 
 public abstract class Entity 
@@ -15,6 +18,7 @@ public abstract class Entity
     int lifePoints;
     public String name;
 
+
     public BufferedImage idle;
     public BufferedImage up_1;
     public BufferedImage up_2;
@@ -24,6 +28,8 @@ public abstract class Entity
     public BufferedImage right_1;
     public BufferedImage left_idle;
     public BufferedImage left_1;
+
+    public BufferedImage sprite;
 
     public Directions direction;
 
@@ -47,5 +53,4 @@ public abstract class Entity
         //per adesso is just:
         lifePoints += summValue; //value può essere positivo o negativo
     }
-    
 }

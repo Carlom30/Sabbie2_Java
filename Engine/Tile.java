@@ -15,7 +15,9 @@ public class Tile
         terrain,
         floor,
         wall,
-        door
+        door,
+        background,
+        tree
     }
     //tile è riferito alle tile della mappa e non di ciò che non è mappa
     public BufferedImage sprite;

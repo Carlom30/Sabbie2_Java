@@ -5,12 +5,15 @@ import Math.RectInt;
 import Math.Vector2;
 import java.awt.Graphics2D;
 import Engine.GamePanel;
+import Entity.Player;
 import Main.Main;
 
 public abstract class SuperObject 
 {
+    //rename package
+    public static int totalObjects = 6;
 
-    public enum objecType
+    public static enum objecType
     {
         gold,
         explosive,
@@ -48,10 +51,15 @@ public abstract class SuperObject
 
     public void addObjToList()
     {
-        if(Main.gp.printableObj.size() < Main.gp.maxPrintableObject)
+        if(GamePanel.printableObj.size() < GamePanel.maxPrintableObject)
         {
-            Main.gp.printableObj.add(this);
+            GamePanel.printableObj.add(this);
         }
+    }
+
+    public boolean interact(Player player)
+    {
+        return false;
     }
 
 

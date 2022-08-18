@@ -4,9 +4,9 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Toolkit;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 import javax.swing.JPanel;
 import Entity.*;
@@ -14,13 +14,11 @@ import Main.KeyHandler;
 import Main.Utils;
 import Main.Main.GameState;
 import Math.*;
-import Object.Chest;
+import Object.Projectile;
 import Object.SuperObject;
-import Object.remoteTnt;
 import World.*;
 import World.Map.MapType;
 
-import javax.imageio.ImageIO;
 
 /*  
     NB: quando nelle mie funzioni scrivo "draw" si intende inserimento di dati, quando scrivo 
@@ -49,7 +47,7 @@ public class GamePanel extends JPanel implements Runnable
     public final int worldWidth = tileSize * maxWorldColumn;
     public final int worldHeight = tileSize * maxWorldRow;
 
-    public final int maxPrintableObject = 999;
+    public static final int maxPrintableObject = 999;
 
     // and so, 48 pixels * 16 = 768 pixel for width and 48 * 12 = 576 pixels for height
     int fps = 60;
@@ -64,9 +62,9 @@ public class GamePanel extends JPanel implements Runnable
     public Map map;
     public MapType currentMap;
     public CollisionLogic collision = new CollisionLogic(this);
-    public Player player;
+    public static Player player = new Player();
     
-    public static List<SuperObject> printableObj;
+    public static List<SuperObject> printableObj = new ArrayList<SuperObject>();
     public static Monster[] onMapMonsters;
 
     public GamePanel()
@@ -76,37 +74,24 @@ public class GamePanel extends JPanel implements Runnable
         this.setDoubleBuffered(true);
         this.addKeyListener(kh);
         this.setFocusable(true);
+    
         init();
     } 
 
     public void init()
     {
         gameState = GameState.inGame;
-        printableObj = new ArrayList<SuperObject>();
         //here goes the game setup
-        map = new Map(this, maxWorldColumn, maxWorldRow);
-        map.fillMapWithOneTile(new Tile(Utils.loadSprite("/Sprites/world/sand/sand3.png")));
-        PerlinNoise.noise(map);
+        //map = new Map(this, maxWorldColumn, maxWorldRow);
+        //map.fillMapWithOneTile(new Tile(Utils.loadSprite("/Sprites/world/sand/sand3.png")));
+        //PerlinNoise.noise(map);
+        player.worldPosition = new Vector2((maxWorldColumn / 2) * GamePanel.tileSize, (maxWorldRow / 2) * GamePanel.tileSize);
+        map = Map.generateOutsideWorld(this);
         printableObj = map.onMapObjects;
 
         currentMap = MapType.outside;
-        //TESTING
-        Dungeon newDungeon = new Dungeon();
-        dungeon = newDungeon;
-        map = newDungeon.area;
-        Tile nullGrey = new Tile(Utils.loadSprite("/Sprites/nullGrey.png"));
-        nullGrey.collision = true;
-        map.fillMapWithOneTile(nullGrey);
-        newDungeon.generateDungeonRooms();
+        player.setDefaultValues(this, kh, map);
         
-        player = new Player(this, kh, null, map);
-        player.linkedDungeon = dungeon;
-        player.worldPosition.x = (dungeon.firstRoom.bounds.min.x + (dungeon.firstRoom.bounds.width / 2)) * GamePanel.tileSize;
-        player.worldPosition.y = (dungeon.firstRoom.bounds.min.y + (dungeon.firstRoom.bounds.height / 2)) * GamePanel.tileSize;
-
-
-        //per testing creo una chest accanto al player
-        //Chest chest = new Chest(new Vector2((player.worldPosition.x / GamePanel.tileSize) + 1, player.worldPosition.y / GamePanel.tileSize));
     }
 
     public void startGameThread()
@@ -161,14 +146,16 @@ public class GamePanel extends JPanel implements Runnable
 
     public void paintComponent(Graphics g) //this thing is from java
     {
+        if(player.linkedMap == null)
+            return;
         super.paintComponent(g); //questo va fatto ogni volta che si utilizza paintComponent
         Graphics2D g2 = (Graphics2D)g; //ofc graphics2d che fa override di graphics
                                        //grpahics2d è ottimo per il 2d ofc, ha più funzioni inerenti
         Engine.printMap(player.linkedMap, g2);
+        Engine.printMonsters(g2, player.linkedRoom == null ? null : player.linkedRoom.onRoomMonsters);
+        Engine.printPlayer(g2, player);
         Engine.printObjects(g2);
         Engine.printHUD(g2, player);
-        Engine.printMonsters(g2, player.linkedRoom.onRoomMonsterArray);
-        Engine.printPlayer(g2, player);
         
         //g2.dispose();
     }
@@ -183,20 +170,44 @@ public class GamePanel extends JPanel implements Runnable
     }
 
     public void updateWorld()
-    {
-
-
-        /*for(Room r : player.linkedDungeon.rooms)
+    {   
+        if(!player.shootedProjectile.isEmpty())
         {
-            if(r != player.linkedRoom)
+            for(Projectile p : player.shootedProjectile)
             {
-                for(Monster m : r.onRoomMonsters)
+                if(player.shootedProjectile.size() == 6)
                 {
-                    //reset monsters position if player is out of room
-                    m.worldPosition = m.spawnPoint;
+                    int a = 0;
                 }
+                p.update();
+                
+                if(player.shootedProjectile.isEmpty())
+                {
+                    break;
+                }
+                
             }
-        }*/
+        }
+        
+        if(player.linkedRoom != null && !player.linkedRoom.onRoomMonsters.isEmpty())
+        {
+            for(Monster m : player.linkedRoom.onRoomMonsters)
+            {
+                //ListIterator<Monster> mIt = player.linkedRoom.onRoomMonsters.listIterator();
+                
+                if(m.monsterThread == null)
+                {
+                    m.startMonsterThread(player);
+                    if(m.getLifePoints() == 0)
+                       break;
+                }
+                
+                if(player.linkedRoom.onRoomMonsters.isEmpty())
+                    break;
+            }
+        }
+        
+
     }
 
     public void update()
@@ -205,3 +216,21 @@ public class GamePanel extends JPanel implements Runnable
         updateWorld();
     }
 }
+
+//TESTING
+        /*Dungeon newDungeon = new Dungeon();
+        dungeon = newDungeon;
+        map = newDungeon.area;
+        Tile nullGrey = new Tile(Utils.loadSprite("/Sprites/nullGrey.png"));
+        nullGrey.collision = true;
+        map.fillMapWithOneTile(nullGrey);
+        newDungeon.generateDungeonRooms();*/
+        
+        //player.linkedMap = dungeon.area;
+        //player.linkedDungeon = dungeon;
+        //player.worldPosition.x = (dungeon.firstRoom.bounds.min.x + (dungeon.firstRoom.bounds.width / 2)) * GamePanel.tileSize;
+        //player.worldPosition.y = (dungeon.firstRoom.bounds.min.y + (dungeon.firstRoom.bounds.height / 2)) * GamePanel.tileSize;
+
+
+        //per testing creo una chest accanto al player
+        //Chest chest = new Chest(new Vector2((player.worldPosition.x / GamePanel.tileSize) + 1, player.worldPosition.y / GamePanel.tileSize));

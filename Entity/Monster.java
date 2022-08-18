@@ -1,20 +1,24 @@
 package Entity;
 import java.util.List;
 import DataStructures.*;
+import Engine.CollisionLogic;
 import Engine.GamePanel;
 import Engine.Tile;
 import Engine.CollisionLogic.CollisionType;
 import Main.Main;
 import Math.Vector2;
+import Object.Projectile;
+import Object.SuperObject;
 import World.Room;
 import Main.Utils;
+import Main.Utils.Directions;
 import Math.RectInt;
 import java.awt.Graphics2D;
 
 public class Monster extends Entity implements Runnable
 {
     GamePanel gp;
-    Thread monsterThread;
+    public Thread monsterThread = null;
     
     public static int lifePoints_Range = 5;
     public Room room;
@@ -33,12 +37,13 @@ public class Monster extends Entity implements Runnable
     {
         this.room = room;
 
-        velocity = 2; //as fast as character
+        velocity = 3; //as fast as character
         lifePoints = lifePoint_max;
         numberOfStep = 0;
         collisionArea = new RectInt(new Vector2(8, 16), 32, 32); 
         collisionAreaMin_Default = collisionArea.min;
         worldPosition = new Vector2(roomPosition.x + room.bounds.min.x, roomPosition.y + room.bounds.min.y);
+        direction = Directions.up;
         this.worldPosition.x *= GamePanel.tileSize;
         this.worldPosition.y *= GamePanel.tileSize;
 
@@ -107,6 +112,18 @@ public class Monster extends Entity implements Runnable
 
         for(int i = 0; i < graph.V.length; i++)
         {
+            if(graph.V[i] == null)
+            {
+                Utils.printf("node is null");
+                return;
+            }
+
+            if(onRoomMonsterPosition == null)
+            {
+                Utils.printf("position not found");
+                return;
+            }
+
             if(graph.V[i].coordinates.x == onRoomMonsterPosition.x && graph.V[i].coordinates.y == onRoomMonsterPosition.y)
             {
                 source = graph.V[i];
@@ -124,7 +141,6 @@ public class Monster extends Entity implements Runnable
         al nodo che ha p = alla source, ovvero la source (enemy) è il padre del nodo.
         allora, le coordinate della source diventeranno quella del nodo in questione.*/
         
-        //per ora faccio che il mostro si teletrasporta da tile a tile una volta al secondo
         Node searchNode = playerNode;
         //if(Utils.currentTime == -1)
         //{
@@ -147,11 +163,13 @@ public class Monster extends Entity implements Runnable
             {
                 //onMoveDirection = new Vector2(0, 0);
                 Vector2 direction = Vector2.directionsVector[i];
+                Directions dir = Utils.allDirections[i];
                 int offset = (source.coordinates.y + direction.y) * room.bounds.width + (source.coordinates.x + direction.x);
                 if(graph.unconnectedNodeMatrix[offset] != null && graph.unconnectedNodeMatrix[offset] == searchNode)
                 {
                     Utils.printf("searchNode found: " + graph.unconnectedNodeMatrix[offset].coordinates.x + ", " + graph.unconnectedNodeMatrix[offset].coordinates.y);
                     onMoveDirection = Vector2.scalarPerVector(direction, 1);
+                    this.direction = dir;
                 }
 
             }
@@ -168,6 +186,10 @@ public class Monster extends Entity implements Runnable
 
     public void moveMonster(Player player)
     {
+        if(player.linkedMap == null)
+        {
+            Utils.printf("plyer's linked map is null");
+        }
         //potrei mettere questo conto nel costruttore, ma preferisco metterlo qui per chiarezza
         goalSteps = GamePanel.tileSize / velocity;
         
@@ -181,9 +203,16 @@ public class Monster extends Entity implements Runnable
             ComandareUnSeguace(player);
             onMoveDirection = Vector2.scalarPerVector(onMoveDirection, this.velocity);
         }
+        
+        Main.gp.collision.checkForCollision_Tile(this, CollisionType.nextTiles);
+        
+        if(collisionOn)
+        {
+            collisionOn = false;
+            //return;
+        }
 
-        this.worldPosition.x += onMoveDirection.x;
-        this.worldPosition.y += onMoveDirection.y;
+        worldPosition = Vector2.vectorSumm(worldPosition, onMoveDirection);
         numberOfStep++;
         a++;
 
@@ -196,19 +225,26 @@ public class Monster extends Entity implements Runnable
             gp = Main.gp;
         }
 
-        int screenX = worldPosition.x - gp.player.worldPosition.x + gp.player.screenPosition.x;
-        int screenY = worldPosition.y - gp.player.worldPosition.y + gp.player.screenPosition.y;
+        int screenX = worldPosition.x - GamePanel.player.worldPosition.x + GamePanel.player.screenPosition.x;
+        int screenY = worldPosition.y - GamePanel.player.worldPosition.y + GamePanel.player.screenPosition.y;
 
 
-        if( worldPosition.x + GamePanel.tileSize < gp.player.worldPosition.x - gp.player.screenPosition.x ||
-            worldPosition.x - GamePanel.tileSize > gp.player.worldPosition.x + gp.player.screenPosition.x ||
-            worldPosition.y + GamePanel.tileSize < gp.player.worldPosition.y - gp.player.screenPosition.y ||
-            worldPosition.y - GamePanel.tileSize > gp.player.worldPosition.y + gp.player.screenPosition.y)
+        if( worldPosition.x + GamePanel.tileSize < GamePanel.player.worldPosition.x - GamePanel.player.screenPosition.x ||
+            worldPosition.x - GamePanel.tileSize > GamePanel.player.worldPosition.x + GamePanel.player.screenPosition.x ||
+            worldPosition.y + GamePanel.tileSize < GamePanel.player.worldPosition.y - GamePanel.player.screenPosition.y ||
+            worldPosition.y - GamePanel.tileSize > GamePanel.player.worldPosition.y + GamePanel.player.screenPosition.y)
         {
             return;
         }
 
         g2D.drawImage(this.idle, screenX, screenY, GamePanel.tileSize, GamePanel.tileSize, null);
+    }
+
+    public void reset()
+    {
+        this.worldPosition = spawnPoint;
+        //distruggo il thread perché non in uso
+        monsterThread = null;
     }
 
     public void startMonsterThread(Player player)
@@ -220,9 +256,20 @@ public class Monster extends Entity implements Runnable
     @Override
     public void run() 
     {   
-        if(player.linkedRoom != this.room)
-            return;
+        Player player = GamePanel.player;
+        if(player.linkedRoom != null && player.linkedRoom == room)
+            moveMonster(player); 
+        
+        SuperObject onCollisionObj = CollisionLogic.checkForCollision_Obj(this, false);
+        if(onCollisionObj != null && onCollisionObj.name == "p")
+        {
+            lifePoints = 0;
+            GamePanel.player.linkedRoom.onRoomMonsters.remove(this);
+            GamePanel.printableObj.remove(onCollisionObj);
+            GamePanel.player.shootedProjectile.remove((Projectile)onCollisionObj);
+            GamePanel.player.inventory.modifyValue_gold(Main.rand.nextInt(2) == 1 ? 1 : 0);
+        }
 
-        moveMonster(player);    
+        
     }
 }

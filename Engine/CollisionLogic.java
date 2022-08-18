@@ -2,20 +2,19 @@ package Engine;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
-import javax.swing.text.Utilities;
+import javax.swing.plaf.metal.MetalBorders.PaletteBorder;
 
 import Engine.Tile.TileType;
 import Entity.Entity;
+import Entity.Monster;
+import Entity.Player;
 import Main.Utils;
-import Main.Utils.Directions;
 import Math.RectInt;
 import Math.Vector2;
+import Object.Projectile;
 import Object.SuperObject;
 import World.Map;
-
-import java.awt.Rectangle;
 
 public class CollisionLogic 
 {
@@ -147,12 +146,12 @@ public class CollisionLogic
         }
 
         //aggiungo un if identico per semplicità
-        if(map.tiles[offsetTileOne].type == TileType.wall)
+        if(map.tiles[offsetTileOne].collision)
         {
             collisionTiles.add(map.tiles[offsetTileOne]);
         }
 
-        if(map.tiles[offsetTileTwo].type == TileType.wall)
+        if(map.tiles[offsetTileTwo].collision)
         {
             collisionTiles.add(map.tiles[offsetTileTwo]);
         }
@@ -218,5 +217,51 @@ public class CollisionLogic
         }
         
         return checkObj;
+    }
+
+    public void shoot_CollisionEnter(Projectile p)
+    {
+        if(GamePanel.player.linkedDungeon == null || GamePanel.player.linkedRoom.onRoomMonsters.isEmpty())
+        {
+            return;
+        }
+
+        boolean hasCollided = false;
+
+        for(Monster entity : GamePanel.player.linkedRoom.onRoomMonsters)
+        {
+            entity.collisionArea.min = 
+                new Vector2((entity.collisionArea.min.x + entity.worldPosition.x), (entity.collisionArea.min.y + entity.worldPosition.y));
+          
+            p.collisionArea.min =  
+                new Vector2((p.collisionArea.min.x + p.worldPos.x), (p.collisionArea.min.y + p.worldPos.y));
+
+
+                if(RectInt.intersect(entity.collisionArea, p.collisionArea))
+                {
+                    Utils.printf("Obj: " + p + " collision on: " + entity);
+                    hasCollided = true;
+                    //testing
+                    GamePanel.player.linkedRoom.onRoomMonsters.remove(entity);
+                    entity = null;
+
+                    for(int i = 0; i < GamePanel.player.linkedRoom.onRoomMonsterArray.length; i++)
+                    {
+                        if(GamePanel.player.linkedRoom.onRoomMonsterArray[i] == entity)
+                        {
+                            GamePanel.player.linkedRoom.onRoomMonsterArray[i] = null;
+                        }
+                    }
+                    p.collisionArea.min = p.collsionAreaMin_Default;
+                    if(hasCollided)
+                    {
+                        GamePanel.player.shootedProjectile.remove(p);
+                        p = null;
+                        break;
+                    }
+                }
+            
+            //entity.collisionArea.min = entity.collisionAreaMin_Default;
+        }
     }
 }

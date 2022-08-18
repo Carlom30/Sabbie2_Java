@@ -4,12 +4,14 @@ import Main.Utils.Directions;
 import Math.RectInt;
 import Math.Vector2;
 import Object.Ladder;
+import Object.Projectile;
 import Object.SuperObject;
 import Object.remoteTnt;
 import Object.SuperObject.objecType;
 import World.Dungeon;
 import World.Map;
 import World.Room;
+import World.Map.MapType;
 import World.Room.RoomType;
 import Entity.Inventory;
 
@@ -25,19 +27,21 @@ import javax.swing.text.Utilities;
 
 import Engine.*;
 import Engine.CollisionLogic.CollisionType;
+import Engine.Tile.TileType;
 
 import java.awt.image.BufferedImage;
 
 public class Player extends Entity 
 {
     public GamePanel gp; //rendering part
-    KeyHandler kh; //input manager (sarà comunque una classe a parte)
+    public KeyHandler kh; //input manager (sarà comunque una classe a parte)
     public Vector2 screenPosition;
     public Map linkedMap;
     public Dungeon linkedDungeon;
     public Room linkedRoom;
     public Vector2 lastKnownOutsidePosition;
     public Inventory inventory;
+    public List<Projectile>shootedProjectile = new ArrayList<Projectile>();
     final public int lifePoints_max = 5;
 
     public boolean DEV_MODE;
@@ -48,37 +52,27 @@ public class Player extends Entity
     public BufferedImage healtBar_base_empty;
     public BufferedImage healtBar_end_empty;
 
-    public Player(GamePanel gp, KeyHandler kh, Vector2 worldPos, Map startingMap)
+    public Player()
+    {
+        
+        readPlayerSprites();
+        screenPosition = new Vector2(GamePanel.screenWidth / 2 - GamePanel.tileSize / 2, GamePanel.screenHeight / 2 - GamePanel.tileSize / 2);
+        //up: print character at the exact centre of the screen
+    }
+    
+    public void setDefaultValues(GamePanel gp, KeyHandler kh, Map startingMap)
     {
         DEV_MODE = false;
         this.gp = gp;
         this.kh = kh;
         
         linkedMap = startingMap;
-        setDefaultValues();
-        if(worldPos != null)
-        {
-            worldPosition = worldPos;
-        }
-        readPlayerSprites();
-        screenPosition = new Vector2(gp.screenWidth / 2 - gp.tileSize / 2, gp.screenHeight / 2 - gp.tileSize / 2);
-        collisionArea = new RectInt(new Vector2(8, 16), 32, 32); 
-        collisionAreaMin_Default = collisionArea.min;
-        //up: print character at the exact centre of the screen
-    }
-
-    public void setDefaultValues()
-    {
         lifePoints = 4;
         velocity = 4; //velocity = 4 ma metto di più per testing
-        
-        worldPosition = new Vector2((linkedMap.width / 2) * gp.tileSize, (linkedMap.height / 2) * gp.tileSize); //new Vector2(gp.tileSize * 23, gp.tileSize * 21);
-        //Testing
-        
-        
+        worldPosition = new Vector2((linkedMap.width / 2) * GamePanel.tileSize, (linkedMap.height / 2) * GamePanel.tileSize); //new Vector2(gp.tileSize * 23, gp.tileSize * 21);
+        collisionArea = new RectInt(new Vector2(8, 16), 32, 32); 
+        collisionAreaMin_Default = collisionArea.min;
         lastKnownOutsidePosition = new Vector2(Integer.MIN_VALUE, Integer.MIN_VALUE);
-        
-
         direction = Directions.down;
         inventory = new Inventory();
 
@@ -87,6 +81,8 @@ public class Player extends Entity
             velocity = velocity * 10;
             collisionArea = new RectInt(new Vector2(0, 0), 0, 0);
         }
+        
+        
     }
 
     void readStatusSprites()
@@ -191,7 +187,7 @@ public class Player extends Entity
             }
         }
 
-        if(kh.E_Pressed)
+        if(kh.Q_Pressed)
         {
             //it just fucking works!
             if(Utils.currentTime == -1)
@@ -204,7 +200,7 @@ public class Player extends Entity
                 Tile[] tileArray = new Tile[2]; //max element is 2
                 nextTiles.toArray(tileArray);
                 
-                if(nextTiles.isEmpty())
+                if(nextTiles.isEmpty() || tileArray[0].type != TileType.wall)
                 {
                     Utils.printf("no wall detected");
                     abbatti();
@@ -219,19 +215,19 @@ public class Player extends Entity
                 //se il giocatore ha tnt, allora ne posiziono una nella tile designata
 
                 remoteTnt newTnt = new remoteTnt(tileArray[0]);
-                kh.E_Pressed = false;
+                kh.Q_Pressed = false;
             }
             
             Utils.timeIsPassed(Utils.currentTime, 1000);
         }
 
-        else if(kh.R_Pressed)
+        else if(kh.H_Pressed)
         {
 
             if(Utils.currentTime == -1)
             {
                 Utils.currentTime = System.currentTimeMillis();
-                Utils.printf("r pressed");
+                Utils.printf("h pressed");
                 if(inventory.modifyValue_healthPotion(-1) && lifePoints < lifePoints_max)
                 {
                     this.setLifePoints(lifePoints_max - lifePoints);
@@ -265,6 +261,52 @@ public class Player extends Entity
             Utils.timeIsPassed(Utils.currentTime, 1000);
         }
 
+        if(kh.E_Pressed)
+        {
+            if(Utils.currentTime == -1)
+            {
+                Utils.currentTime = System.currentTimeMillis();
+                Utils.printf("E pressed");
+                onCollisionObject = CollisionLogic.checkForCollision_Obj(this, true);
+                if(onCollisionObject == null)
+                {
+                    Utils.printf("obj not found");
+                    return;
+                }
+                if(onCollisionObject.interact(this))
+                {
+                    GamePanel.printableObj.remove(onCollisionObject);
+                    onCollisionObject = null;
+                }
+            }
+            Utils.timeIsPassed(Utils.currentTime, 1000);
+        }
+
+        if(kh.shootUp || kh.shootDown || kh.shootRight || kh.shootLeft)
+        {
+            if(Utils.currentTime == -1)
+            {
+                Utils.currentTime = System.currentTimeMillis();
+                Directions d = Directions.ALL_DIRECTIONS;
+
+                if(kh.shootUp)
+                    d = Directions.up;
+
+                else if(kh.shootDown)
+                    d = Directions.down;
+
+                else if(kh.shootRight)
+                    d = Directions.right;
+
+                else if(kh.shootLeft)
+                    d = Directions.left;
+
+                Utils.printf(d.toString());
+                Projectile.shoot(this, d);
+            }
+            Utils.timeIsPassed(Utils.currentTime, 2000);
+        }
+
         if(linkedDungeon != null)
         {
             List<Tile> tilesList =  gp.collision.checkForCollision_Tile(this, CollisionType.onStepTile);
@@ -272,7 +314,16 @@ public class Player extends Entity
             tilesList.toArray(tiles);
             int a = Main.rand.nextInt(tiles.length);
 
+            Room lastLinkedRoom = this.linkedRoom;
             this.linkedRoom = tiles[a].linkedRoom == null ? this.linkedRoom : tiles[a].linkedRoom;
+
+            if(lastLinkedRoom != null && this.linkedRoom != lastLinkedRoom)
+            {
+                for(Monster m : lastLinkedRoom.onRoomMonsters)
+                {
+                    m.reset();
+                }
+            }
             //Utils.printf(linkedRoom.toString());
         }
         
@@ -330,18 +381,33 @@ public class Player extends Entity
             {  
                 boomDirection = Directions.right;
             }
-
+            
             else if(tileVector.y == mainRoom.bounds.min.y)
             {
                 boomDirection = Directions.up;
             }
-
+            
             else if(tileVector.y == mainRoom.bounds.min.y + mainRoom.bounds.height - 1)
             {
                 boomDirection = Directions.down;
             }
             
+            Tile floor = new Tile(Utils.loadSprite("/Sprites/world/sand/sand0.png"));
             Utils.printf("BOOM!! at: " + boomDirection.toString());
+            if(Main.gp.currentMap == MapType.outside)
+            {
+                map.tiles[tileVector.y * map.width + tileVector.x] = floor;
+                map.tiles[tileVector.y * map.width + tileVector.x].collision = false; //jsut declaration of intent
+
+                //do l'idea di esplosione distruggendo le tile perpendicolari
+                for(int i = 0; i < ALL_DIRECTIONS; i++) 
+                {
+                    map.tiles[(tileVector.y + Vector2.directionsVector[i].y) * map.width + (tileVector.x + Vector2.directionsVector[i].x)] = floor;
+                }
+                Main.gp.printableObj.remove(obj);
+                return;
+            }
+
             List<Directions> busyDir = new ArrayList<Directions>();
             List<Room> nearRooms = dungeon.checkForNeighbors(mainRoom, busyDir);
 
@@ -362,7 +428,6 @@ public class Player extends Entity
                 newRoom.drawRoomOnMap(map);
             }
 
-            Tile floor = new Tile(Utils.loadSprite("/Sprites/world/sand/sand0.png"));
 
             map.tiles[tileVector.y * map.width + tileVector.x] = floor;
             map.tiles[tileVector.y * map.width + tileVector.x].collision = false; //jsut declaration of intent

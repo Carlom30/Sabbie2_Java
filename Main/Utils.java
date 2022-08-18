@@ -4,6 +4,7 @@ import javax.imageio.ImageIO;
 
 public class Utils 
 {
+    public static long buttonsDelay = 500;
     public static long currentTime = -1; //the cursed "-1 second has passed"
     public static long onCollision_currentTime = -1;
     /*public static void main(String[] args) 

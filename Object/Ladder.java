@@ -31,7 +31,7 @@ public class Ladder extends SuperObject
     //da finire
     public Ladder(Vector2 worldPosition, LadderType lType, Map linkedMap, Dungeon linkedDungeon)
     {   
-        BufferedImage spriteGoesDown = Utils.loadSprite("/Sprites/world/ladder/ladder_godown.png");
+        BufferedImage spriteGoesDown = Utils.loadSprite("/Sprites/world/ladder/ladder_goup.png");
         BufferedImage spriteGoesUp = Utils.loadSprite("/Sprites/world/ladder/ladder_goup.png");
         collision = false;
         this.worldPos = new Vector2(worldPosition.x, worldPosition.y);
@@ -72,9 +72,17 @@ public class Ladder extends SuperObject
             toRenderMap = Main.gp.map;
             Main.gp.currentMap = MapType.outside;
             newPlayerPosition = player.lastKnownOutsidePosition;
+            player.linkedDungeon = null;
+            player.linkedRoom = null;
         }
         
         Main.gp.changeRenderedMap(toRenderMap, newPlayerPosition);
-        
+    
+    }
+
+    @Override
+    public boolean interact(Player player) 
+    {
+        return super.interact(player);
     }
 }

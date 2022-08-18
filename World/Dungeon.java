@@ -21,6 +21,7 @@ import Object.Ladder;
 import Object.SuperObject;
 import Object.Ladder.LadderType;
 import Engine.Tile;
+import Engine.CollisionLogic.CollisionType;
 
 public class Dungeon 
 {
@@ -224,9 +225,8 @@ public class Dungeon
                 Ladder upLadder = new Ladder(new Vector2((room.bounds.min.x + room.bounds.width / 2) * GamePanel.tileSize,
                     (room.bounds.min.y + room.bounds.height / 2) * GamePanel.tileSize), LadderType.goesUp, this.area, this);
 
-                //testing
                 firstRoom = room;
-                firstRoom.addMonsters(Main.rand.nextInt(2) + 1, null);
+                //firstRoom.addMonsters(Main.rand.nextInt(3), null);
 
                 i++;
                 continue;
@@ -282,7 +282,7 @@ public class Dungeon
             Room newRoom = new Room(new RectInt(calculateRoomMin(mainRoom, randDir), roomWidth, roomHeight), newRoomDoors, (i < roomNumb) ? RoomType.normal : RoomType.chest, area);
             addRoomToMemArea(mainRoom, newRoom, randDir);
             newRoom.drawRoomOnMap(area);
-            newRoom.addMonsters(1, null);
+            newRoom.addMonsters(Main.rand.nextInt(3), null);
             //e adesso la aggiungo alle varie struture dati
             rooms.add(newRoom);
             
@@ -316,6 +316,17 @@ public class Dungeon
             if(Utils.allDirections[i] == player.direction)
             {
                 ladderPosition = (Vector2.vectorSumm(player.worldPosition, Vector2.scalarPerVector((Vector2.directionsVector[i]), GamePanel.tileSize)));
+                List<Tile> tiles = Main.gp.collision.checkForCollision_Tile(player, CollisionType.nextTiles);
+                
+                for(Tile t : tiles)
+                {
+                    if(t.collision == true)
+                    {
+                        Utils.printf("collision detected, no ladder, sorry");
+                        return;
+                    }
+                }
+                
                 break;
             }
         }

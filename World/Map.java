@@ -2,6 +2,8 @@ package World;
 import Math.RectInt;
 import Math.Vector2;
 import Object.SuperObject;
+import Object.Tree;
+import World.Room.RoomType;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -9,8 +11,12 @@ import java.util.ArrayList;
 import javax.swing.text.Utilities;
 import Engine.GamePanel;
 import Engine.Tile;
+import Engine.Tile.TileType;
+import Entity.Merchant;
 import Main.Main;
 import Main.Utils;
+import Main.Utils.Directions;
+
 import java.awt.Graphics2D; 
 import java.util.List;
 
@@ -24,6 +30,9 @@ public class Map
     public final int area;
 
     public List<SuperObject> onMapObjects;
+    public List<Room> onOutsideRooms; //only for outside
+
+    public Merchant merchant;
 
     public enum MapType
     {
@@ -50,6 +59,19 @@ public class Map
             tiles[i] = tile;
         }
 
+        for(int i = 0; i < height; i++)
+        {
+            for(int j = 0; j < width; j++)
+            {
+                int offset = i * width + j;
+                if(i == 0 || i == height - 1 || j == 0 || j == width - 1)
+                {
+                    tiles[offset] = new Tile(Utils.loadSprite("/Sprites/world/outside/maplimit.png"));
+                    tiles[offset].collision = true;
+                }
+            }
+        }
+
     }
 
     public Vector2 getGlobalTileVector(Tile tile)
@@ -74,6 +96,55 @@ public class Map
         Utils.printf("tile not found in map (assert)");
 
         return null;
+    }
+
+    public static Map generateOutsideWorld(GamePanel gp)
+    {
+        Map outside = new Map(gp, gp.maxWorldColumn, gp.maxWorldRow);
+        outside.fillMapWithOneTile(new Tile(Utils.loadSprite("/Sprites/world/sand/sand3.png")));
+        outside.onOutsideRooms = new ArrayList<Room>();
+
+
+        BufferedImage treeSprite = Utils.loadSprite("/Sprites/world/sand/sandAndTree.png");
+        
+        for(int i = 0; i < outside.height; i++)
+        {
+            for(int j = 0; j < outside.width; j++)
+            {
+                int offset = i * outside.width + j;
+                if(Main.rand.nextInt(100) <= 3) //1/3 di possibilità che ci sia un albero
+                {
+                    outside.tiles[offset] = new Tile(treeSprite);
+                    outside.tiles[offset].collision = true;
+                    outside.tiles[offset].type = TileType.tree;
+                }
+            }
+        }
+
+        int maxRandRooms = 5;
+        int randomOutsideRooms = Main.rand.nextInt(maxRandRooms);
+
+        for(int i = 0; i < randomOutsideRooms; i++)
+        {
+            int randDoors = Main.rand.nextInt(2) == 1 ? Main.rand.nextInt(Utils.allDirections.length) : -1; 
+            List<Directions> dir = new ArrayList<Directions>();
+            if(randDoors > 0)
+            {
+                dir.add(Utils.allDirections[randDoors]);
+            }
+
+            int width = Main.rand.nextInt(5) + 5;
+            int height = Main.rand.nextInt(5) + 5;
+            Vector2 randMin = new Vector2(Main.rand.nextInt(outside.width - (width + 1)), Main.rand.nextInt(outside.height - (height + 1)));
+            Room room = new Room(new RectInt(randMin, width, height), dir ,RoomType.chest, outside);
+            outside.onOutsideRooms.add(room);
+            room.drawRoomOnMap(outside);
+        }
+
+        outside.merchant = new Merchant(outside, GamePanel.player);
+
+
+        return outside;
     }
 
 }

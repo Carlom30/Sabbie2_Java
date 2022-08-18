@@ -1,5 +1,7 @@
 package Math;
+import Engine.GamePanel;
 import Main.Utils.Directions;
+import World.Room;
 
 public class Vector2 
 {
@@ -44,5 +46,14 @@ public class Vector2
     public static boolean areEqual(Vector2 a, Vector2 b)
     {
         return (a.x == b.x && a.y == b.y);
+    }
+
+    public static Vector2 roomToGlobalPosition(Vector2 localPosition, Room room)
+    {
+        Vector2 worldPoition = new Vector2(localPosition.x + room.bounds.min.x, localPosition.y + room.bounds.min.y);
+        worldPoition.x *= GamePanel.tileSize;
+        worldPoition.y *= GamePanel.tileSize;
+
+        return worldPoition;
     }
 }
