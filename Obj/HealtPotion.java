@@ -1,4 +1,4 @@
-package Object;
+package Obj;
 
 public class HealtPotion extends SuperObject
 {

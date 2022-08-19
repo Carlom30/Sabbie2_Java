@@ -2,7 +2,7 @@ package World;
 import Math.PerlinNoise;
 import Math.RectInt;
 import Math.Vector2;
-import Object.SuperObject;
+import Obj.SuperObject;
 import World.Room.RoomType;
 
 import java.awt.image.BufferedImage;
@@ -124,6 +124,11 @@ public class Map
             }
         }
 
+        //good values
+        /*float value = PerlinNoise.perlin((j + 0.7f) * 0.15f, (i + 0.7f) * 0.15f);
+                value = value * 0.5f + 0.5f;
+                float threshold = 0.38f; */
+
         return outside;
     }
 
@@ -171,7 +176,6 @@ public class Map
         }
 
         outside.merchant = new Merchant(outside, GamePanel.player);
-
     }
 
 

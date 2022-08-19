@@ -8,9 +8,9 @@ import Entity.Monster;
 import Entity.Player;
 import Main.*;
 import Math.Vector2;
-import Object.Projectile;
-import Object.SuperObject;
-import Object.SuperObject.objecType;
+import Obj.Projectile;
+import Obj.SuperObject;
+import Obj.SuperObject.objecType;
 import World.Map;
 import World.Map.MapType;
 

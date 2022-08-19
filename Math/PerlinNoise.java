@@ -42,7 +42,7 @@ public class PerlinNoise
         float dy = y - (float)iy;
     
         // Compute the dot-product
-        return (dx*gradient.x + dy*gradient.y);
+        return (dx * gradient.x + dy * gradient.y);
     }
     
     public static float perlin(float x, float y) 

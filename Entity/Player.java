@@ -3,11 +3,11 @@ import Main.*;
 import Main.Utils.Directions;
 import Math.RectInt;
 import Math.Vector2;
-import Object.Ladder;
-import Object.Projectile;
-import Object.SuperObject;
-import Object.remoteTnt;
-import Object.SuperObject.objecType;
+import Obj.Ladder;
+import Obj.Projectile;
+import Obj.SuperObject;
+import Obj.remoteTnt;
+import Obj.SuperObject.objecType;
 import World.Dungeon;
 import World.Map;
 import World.Room;
@@ -224,7 +224,7 @@ public class Player extends Entity
                 kh.Q_Pressed = false;
             }
             
-            Utils.timeIsPassed(Utils.currentTime, 1000);
+            Utils.timeIsPassed(Utils.currentTime, 500);
         }
 
         else if(kh.H_Pressed)
@@ -240,7 +240,7 @@ public class Player extends Entity
                 }
             }
             
-            Utils.timeIsPassed(Utils.currentTime, 1000);
+            Utils.timeIsPassed(Utils.currentTime, 500);
         }
 
         else if(kh.C_Pressed)
@@ -267,7 +267,7 @@ public class Player extends Entity
                 if(onCollisionObject == null)
                 {
                     Utils.printf("c pressed");
-                    if(inventory.modifyValue_log(-3))
+                    if(onCollisionTiles.isEmpty() && inventory.modifyValue_log(-3))
                         Dungeon.digDungeon(this);
                     
                 }
@@ -280,7 +280,7 @@ public class Player extends Entity
                 }
 
             }
-            Utils.timeIsPassed(Utils.currentTime, 1000);
+            Utils.timeIsPassed(Utils.currentTime, 500);
         }
 
         if(kh.E_Pressed)
@@ -295,13 +295,14 @@ public class Player extends Entity
                     Utils.printf("obj not found");
                     return;
                 }
+
                 if(onCollisionObject.interact(this))
                 {
                     GamePanel.printableObj.remove(onCollisionObject);
                     onCollisionObject = null;
                 }
             }
-            Utils.timeIsPassed(Utils.currentTime, 1000);
+            Utils.timeIsPassed(Utils.currentTime, 500);
         }
 
         if(kh.R_Pressed)
@@ -311,7 +312,7 @@ public class Player extends Entity
                 Utils.currentTime = System.currentTimeMillis();
                 inventory.craftRemoteTnt();
             }
-            Utils.timeIsPassed(Utils.currentTime, 1000);
+            Utils.timeIsPassed(Utils.currentTime, 500);
         }
 
         if(kh.shootUp || kh.shootDown || kh.shootRight || kh.shootLeft)

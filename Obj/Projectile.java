@@ -1,4 +1,4 @@
-package Object;
+package Obj;
 
 import Entity.Player;
 import Main.Utils;

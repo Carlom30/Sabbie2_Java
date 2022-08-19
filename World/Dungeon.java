@@ -17,9 +17,9 @@ import Main.Utils;
 import Main.Utils.Directions;
 import Math.RectInt;
 import Math.Vector2;
-import Object.Ladder;
-import Object.SuperObject;
-import Object.Ladder.LadderType;
+import Obj.Ladder;
+import Obj.SuperObject;
+import Obj.Ladder.LadderType;
 import Engine.Tile;
 import Engine.CollisionLogic.CollisionType;
 
@@ -49,8 +49,8 @@ public class Dungeon
     final public int roomWidth = 9;
     final public int roomHeight = 9;
 
-    final int maxAreaWidth = 300;
-    final int maxAreaHeight = 300;
+    final int maxAreaWidth = 1000;
+    final int maxAreaHeight = 1000;
 
     int ALL_DIRECTIONS;
 

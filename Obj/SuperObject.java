@@ -1,4 +1,4 @@
-package Object;
+package Obj;
 import java.awt.image.BufferedImage;
 
 import Math.RectInt;
@@ -8,7 +8,7 @@ import Engine.GamePanel;
 import Entity.Player;
 import Main.Main;
 
-public abstract class SuperObject 
+public class SuperObject 
 {
     //rename package
     public static int totalObjects = 6;

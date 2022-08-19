@@ -5,6 +5,7 @@ import Main.Main;
 import Main.Utils;
 import Math.RectInt;
 import Math.Vector2;
+import Obj.Chest;
 import World.Map;
 import World.Room;
 import World.Room.RoomType;
@@ -17,18 +18,21 @@ public class Merchant extends Entity
 {
     
     final int randomGoldValueWanted = Main.rand.nextInt(9) + 1;
-    int goldObtained = 0;
-    int randomChestCost = Main.rand.nextInt(5) + 1;
+    public int goldObtained = 0;
+    public int randomChestCost = Main.rand.nextInt(5) + 1;
     int roomWidth = 9;
     int roomHeight = 9;
     BufferedImage sprite;
+
+    public Chest merchantChest;
+
 
 
     public Merchant(Map outside, Player player)
     {
         Room merchRoom = generateMerchantRoom(outside, player);
         sprite = Utils.loadSprite("/Sprites/world/outside/merchant.png");
-        worldPosition = new Vector2(merchRoom.bounds.width / 2, merchRoom.bounds.height / 2);
+        worldPosition = new Vector2(merchRoom.bounds.width / 2, merchRoom.bounds.height / 2 - 1);
         worldPosition = Vector2.roomToGlobalPosition(worldPosition, merchRoom);
         
     }
@@ -45,11 +49,19 @@ public class Merchant extends Entity
             randMinX = Main.rand.nextInt(outside.width - (roomWidth + 3)) + 3;
             randMinY = Main.rand.nextInt(outside.height  - (roomHeight + 3)) + 3;
             bounds = new RectInt(new Vector2(randMinX, randMinY), this.roomWidth, this.roomHeight);
-            RectInt virtualBounds = bounds;
 
             if(RectInt.intersect(player.spawnArea, bounds))
             {
                 boundsOK = false;
+            }
+
+            for(Room room : outside.onOutsideRooms)
+            {
+                if(RectInt.intersect(room.bounds, bounds))
+                {
+                    boundsOK = false;
+                    break;
+                }
             }
         }
         //questo while assicura che la stanza non intersechi mai il player
@@ -58,6 +70,9 @@ public class Merchant extends Entity
         Room merchantRoom = new Room(bounds, null, RoomType.merchant, outside);
         merchantRoom.drawRoomOnMap(outside);
         outside.onOutsideRooms.add(merchantRoom);
+
+        merchantChest = new Chest(new Vector2(merchantRoom.bounds.min.x + merchantRoom.bounds.width / 2, merchantRoom.bounds.min.y + merchantRoom.bounds.height / 2 + 1), outside);
+        GamePanel.printableObj.add(merchantChest);
 
         return merchantRoom;
     }

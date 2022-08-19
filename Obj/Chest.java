@@ -1,10 +1,11 @@
-package Object;
+package Obj;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 import Engine.GamePanel;
 import Entity.Inventory;
+import Entity.Merchant;
 import Entity.Player;
 import Main.Main;
 import Main.Utils;
@@ -23,6 +24,8 @@ public class Chest extends SuperObject
     int maxQuantityPerObj = 3; //the classic rule of three in videogames always works 
 
     int totalObjects = SuperObject.totalObjects - 1; //nella chest non è possibile trovare ladders
+
+    boolean isMerchantChest = false;
 
     int[] loot = new int[]
     {
@@ -67,12 +70,25 @@ public class Chest extends SuperObject
     @Override
     public boolean interact(Player player) 
     {
-        generateLoot();
-        player.inventory.modifyValue_tnt(loot[0]);
-        player.inventory.modifyValue_healthPotion(loot[1]);
-        player.inventory.addObj_component(loot[2], loot[3]);
-        player.inventory.modifyValue_gold(loot[4]);
+        boolean freeChest = true;
+        Merchant merchant = player.linkedMap.merchant;
+        int chestCost = 0;
 
-        return true;
+        if(merchant != null && this == merchant.merchantChest)
+        {
+            chestCost = merchant.randomChestCost;
+            freeChest = false;
+        }
+
+        if(player.inventory.modifyValue_gold(-(chestCost)))
+        {
+            generateLoot();
+            player.inventory.modifyValue_tnt(loot[0]);
+            player.inventory.modifyValue_healthPotion(loot[1]);
+            player.inventory.addObj_component(loot[2], loot[3]);
+            player.inventory.modifyValue_gold(loot[4]);
+        }
+
+        return freeChest;
     }
 }

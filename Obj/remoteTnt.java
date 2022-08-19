@@ -1,4 +1,4 @@
-package Object;
+package Obj;
 
 import Engine.GamePanel;
 import Engine.Tile;
