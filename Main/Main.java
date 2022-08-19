@@ -5,7 +5,7 @@ import javax.swing.JPanel;
 import java.util.Random;
 
 import Engine.GamePanel;
-import Object.remoteTnt;
+import Obj.remoteTnt;
 import World.Dungeon;
 
 public class Main 

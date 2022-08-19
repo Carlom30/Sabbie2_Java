@@ -1,7 +1,7 @@
 package World;
 
 import Math.*;
-import Object.Chest;
+import Obj.Chest;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;

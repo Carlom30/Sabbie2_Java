@@ -1,5 +1,6 @@
 package Entity;
 
+import Engine.Engine;
 import Engine.GamePanel;
 import Main.Main;
 import Main.Utils;
@@ -19,22 +20,28 @@ public class Merchant extends Entity
     
     final int randomGoldValueWanted = Main.rand.nextInt(9) + 1;
     public int goldObtained = 0;
-    public int randomChestCost = Main.rand.nextInt(5) + 1;
+    public int randomChestCost = Main.rand.nextInt(4) + 2; //[2, 5]
     int roomWidth = 9;
     int roomHeight = 9;
     BufferedImage sprite;
 
     public Chest merchantChest;
+    Vector2 goldSpriteLocalPosition;
+    Vector2 chestCostSpriteLocalPosition;
 
-
+    Room merchantRoom;
 
     public Merchant(Map outside, Player player)
     {
+        name = "merchant";
         Room merchRoom = generateMerchantRoom(outside, player);
         sprite = Utils.loadSprite("/Sprites/world/outside/merchant.png");
         worldPosition = new Vector2(merchRoom.bounds.width / 2, merchRoom.bounds.height / 2 - 1);
         worldPosition = Vector2.roomToGlobalPosition(worldPosition, merchRoom);
-        
+        merchantRoom = merchRoom;
+        collisionOn = true;
+        collisionArea = new RectInt(new Vector2(0, 0), GamePanel.tileSize, GamePanel.tileSize);
+        collisionAreaMin_Default = collisionArea.min;
     }
 
     Room generateMerchantRoom(Map outside, Player player)
@@ -74,23 +81,19 @@ public class Merchant extends Entity
         merchantChest = new Chest(new Vector2(merchantRoom.bounds.min.x + merchantRoom.bounds.width / 2, merchantRoom.bounds.min.y + merchantRoom.bounds.height / 2 + 1), outside);
         GamePanel.printableObj.add(merchantChest);
 
+        goldSpriteLocalPosition = new Vector2(merchantRoom.bounds.width / 2 + 2, merchantRoom.bounds.height / 2 + 1);
+        chestCostSpriteLocalPosition = new Vector2(merchantRoom.bounds.width / 2 + 1, merchantRoom.bounds.height / 2 + 1);
+
         return merchantRoom;
     }
 
     public void draw(Graphics2D g2D, GamePanel gp)
     {
-        int screenX = worldPosition.x - GamePanel.player.worldPosition.x + GamePanel.player.screenPosition.x;
-        int screenY = worldPosition.y - GamePanel.player.worldPosition.y + GamePanel.player.screenPosition.y;
-
-        if( worldPosition.x + GamePanel.tileSize < GamePanel.player.worldPosition.x - GamePanel.player.screenPosition.x ||
-            worldPosition.x - GamePanel.tileSize > GamePanel.player.worldPosition.x + GamePanel.player.screenPosition.x ||
-            worldPosition.y + GamePanel.tileSize < GamePanel.player.worldPosition.y - GamePanel.player.screenPosition.y ||
-            worldPosition.y - GamePanel.tileSize > GamePanel.player.worldPosition.y + GamePanel.player.screenPosition.y)
-        {
-            return;
-        }
-
-        g2D.drawImage(sprite, screenX, screenY, GamePanel.tileSize, GamePanel.tileSize, null);
+        Engine.printSpriteOnWorld(g2D, GamePanel.player, worldPosition, sprite);
+        Engine.printSpriteOnWorld(g2D, GamePanel.player, Vector2.roomToGlobalPosition(goldSpriteLocalPosition, merchantRoom),
+            Inventory.allItemsSprite[Inventory.GOLD]);
+        Engine.printSpriteOnWorld(g2D, GamePanel.player, Vector2.roomToGlobalPosition(chestCostSpriteLocalPosition, merchantRoom), 
+            Inventory.allNumbers[randomChestCost]);
     }
     
 

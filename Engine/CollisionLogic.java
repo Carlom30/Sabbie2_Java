@@ -12,8 +12,8 @@ import Entity.Player;
 import Main.Utils;
 import Math.RectInt;
 import Math.Vector2;
-import Object.Projectile;
-import Object.SuperObject;
+import Obj.Projectile;
+import Obj.SuperObject;
 import World.Map;
 
 public class CollisionLogic 
@@ -35,7 +35,8 @@ public class CollisionLogic
 
 
     //questa funzione setta collisionOn al player, ma ritorna pure le due tile avanti alla direzione dove punta l'avatar
-    public List<Tile> checkForCollision_Tile(Entity entity, CollisionType type)
+    //inoltre, la lista di entity passata come parametro serve per testare collisioni con entità senza creare funzoini simili.
+    public List<Tile> checkForCollision_Tile(Entity entity, CollisionType type, List<Entity> collidedEntities)
     {
         entity.collisionArea.min = entity.collisionAreaMin_Default;
         List<Tile> collisionTiles = new ArrayList<Tile>();
@@ -219,49 +220,63 @@ public class CollisionLogic
         return checkObj;
     }
 
-    public void shoot_CollisionEnter(Projectile p)
+    public static List<Entity> playerWithEntityCollision(Player player, CollisionType type)
     {
-        if(GamePanel.player.linkedDungeon == null || GamePanel.player.linkedRoom.onRoomMonsters.isEmpty())
+        List<Entity> onCollisionEntities = new ArrayList<Entity>();
+        List<Entity> onMapEntities = Entity.getOnMapEntities(player);
+        
+        if(onMapEntities.isEmpty())
+            return onMapEntities;
+        
+        player.collisionArea.min = 
+            new Vector2((player.collisionArea.min.x + player.worldPosition.x), (player.collisionArea.min.y + player.worldPosition.y));
+
+
+        for(Entity e : onMapEntities)
         {
-            return;
-        }
-
-        boolean hasCollided = false;
-
-        for(Monster entity : GamePanel.player.linkedRoom.onRoomMonsters)
-        {
-            entity.collisionArea.min = 
-                new Vector2((entity.collisionArea.min.x + entity.worldPosition.x), (entity.collisionArea.min.y + entity.worldPosition.y));
-          
-            p.collisionArea.min =  
-                new Vector2((p.collisionArea.min.x + p.worldPos.x), (p.collisionArea.min.y + p.worldPos.y));
-
-
-                if(RectInt.intersect(entity.collisionArea, p.collisionArea))
+            e.collisionArea.min = 
+                new Vector2((e.collisionArea.min.x + e.worldPosition.x), (e.collisionArea.min.y + e.worldPosition.y));
+                
+                for(int i = 0; i < Utils.allDirections.length; i++)
                 {
-                    Utils.printf("Obj: " + p + " collision on: " + entity);
-                    hasCollided = true;
-                    //testing
-                    GamePanel.player.linkedRoom.onRoomMonsters.remove(entity);
-                    entity = null;
-
-                    for(int i = 0; i < GamePanel.player.linkedRoom.onRoomMonsterArray.length; i++)
+                    if(Utils.allDirections[i] == player.direction)
                     {
-                        if(GamePanel.player.linkedRoom.onRoomMonsterArray[i] == entity)
+                        Vector2 playerDirection = Vector2.scalarPerVector(Vector2.directionsVector[i], player.velocity);
+                        
+                        if(type == CollisionType.nextTiles)
                         {
-                            GamePanel.player.linkedRoom.onRoomMonsterArray[i] = null;
+                            player.collisionArea.min = Vector2.vectorSumm(player.collisionArea.min, playerDirection);
                         }
-                    }
-                    p.collisionArea.min = p.collsionAreaMin_Default;
-                    if(hasCollided)
-                    {
-                        GamePanel.player.shootedProjectile.remove(p);
-                        p = null;
+    
+                        if(RectInt.intersect(player.collisionArea, e.collisionArea))
+                        {
+                            //Utils.printf("entity: " + e + " collision on: " + Utils.allDirections[i]);
+                            onCollisionEntities.add(e);
+                            
+                            if(e.collisionOn && type == CollisionType.nextTiles)
+                            {
+                                player.collisionOn = true;
+                            }
+
+                            if(e.collisionOn && type == CollisionType.onStepTile)
+                            {
+                                player.collisionOn = e.name == "merchant" ? false : true;
+                            }
+                        }
+                        
                         break;
                     }
+                    
+                    //Utils.printf("direction not found in obj collision");
+                    
+                    //return null;
                 }
-            
-            //entity.collisionArea.min = entity.collisionAreaMin_Default;
+                e.collisionArea.min = e.collisionAreaMin_Default;
+                player.collisionArea.min = player.collisionAreaMin_Default;
         }
+
+        return onCollisionEntities;
+        
     }
+ 
 }

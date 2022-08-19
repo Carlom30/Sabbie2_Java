@@ -71,7 +71,7 @@ public class Player extends Entity
         this.kh = kh;
         
         linkedMap = startingMap;
-        lifePoints = 4;
+        lifePoints = lifePoints_max;
         velocity = 4; //velocity = 4 ma metto di più per testing
         worldPosition = new Vector2((linkedMap.width / 2) * GamePanel.tileSize, (linkedMap.height / 2) * GamePanel.tileSize); //new Vector2(gp.tileSize * 23, gp.tileSize * 21);
         spawnArea = new RectInt(new Vector2((linkedMap.width / 2) - 5, (linkedMap.height / 2) - 5), (linkedMap.width / 2) + 5, (linkedMap.height / 2) + 5);
@@ -127,17 +127,39 @@ public class Player extends Entity
     {
         SuperObject onCollisionObject = null;
         List<Tile> onCollisionTiles = null;
+        List<Entity> onCollisionEntities = null;
+        
+        if(Utils.onCollision_currentTime == -1)
+        {
+            onCollisionEntities = CollisionLogic.playerWithEntityCollision(this, CollisionType.onStepTile);
+            if(!onCollisionEntities.isEmpty())
+            {
+                Utils.onCollision_currentTime = System.currentTimeMillis();
+                int randIndex = Main.rand.nextInt(onCollisionEntities.size());
+    
+                Monster m = (Monster)onCollisionEntities.get(randIndex);
+                m.damagePlayer(this);
+    
+                Utils.printf("Monster: " + m + "damages you!\nyou hp: " + this.lifePoints);
+
+            }
+            
+        }
+
+        Monster.timeIsPassed(Utils.onCollision_currentTime, 1000);
+
 
         inventory.updateInventory();
 
         if(kh.downPressed || kh.leftPressed || kh.rightPressed || kh.upPressed)
         {
             onCollisionObject = CollisionLogic.checkForCollision_Obj(this, true);
+            onCollisionEntities = CollisionLogic.playerWithEntityCollision(this, CollisionType.nextTiles);
             
             if(kh.upPressed)
             {
                 direction = Directions.up;
-                gp.collision.checkForCollision_Tile(this, CollisionType.nextTiles);
+                gp.collision.checkForCollision_Tile(this, CollisionType.nextTiles, null);
                 if(collisionOn == false)
                 {
                     worldPosition.y -= velocity;
@@ -147,7 +169,7 @@ public class Player extends Entity
             else if(kh.downPressed)
             {
                 direction = Directions.down;
-                gp.collision.checkForCollision_Tile(this, CollisionType.nextTiles);
+                gp.collision.checkForCollision_Tile(this, CollisionType.nextTiles, null);
                 if(collisionOn == false)
                 {
                     worldPosition.y += velocity;
@@ -157,7 +179,7 @@ public class Player extends Entity
             else if(kh.leftPressed)
             {
                 direction = Directions.left;
-                gp.collision.checkForCollision_Tile(this, CollisionType.nextTiles);
+                gp.collision.checkForCollision_Tile(this, CollisionType.nextTiles, null);
                 if(collisionOn == false)
                 {
                     worldPosition.x -= velocity;
@@ -167,7 +189,7 @@ public class Player extends Entity
             else if(kh.rightPressed)
             {
                 direction = Directions.right;
-                gp.collision.checkForCollision_Tile(this, CollisionType.nextTiles);
+                gp.collision.checkForCollision_Tile(this, CollisionType.nextTiles, null);
                 if(collisionOn == false)
                 {
                     worldPosition.x += velocity;
@@ -201,7 +223,7 @@ public class Player extends Entity
                 Utils.currentTime = System.currentTimeMillis();
                 Utils.printf("e pressed");
                 
-                List<Tile> nextTiles = gp.collision.checkForCollision_Tile(this, CollisionType.nextTiles);
+                List<Tile> nextTiles = gp.collision.checkForCollision_Tile(this, CollisionType.nextTiles, null);
                 
                 Tile[] tileArray = new Tile[2]; //max element is 2
                 nextTiles.toArray(tileArray);
@@ -236,7 +258,7 @@ public class Player extends Entity
                 Utils.printf("h pressed");
                 if(inventory.modifyValue_healthPotion(-1) && lifePoints < lifePoints_max)
                 {
-                    this.setLifePoints(lifePoints_max - lifePoints);
+                    this.setLifePoints(lifePoints_max - lifePoints, lifePoints_max);
                 }
             }
             
@@ -249,7 +271,7 @@ public class Player extends Entity
             {
                 Utils.currentTime = System.currentTimeMillis();
                 onCollisionObject = CollisionLogic.checkForCollision_Obj(this, true);
-                onCollisionTiles = gp.collision.checkForCollision_Tile(this, CollisionType.nextTiles);
+                onCollisionTiles = gp.collision.checkForCollision_Tile(this, CollisionType.nextTiles, null);
 
                 if(!onCollisionTiles.isEmpty())
                 {
@@ -342,7 +364,7 @@ public class Player extends Entity
 
         if(linkedDungeon != null)
         {
-            List<Tile> tilesList =  gp.collision.checkForCollision_Tile(this, CollisionType.onStepTile);
+            List<Tile> tilesList =  gp.collision.checkForCollision_Tile(this, CollisionType.onStepTile, null);
             Tile[] tiles = new Tile[tilesList.size()];
             tilesList.toArray(tiles);
             int a = Main.rand.nextInt(tiles.length);
@@ -427,7 +449,7 @@ public class Player extends Entity
             
             Tile floor = new Tile(Utils.loadSprite("/Sprites/world/sand/sand0.png"));
             Utils.printf("BOOM!! at: " + boomDirection.toString());
-            if(Main.gp.currentMap == MapType.outside)
+            if(Main.gp.currentMapType == MapType.outside)
             {
                 map.tiles[tileVector.y * map.width + tileVector.x] = floor;
                 map.tiles[tileVector.y * map.width + tileVector.x].collision = false; //jsut declaration of intent

@@ -61,7 +61,7 @@ public class Inventory
         onInventory_healthPotion = 0;
         onInventory_electronic = 0;
         onInventory_explosive = 0;
-        onInventory_gold = 0;
+        onInventory_gold = 2;
         onInventory_log = 0;
     }
 

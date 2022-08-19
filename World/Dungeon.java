@@ -304,7 +304,7 @@ public class Dungeon
 
     public static void digDungeon(Player player)
     {
-        if(Main.gp.currentMap == MapType.dungeon)
+        if(Main.gp.currentMapType == MapType.dungeon)
         {
             Utils.printf("you cant dig inside a fucking dungeon");
             return;
@@ -316,7 +316,7 @@ public class Dungeon
             if(Utils.allDirections[i] == player.direction)
             {
                 ladderPosition = (Vector2.vectorSumm(player.worldPosition, Vector2.scalarPerVector((Vector2.directionsVector[i]), GamePanel.tileSize)));
-                List<Tile> tiles = Main.gp.collision.checkForCollision_Tile(player, CollisionType.nextTiles);
+                List<Tile> tiles = Main.gp.collision.checkForCollision_Tile(player, CollisionType.nextTiles, null);
                 
                 for(Tile t : tiles)
                 {

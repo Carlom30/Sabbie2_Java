@@ -61,7 +61,7 @@ public class Ladder extends SuperObject
         if(ladderType == LadderType.goesDown)
         {
             toRenderMap = this.linkedDungeon.area;
-            Main.gp.currentMap = MapType.dungeon;
+            Main.gp.currentMapType = MapType.dungeon;
             player.linkedDungeon = this.linkedDungeon;
             newPlayerPosition.x = (toRenderMap.width / 2) * Main.gp.tileSize;
             newPlayerPosition.y = (toRenderMap.height / 2) * Main.gp.tileSize;
@@ -70,7 +70,7 @@ public class Ladder extends SuperObject
         else if(ladderType == LadderType.goesUp)
         {
             toRenderMap = Main.gp.map;
-            Main.gp.currentMap = MapType.outside;
+            Main.gp.currentMapType = MapType.outside;
             newPlayerPosition = player.lastKnownOutsidePosition;
             player.linkedDungeon = null;
             player.linkedRoom = null;

@@ -1,13 +1,18 @@
 package Entity;
 import Math.*;
-import Object.SuperObject;
+import Obj.SuperObject;
+import World.Map.MapType;
 
 import java.awt.image.BufferedImage;
 import java.text.CollationElementIterator;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.text.Utilities;
 
 import Engine.GamePanel;
-
-
+import Main.Main;
+import Main.Utils;
 import Main.Utils.*;
 
 public abstract class Entity 
@@ -48,9 +53,46 @@ public abstract class Entity
         return this.lifePoints;
     }
 
-    public void setLifePoints(int summValue)
+    public void setLifePoints(int summValue, int maxLifePoints)
     {
         //per adesso is just:
+        if(lifePoints + summValue > maxLifePoints)
+        {
+            lifePoints = maxLifePoints;
+            return;
+        }
+
+        else if(lifePoints + summValue < 0)
+        {
+            lifePoints = 0;
+            return;
+        }
+
         lifePoints += summValue; //value può essere positivo o negativo
+    }
+
+    public static List<Entity> getOnMapEntities(Player player)
+    {
+        List<Entity> onMapEnts = new ArrayList<Entity>();
+        if(player.gp.currentMapType == MapType.outside)
+        {
+            onMapEnts.add(player.linkedMap.merchant);
+        }
+
+        else if(player.linkedRoom != null)
+        {
+            for(Monster m : player.linkedRoom.onRoomMonsters)
+            {
+                onMapEnts.add(m);
+            }
+        }
+
+        else
+        {
+            Utils.printf("something went terribly wrong");
+            return null;
+        }
+
+        return onMapEnts;
     }
 }

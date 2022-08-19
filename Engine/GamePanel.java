@@ -14,8 +14,8 @@ import Main.KeyHandler;
 import Main.Utils;
 import Main.Main.GameState;
 import Math.*;
-import Object.Projectile;
-import Object.SuperObject;
+import Obj.Projectile;
+import Obj.SuperObject;
 import World.*;
 import World.Map.MapType;
 import java.awt.image.BufferedImage;
@@ -61,7 +61,7 @@ public class GamePanel extends JPanel implements Runnable
     Dungeon dungeon;
 
     public Map map;
-    public MapType currentMap;
+    public MapType currentMapType;
     public CollisionLogic collision = new CollisionLogic(this);
     public static Player player = new Player();
     
@@ -109,7 +109,7 @@ public class GamePanel extends JPanel implements Runnable
         map = Map.generateOutsideWorld(this);
         printableObj = map.onMapObjects;
 
-        currentMap = MapType.outside;
+        currentMapType = MapType.outside;
         player.setDefaultValues(this, kh, map);
         map.addOutsideRooms(player, map);
     }

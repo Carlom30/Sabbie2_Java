@@ -2,6 +2,7 @@ package Entity;
 import java.util.List;
 import DataStructures.*;
 import Engine.CollisionLogic;
+import Engine.Engine;
 import Engine.GamePanel;
 import Engine.Tile;
 import Engine.CollisionLogic.CollisionType;
@@ -42,6 +43,7 @@ public class Monster extends Entity implements Runnable
         numberOfStep = 0;
         collisionArea = new RectInt(new Vector2(8, 16), 32, 32); 
         collisionAreaMin_Default = collisionArea.min;
+        collisionOn = true;
         worldPosition = new Vector2(roomPosition.x + room.bounds.min.x, roomPosition.y + room.bounds.min.y);
         direction = Directions.up;
         this.worldPosition.x *= GamePanel.tileSize;
@@ -73,22 +75,22 @@ public class Monster extends Entity implements Runnable
         //per prima cosa devo trovare questi due ragazzoni nel grafo
         if(gp == null)
         {
-            Utils.printf("gp is null");
+            //Utils.printf("gp is null");
             gp = Main.gp;
         }
 
-        List<Tile> onStepTiles_player = gp.collision.checkForCollision_Tile(player, CollisionType.onStepTile);
+        List<Tile> onStepTiles_player = gp.collision.checkForCollision_Tile(player, CollisionType.onStepTile, null);
 
         Tile randomTile = (Tile)onStepTiles_player.toArray()[Main.rand.nextInt(onStepTiles_player.size())];
         Vector2 onRoomPlayerPosition = randomTile.onRoomPosition;
 
         if(randomTile.linkedRoom == null || randomTile.linkedRoom != this.room)
         {
-            Utils.printf("the player is away...");
+            //Utils.printf("the player is away...");
             return;
         }
 
-        List<Tile> onStepTiles_monster = gp.collision.checkForCollision_Tile(this, CollisionType.onStepTile);
+        List<Tile> onStepTiles_monster = gp.collision.checkForCollision_Tile(this, CollisionType.onStepTile, null);
         Tile randomTile_monster = (Tile)onStepTiles_monster.toArray()[Main.rand.nextInt(onStepTiles_monster.size())];
         Vector2 onRoomMonsterPosition = randomTile_monster.onRoomPosition;
         
@@ -106,7 +108,7 @@ public class Monster extends Entity implements Runnable
 
         if(playerNode == null)
         {
-            Utils.printf("player not found");
+            //Utils.printf("player not found");
             return;
         }
 
@@ -114,13 +116,13 @@ public class Monster extends Entity implements Runnable
         {
             if(graph.V[i] == null)
             {
-                Utils.printf("node is null");
+                //Utils.printf("node is null");
                 return;
             }
 
             if(onRoomMonsterPosition == null)
             {
-                Utils.printf("position not found");
+                //Utils.printf("position not found");
                 return;
             }
 
@@ -133,7 +135,7 @@ public class Monster extends Entity implements Runnable
 
         if(source == null)
         {
-            Utils.printf("monster not found");
+            //Utils.printf("monster not found");
             return;
         }
         
@@ -167,7 +169,7 @@ public class Monster extends Entity implements Runnable
                 int offset = (source.coordinates.y + direction.y) * room.bounds.width + (source.coordinates.x + direction.x);
                 if(graph.unconnectedNodeMatrix[offset] != null && graph.unconnectedNodeMatrix[offset] == searchNode)
                 {
-                    Utils.printf("searchNode found: " + graph.unconnectedNodeMatrix[offset].coordinates.x + ", " + graph.unconnectedNodeMatrix[offset].coordinates.y);
+                    //Utils.printf("searchNode found: " + graph.unconnectedNodeMatrix[offset].coordinates.x + ", " + graph.unconnectedNodeMatrix[offset].coordinates.y);
                     onMoveDirection = Vector2.scalarPerVector(direction, 1);
                     this.direction = dir;
                 }
@@ -188,7 +190,7 @@ public class Monster extends Entity implements Runnable
     {
         if(player.linkedMap == null)
         {
-            Utils.printf("plyer's linked map is null");
+            //Utils.printf("plyer's linked map is null");
         }
         //potrei mettere questo conto nel costruttore, ma preferisco metterlo qui per chiarezza
         goalSteps = GamePanel.tileSize / velocity;
@@ -199,12 +201,12 @@ public class Monster extends Entity implements Runnable
             numberOfStep = 0;
             onMoveDirection = new Vector2(0, 0);
 
-            Utils.printf("monster ended one tile movement");
+            //Utils.printf("monster ended one tile movement");
             ComandareUnSeguace(player);
             onMoveDirection = Vector2.scalarPerVector(onMoveDirection, this.velocity);
         }
         
-        Main.gp.collision.checkForCollision_Tile(this, CollisionType.nextTiles);
+        Main.gp.collision.checkForCollision_Tile(this, CollisionType.nextTiles, null);
         
         if(collisionOn)
         {
@@ -238,6 +240,8 @@ public class Monster extends Entity implements Runnable
         }
 
         g2D.drawImage(this.idle, screenX, screenY, GamePanel.tileSize, GamePanel.tileSize, null);
+
+        //Engine.printSpriteOnWorld(g2D, player, worldPosition, sprite);
     }
 
     public void reset()
@@ -245,6 +249,24 @@ public class Monster extends Entity implements Runnable
         this.worldPosition = spawnPoint;
         //distruggo il thread perché non in uso
         monsterThread = null;
+    }
+
+    public void damagePlayer(Player player)
+    {
+        player.setLifePoints(-1, player.lifePoints_max);
+    }
+
+    public static boolean timeIsPassed(long lastTime, long timeToWait) //time to wait must be in millisec
+    {
+        long currentTime = System.currentTimeMillis();
+        long delta = currentTime - lastTime;
+        if(delta >= timeToWait)
+        {
+            Utils.onCollision_currentTime = -1;
+            return true;
+        }
+
+        return false;
     }
 
     public void startMonsterThread(Player player)
@@ -267,9 +289,7 @@ public class Monster extends Entity implements Runnable
             GamePanel.player.linkedRoom.onRoomMonsters.remove(this);
             GamePanel.printableObj.remove(onCollisionObj);
             GamePanel.player.shootedProjectile.remove((Projectile)onCollisionObj);
-            GamePanel.player.inventory.modifyValue_gold(Main.rand.nextInt(2) == 1 ? 1 : 0);
-        }
-
-        
+            GamePanel.player.inventory.modifyValue_gold(Main.rand.nextInt(3) == 1 ? 1 : 0);
+        } 
     }
 }
