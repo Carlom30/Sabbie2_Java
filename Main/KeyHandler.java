@@ -5,7 +5,6 @@ import java.awt.event.KeyListener;
 public class KeyHandler implements KeyListener
 {
     
-
     public boolean upPressed;
     public boolean downPressed;
     public boolean rightPressed;
@@ -22,6 +21,8 @@ public class KeyHandler implements KeyListener
     public boolean shootDown;
     public boolean shootRight;
     public boolean shootLeft;
+
+    public boolean returnPressed;
     
 
     public boolean keyIsPressed = false;
@@ -94,6 +95,11 @@ public class KeyHandler implements KeyListener
         else if(code == KeyEvent.VK_LEFT)
         {
             shootLeft = true;
+        }
+
+        else if(code == KeyEvent.VK_ENTER)
+        {
+            returnPressed = true;
         }
         
     }
@@ -169,6 +175,11 @@ public class KeyHandler implements KeyListener
             H_Pressed = false;
         }
         
+        else if(code == KeyEvent.VK_ENTER)
+        {
+            returnPressed = false;
+        }
+
     }
 
     @Override
@@ -178,9 +189,6 @@ public class KeyHandler implements KeyListener
         
     }
 
-    public static void interact()
-    {
-        return;
-    }
+    
     
 }

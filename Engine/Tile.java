@@ -22,7 +22,7 @@ public class Tile
     //tile è riferito alle tile della mappa e non di ciò che non è mappa
     public BufferedImage sprite;
     public boolean collision = false;
-    public boolean isElevated; //terza dimenzione per il perlin noise
+    public boolean treasureTile; //terza dimenzione per il perlin noise
 
     public Map connectedMap;
     public Room linkedRoom;

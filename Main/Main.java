@@ -1,26 +1,25 @@
 package Main;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
-
 import java.util.Random;
 
 import Engine.GamePanel;
-import Obj.remoteTnt;
-import World.Dungeon;
 
 public class Main 
 {
     public enum GameState
     {
-        inMenu,
         inGame,
-        onInventory,
-        onLootMenu,
+        title
     }
     
     public static GamePanel gp;
     public static Random rand = new Random();
     public static void main(String[] args) 
+    {   
+        startNewGame();
+    }
+
+    public static void startNewGame()
     {
         rand = new Random();
         long seed = rand.nextLong();

@@ -29,7 +29,7 @@ public class Dungeon
     public int chestRoomNumb;
     public Room[] memArea;
     public Map area;
-
+    public boolean treasureDungeon;
 
     //aggiungo una lista di rooms per tenere traccia di tutte le stanze, anche quelle allocate in game
     public List<Room> rooms= new ArrayList<Room>();
@@ -54,9 +54,9 @@ public class Dungeon
 
     int ALL_DIRECTIONS;
 
-    public Dungeon()
+    public Dungeon(boolean hasTreaure)
     {
-
+        treasureDungeon = hasTreaure;
         ALL_DIRECTIONS = Utils.allDirections.length;
         roomNumb = Main.rand.nextInt((maxRoom - minRoom)) + minRoom;
         
@@ -282,7 +282,7 @@ public class Dungeon
             Room newRoom = new Room(new RectInt(calculateRoomMin(mainRoom, randDir), roomWidth, roomHeight), newRoomDoors, (i < roomNumb) ? RoomType.normal : RoomType.chest, area);
             addRoomToMemArea(mainRoom, newRoom, randDir);
             newRoom.drawRoomOnMap(area);
-            newRoom.addMonsters(Main.rand.nextInt(3), null);
+            newRoom.addMonsters( 2/*Main.rand.nextInt(3)*/, null);
             //e adesso la aggiungo alle varie struture dati
             rooms.add(newRoom);
             
@@ -302,12 +302,12 @@ public class Dungeon
         return;
     }
 
-    public static void digDungeon(Player player)
+    public static Dungeon digDungeon(Player player)
     {
         if(Main.gp.currentMapType == MapType.dungeon)
         {
             Utils.printf("you cant dig inside a fucking dungeon");
-            return;
+            return null;
         }
         player.lastKnownOutsidePosition = player.worldPosition;
         Vector2 ladderPosition = new Vector2(0, 0);
@@ -323,7 +323,7 @@ public class Dungeon
                     if(t.collision == true)
                     {
                         //Utils.printf("collision detected, no ladder, sorry");
-                        return;
+                        return null;
                     }
                 }
                 
@@ -331,9 +331,10 @@ public class Dungeon
             }
         }
 
-        Dungeon dungeon = new Dungeon();
+        Dungeon dungeon = new Dungeon(false);
         dungeon.generateDungeonRooms();
 
         Ladder ladder = new Ladder(ladderPosition, LadderType.goesDown, player.linkedMap, dungeon);
+        return dungeon;
     } 
 }

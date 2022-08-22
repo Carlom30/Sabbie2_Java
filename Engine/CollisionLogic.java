@@ -2,17 +2,11 @@ package Engine;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.plaf.metal.MetalBorders.PaletteBorder;
-
-import Engine.Tile.TileType;
 import Entity.Entity;
-import Entity.Monster;
 import Entity.Player;
 import Main.Utils;
 import Math.RectInt;
 import Math.Vector2;
-import Obj.Projectile;
 import Obj.SuperObject;
 import World.Map;
 
@@ -48,11 +42,11 @@ public class CollisionLogic
         int topCollisionY = entity.worldPosition.y + entity.collisionArea.min.y; 
         int bottomCollisionY = entity.worldPosition.y + entity.collisionArea.min.y + entity.collisionArea.height;
         
-        int entityLeftCol = leftCollisionX / gp.tileSize;
-        int entityRightCol = rightCollisionX / gp.tileSize;
+        int entityLeftCol = leftCollisionX / GamePanel.tileSize;
+        int entityRightCol = rightCollisionX / GamePanel.tileSize;
 
-        int entityTopRow = topCollisionY / gp.tileSize;
-        int entityBottomRow = bottomCollisionY / gp.tileSize;
+        int entityTopRow = topCollisionY / GamePanel.tileSize;
+        int entityBottomRow = bottomCollisionY / GamePanel.tileSize;
 
         int offsetTileOne = 0;
         int offsetTileTwo = 0;
@@ -104,7 +98,7 @@ public class CollisionLogic
                 in java è in alto a sinistra, quindi se il player
                 si muove in alto, la Y diminuisce
             */
-                entityTopRow = (topCollisionY - entity.velocity) / gp.tileSize; //il rounding non fa differenza, mi troverò sempre nella stessa tile
+                entityTopRow = (topCollisionY - entity.velocity) / GamePanel.tileSize; //il rounding non fa differenza, mi troverò sempre nella stessa tile
                 offsetTileOne = entityTopRow * map.width + entityLeftCol;
                 offsetTileTwo = entityTopRow * map.width + entityRightCol;
 
@@ -114,7 +108,7 @@ public class CollisionLogic
             //il resto ha la stessa logica di sopra
             case down:
             {
-                entityBottomRow = (bottomCollisionY + entity.velocity) / gp.tileSize;
+                entityBottomRow = (bottomCollisionY + entity.velocity) / GamePanel.tileSize;
                 offsetTileOne = entityBottomRow * map.width + entityLeftCol;
                 offsetTileTwo = entityBottomRow * map.width + entityRightCol;
 
@@ -123,7 +117,7 @@ public class CollisionLogic
 
             case right:
             {
-                entityRightCol = (rightCollisionX + entity.velocity) / gp.tileSize;
+                entityRightCol = (rightCollisionX + entity.velocity) / GamePanel.tileSize;
                 offsetTileOne = entityTopRow * map.width + entityRightCol;
                 offsetTileTwo = entityBottomRow * map.width + entityRightCol;
 
@@ -132,7 +126,7 @@ public class CollisionLogic
 
             case left:
             {
-                entityLeftCol = (leftCollisionX - entity.velocity) / gp.tileSize;
+                entityLeftCol = (leftCollisionX - entity.velocity) / GamePanel.tileSize;
                 offsetTileOne = entityTopRow * map.width + entityLeftCol;
                 offsetTileTwo = entityBottomRow * map.width + entityLeftCol;
 
@@ -225,6 +219,7 @@ public class CollisionLogic
         List<Entity> onCollisionEntities = new ArrayList<Entity>();
         List<Entity> onMapEntities = Entity.getOnMapEntities(player);
         
+
         if(onMapEntities.isEmpty())
             return onMapEntities;
         
@@ -234,6 +229,7 @@ public class CollisionLogic
 
         for(Entity e : onMapEntities)
         {
+            //Utils.printf(e.toString());
             e.collisionArea.min = 
                 new Vector2((e.collisionArea.min.x + e.worldPosition.x), (e.collisionArea.min.y + e.worldPosition.y));
                 
@@ -247,28 +243,26 @@ public class CollisionLogic
                         {
                             player.collisionArea.min = Vector2.vectorSumm(player.collisionArea.min, playerDirection);
                         }
-    
-                        if(RectInt.intersect(player.collisionArea, e.collisionArea))
-                        {
-                            //Utils.printf("entity: " + e + " collision on: " + Utils.allDirections[i]);
-                            onCollisionEntities.add(e);
-                            
-                            if(e.collisionOn && type == CollisionType.nextTiles)
-                            {
-                                player.collisionOn = true;
-                            }
-
-                            if(e.collisionOn && type == CollisionType.onStepTile)
-                            {
-                                player.collisionOn = e.name == "merchant" ? false : true;
-                            }
-                        }
                         
-                        break;
                     }
-                    
-                    //Utils.printf("direction not found in obj collision");
-                    
+
+                    if(RectInt.intersect(player.collisionArea, e.collisionArea) && !onCollisionEntities.contains(e))
+                    {
+                        //Utils.printf("entity: " + e + " collision on: " + Utils.allDirections[i]);
+                        onCollisionEntities.add(e);
+                        Utils.printf("entity: " + e + " " + e.collisionArea.min.x + ", " + e.collisionArea.min.y);
+                        
+                        if(e.collisionOn && type == CollisionType.nextTiles)
+                        {
+                            player.collisionOn = true;
+                        }
+
+                        if(e.collisionOn && type == CollisionType.onStepTile)
+                        {
+                            player.collisionOn = e.name == "merchant" ? false : true;
+                        }
+                    }
+                       
                     //return null;
                 }
                 e.collisionArea.min = e.collisionAreaMin_Default;

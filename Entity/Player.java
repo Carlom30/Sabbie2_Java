@@ -1,5 +1,6 @@
 package Entity;
 import Main.*;
+import Main.Main.GameState;
 import Main.Utils.Directions;
 import Math.RectInt;
 import Math.Vector2;
@@ -13,20 +14,11 @@ import World.Map;
 import World.Room;
 import World.Map.MapType;
 import World.Room.RoomType;
-import Entity.Inventory;
-
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
-import javax.swing.text.DocumentFilter;
-import javax.swing.text.Utilities;
-
-import org.w3c.dom.css.Rect;
-
 import Engine.*;
 import Engine.CollisionLogic.CollisionType;
 import Engine.Tile.TileType;
@@ -49,6 +41,7 @@ public class Player extends Entity
     final public int lifePoints_max = 5;
 
     public boolean DEV_MODE;
+    public boolean isDead = false;
 
     public BufferedImage heart;
     public BufferedImage healtBar_base;
@@ -123,33 +116,34 @@ public class Player extends Entity
         readStatusSprites();
     }
     
-    public void update()
+    public void update(Player player)
     {
+        if(player.lifePoints <= 0)
+        {
+            isDead = true;
+            GamePanel.gameState = GameState.title;
+        }
         SuperObject onCollisionObject = null;
         List<Tile> onCollisionTiles = null;
         List<Entity> onCollisionEntities = null;
         
-        if(Utils.onCollision_currentTime == -1)
-        {
-            onCollisionEntities = CollisionLogic.playerWithEntityCollision(this, CollisionType.onStepTile);
-            if(!onCollisionEntities.isEmpty())
-            {
-                Utils.onCollision_currentTime = System.currentTimeMillis();
-                int randIndex = Main.rand.nextInt(onCollisionEntities.size());
-    
-                Monster m = (Monster)onCollisionEntities.get(randIndex);
-                m.damagePlayer(this);
-    
-                Utils.printf("Monster: " + m + "damages you!\nyou hp: " + this.lifePoints);
+        inventory.updateInventory();
 
-            }
-            
+        if(kh.returnPressed && GamePanel.gameState == GameState.title && lifePoints > 0)
+        {
+            GamePanel.gameState = GameState.inGame;
         }
 
-        Monster.timeIsPassed(Utils.onCollision_currentTime, 1000);
+        if(kh.returnPressed && GamePanel.gameState == GameState.title && player.isDead)
+        {
+            Main.startNewGame();
+            GamePanel.gameState = GameState.inGame;
+        }
 
-
-        inventory.updateInventory();
+        if(GamePanel.gameState == GameState.title)
+        {
+            return;
+        }
 
         if(kh.downPressed || kh.leftPressed || kh.rightPressed || kh.upPressed)
         {
@@ -267,11 +261,14 @@ public class Player extends Entity
 
         else if(kh.C_Pressed)
         {
+            List<Tile> onStepTiles = gp.collision.checkForCollision_Tile(this, CollisionType.onStepTile, null);
+            boolean hasTreasure = false;
             if(Utils.currentTime == -1)
             {
                 Utils.currentTime = System.currentTimeMillis();
                 onCollisionObject = CollisionLogic.checkForCollision_Obj(this, true);
                 onCollisionTiles = gp.collision.checkForCollision_Tile(this, CollisionType.nextTiles, null);
+                //onCollisionEntities = CollisionLogic.playerWithEntityCollision(this, CollisionType.nextTiles);
 
                 if(!onCollisionTiles.isEmpty())
                 {
@@ -283,14 +280,29 @@ public class Player extends Entity
                             return;
                         }
                     }
-            
                 }
                 
-                if(onCollisionObject == null)
+                for(Tile t : onStepTiles)
+                {
+                    if(t.treasureTile)
+                    {
+                        hasTreasure = true;
+                    }
+                }
+
+                if(onCollisionObject == null && CollisionLogic.playerWithEntityCollision(this, CollisionType.nextTiles).isEmpty())
                 {
                     Utils.printf("c pressed");
                     if(onCollisionTiles.isEmpty() && inventory.modifyValue_log(-3))
-                        Dungeon.digDungeon(this);
+                    {
+                        Dungeon d = Dungeon.digDungeon(this);
+                        if(d != null && hasTreasure)
+                        {
+                            d.treasureDungeon = true;
+                            Utils.printf("treasure!");
+                        }
+                    }    
+
                     
                 }
 
@@ -312,16 +324,24 @@ public class Player extends Entity
                 Utils.currentTime = System.currentTimeMillis();
                 Utils.printf("E pressed");
                 onCollisionObject = CollisionLogic.checkForCollision_Obj(this, true);
+                onCollisionEntities = CollisionLogic.playerWithEntityCollision(this, CollisionType.nextTiles);
                 if(onCollisionObject == null)
                 {
                     Utils.printf("obj not found");
-                    return;
                 }
 
-                if(onCollisionObject.interact(this))
+                if(onCollisionObject != null && onCollisionObject.interact(this))
                 {
                     GamePanel.printableObj.remove(onCollisionObject);
                     onCollisionObject = null;
+                }
+
+                if(!onCollisionEntities.isEmpty() && gp.currentMapType == MapType.outside)
+                {
+                    //l'unica interazione possibile outside è quella con il mercante,
+                    //quindi se non è empty, è il mercante
+                    Merchant m = (Merchant)onCollisionEntities.iterator().next();
+                    m.interact(this);
                 }
             }
             Utils.timeIsPassed(Utils.currentTime, 500);
@@ -449,6 +469,8 @@ public class Player extends Entity
             
             Tile floor = new Tile(Utils.loadSprite("/Sprites/world/sand/sand0.png"));
             Utils.printf("BOOM!! at: " + boomDirection.toString());
+
+            //caso outside.
             if(Main.gp.currentMapType == MapType.outside)
             {
                 map.tiles[tileVector.y * map.width + tileVector.x] = floor;
@@ -463,6 +485,7 @@ public class Player extends Entity
                 return;
             }
 
+            //case onDungeon
             List<Directions> busyDir = new ArrayList<Directions>();
             List<Room> nearRooms = dungeon.checkForNeighbors(mainRoom, busyDir);
 
@@ -478,7 +501,16 @@ public class Player extends Entity
                 RectInt bounds = new RectInt(dungeon.calculateRoomMin(mainRoom, boomDirection), dungeon.roomWidth, dungeon.roomHeight);
                 /*List<Directions> doorDir = new ArrayList<Directions>();
                 doorDir.add(Utils.getOppositeDirection(boomDirection));*/
-                Room newRoom = new Room(bounds, null, (Main.rand.nextInt(100) + 1) <= 35 ? RoomType.normal : RoomType.chest, linkedDungeon.area);
+                RoomType type = (Main.rand.nextInt(100) + 1) <= 35 ? RoomType.normal : RoomType.chest;
+
+                if(dungeon.treasureDungeon)
+                {
+                    type = Main.rand.nextInt(100) <= 20 ? RoomType.treasure : type;
+                    Utils.printf("treasure room");
+                }
+
+                Room newRoom = new Room(bounds, null, type, linkedDungeon.area);
+
                 dungeon.addRoomToMemArea(mainRoom, newRoom, boomDirection);
                 newRoom.drawRoomOnMap(map);
             }

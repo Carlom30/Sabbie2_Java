@@ -1,1 +1,1 @@
-solve player segFault on monster thread
+ogni monster dovrebbe checkare indipendentemente le sue collisioni

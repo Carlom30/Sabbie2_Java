@@ -31,6 +31,8 @@ public class Monster extends Entity implements Runnable
     int numberOfStep;
     Vector2 onMoveDirection = new Vector2(0, 0);
 
+    public boolean hitPlayer = false;
+
     int a = 0;
 
     final int lifePoint_max = Main.rand.nextInt(lifePoints_Range) + 1;
@@ -38,10 +40,10 @@ public class Monster extends Entity implements Runnable
     {
         this.room = room;
 
-        velocity = Main.rand.nextInt(5) + 1; //as fast as character
+        velocity = Main.rand.nextInt(5) + 2; //as fast as character
         lifePoints = lifePoint_max;
         numberOfStep = 0;
-        collisionArea = new RectInt(new Vector2(8, 16), 32, 32); 
+        collisionArea = new RectInt(new Vector2(8, 18), 32, 32); 
         collisionAreaMin_Default = collisionArea.min;
         collisionOn = true;
         worldPosition = new Vector2(roomPosition.x + room.bounds.min.x, roomPosition.y + room.bounds.min.y);
@@ -210,7 +212,7 @@ public class Monster extends Entity implements Runnable
         
         if(collisionOn)
         {
-            collisionOn = false;
+            //collisionOn = false;
             //return;
         }
 
@@ -218,6 +220,35 @@ public class Monster extends Entity implements Runnable
         numberOfStep++;
         a++;
 
+    }
+
+    public boolean checkForPlayerCollision(Player player)
+    {
+        boolean collision = false;
+        
+        player.collisionArea.min = 
+            new Vector2((player.collisionArea.min.x + player.worldPosition.x), (player.collisionArea.min.y + player.worldPosition.y));
+
+        for(int i = 0; i < Utils.allDirections.length; i++)
+        {
+            collisionArea.min = new Vector2((collisionArea.min.x + worldPosition.x), (collisionArea.min.y + worldPosition.y));
+
+            Vector2 dir = Vector2.scalarPerVector(Vector2.directionsVector[i], velocity);
+            collisionArea.min = Vector2.vectorSumm(collisionArea.min, dir);
+
+
+            if(RectInt.intersect(player.collisionArea, collisionArea))
+            {
+                //Utils.printf("entity: " + e + " collision on: " + Utils.allDirections[i]);
+                //Utils.printf("entity: " + this + " " + collisionArea.min.x + ", " + collisionArea.min.y);
+                collision = true;
+            }
+
+            collisionArea.min = collisionAreaMin_Default;
+        }
+        
+        player.collisionArea.min = player.collisionAreaMin_Default;
+        return collision;
     }
 
     public void draw(Graphics2D g2D)
@@ -279,8 +310,30 @@ public class Monster extends Entity implements Runnable
     public void run() 
     {   
         Player player = GamePanel.player;
+       
         if(player.linkedRoom != null && player.linkedRoom == room)
+        {
+            if(Utils.onCollision_currentTime == -1)
+            {
+                hitPlayer = false;
+                if(checkForPlayerCollision(player))
+                {
+                    Utils.onCollision_currentTime = System.currentTimeMillis();
+                    hitPlayer = true;
+                    damagePlayer(player);
+        
+                    Utils.printf("Monster: " + this + "damages you!\nyou hp: " + player.lifePoints);
+
+                }
+            }  
+        }
+
+        Monster.timeIsPassed(Utils.onCollision_currentTime, 1000);
+
+        if(!hitPlayer)
+        {
             moveMonster(player); 
+        }
         
         SuperObject onCollisionObj = CollisionLogic.checkForCollision_Obj(this, false);
         if(onCollisionObj != null && onCollisionObj.name == "p")
@@ -289,7 +342,7 @@ public class Monster extends Entity implements Runnable
             GamePanel.player.linkedRoom.onRoomMonsters.remove(this);
             GamePanel.printableObj.remove(onCollisionObj);
             GamePanel.player.shootedProjectile.remove((Projectile)onCollisionObj);
-            GamePanel.player.inventory.modifyValue_gold(Main.rand.nextInt(3) == 1 ? 1 : 0);
+            GamePanel.player.inventory.modifyValue_gold(Main.rand.nextInt(2) == 1 ? 1 : 0);
         } 
     }
 }

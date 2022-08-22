@@ -2,6 +2,7 @@ package World;
 
 import Math.*;
 import Obj.Chest;
+import Obj.yendorAmulet;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -24,7 +25,8 @@ public class Room
     {
         normal,
         chest,
-        merchant
+        merchant,
+        treasure
     };
 
     public RectInt bounds;
@@ -34,7 +36,7 @@ public class Room
     public List<Monster> onRoomMonsters;
     public Monster[] onRoomMonsterArray;
 
-    RoomType type;
+    public RoomType type;
 
     Vector2 onDungeonMemPosition;
 
@@ -99,6 +101,13 @@ public class Room
             globalChestPosition.y = bounds.min.y + bounds.height / 2;
 
             Chest roomChest = new Chest(globalChestPosition, map);
+        }
+
+        if(type == RoomType.treasure)
+        {
+            //add treasure
+            yendorAmulet yendor = new yendorAmulet(this, GamePanel.player.linkedDungeon);
+            GamePanel.player.linkedMap.onMapObjects.add(yendor);
         }
     }
 

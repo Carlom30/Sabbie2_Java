@@ -63,10 +63,12 @@ public class Map
             for(int j = 0; j < width; j++)
             {
                 int offset = i * width + j;
+                tiles[offset].type = TileType.terrain;
                 if(i == 0 || i == height - 1 || j == 0 || j == width - 1)
                 {
                     tiles[offset] = new Tile(Utils.loadSprite("/Sprites/world/outside/maplimit.png"));
                     tiles[offset].collision = true;
+                    tiles[offset].type = TileType.background;
                 }
             }
         }
@@ -99,6 +101,7 @@ public class Map
 
     public static Map generateOutsideWorld(GamePanel gp)
     {
+        
         Map outside = new Map(gp, gp.maxWorldColumn, gp.maxWorldRow);
         outside.fillMapWithOneTile(new Tile(Utils.loadSprite("/Sprites/world/sand/sand3.png")));
         outside.onOutsideRooms = new ArrayList<Room>();

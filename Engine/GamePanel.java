@@ -29,7 +29,7 @@ import java.awt.image.BufferedImage;
 public class GamePanel extends JPanel implements Runnable
 {
     //screen settings
-
+    public static boolean playerHasWon = false;
     //tilesize è la dimenzione finale di una tile (in pixel ovviamente)
     final public static int originalTileSize = 16; // 16 x 16 tiles
     //16x16 è comunque un po piccolo in generale per i monitor moderni quindi
@@ -55,7 +55,7 @@ public class GamePanel extends JPanel implements Runnable
     public KeyHandler kh = new KeyHandler();
     Thread gameThread;
     
-    GameState gameState;
+    public static GameState gameState = GameState.title;
 
     //testing
     Dungeon dungeon;
@@ -81,30 +81,14 @@ public class GamePanel extends JPanel implements Runnable
 
     public void init()
     {
-        Map pmap = new Map(this, screenWidth, screenHeight);
-        BufferedImage zero = Utils.loadSprite("/Sprites/gradient/zero.png");
-        BufferedImage one = Utils.loadSprite("/Sprites/gradient/positive.png");
-        for(int i = 0; i < screenHeight; i++)
-        {
-            for(int j = 0; j < screenWidth; j++)
-            {
-                int offset = i * screenWidth + j;
-                float value = PerlinNoise.perlin(j, i);
-                value = value * 0.5f + 0.5f;
-                int intValue = Math.round(value);
-
-                pmap.tiles[offset] = new Tile(intValue == 0 ? zero : one);
-
-                //pmap.tiles[offset]
-            }
-        }
 
         //up is testing
-        gameState = GameState.inGame;
+        gameState = GameState.title;
         //here goes the game setup
         //map = new Map(this, maxWorldColumn, maxWorldRow);
         //map.fillMapWithOneTile(new Tile(Utils.loadSprite("/Sprites/world/sand/sand3.png")));
         //PerlinNoise.noise(map);
+        player = new Player();
         player.worldPosition = new Vector2((maxWorldColumn / 2), (maxWorldRow / 2));
         map = Map.generateOutsideWorld(this);
         printableObj = map.onMapObjects;
@@ -118,6 +102,7 @@ public class GamePanel extends JPanel implements Runnable
     {
         gameThread = new Thread(this); //this perché gli sto passando lo stesso gamepanel (odio la programmazione ad oggetti :D)
         gameThread.start(); //start chiama run as usually
+
     }
     
     @Override
@@ -157,6 +142,7 @@ public class GamePanel extends JPanel implements Runnable
                 drawCount = 0;
                 timer = 0;
             }
+
         }
 
         //the game loop works like: 
@@ -166,16 +152,30 @@ public class GamePanel extends JPanel implements Runnable
 
     public void paintComponent(Graphics g) //this thing is from java
     {
-        if(player.linkedMap == null)
-            return;
-        super.paintComponent(g); //questo va fatto ogni volta che si utilizza paintComponent
         Graphics2D g2 = (Graphics2D)g; //ofc graphics2d che fa override di graphics
-                                       //grpahics2d è ottimo per il 2d ofc, ha più funzioni inerenti
-        Engine.printMap(player.linkedMap, g2);
-        Engine.printMonsters(g2, player.linkedRoom == null ? null : player.linkedRoom.onRoomMonsters);
-        Engine.printObjects(g2);
-        Engine.printPlayer(g2, player);
-        Engine.printHUD(g2, player);
+        super.paintComponent(g); //questo va fatto ogni volta che si utilizza paintComponent
+        if(gameState == GameState.title)
+        {
+            if(GamePanel.player.isDead)
+            {
+                Engine.printEndGameScreen(g2);
+            }
+
+            else
+                Engine.printTitleScreen(g2);
+        }
+
+        else
+        {
+            if(player.linkedMap == null)
+                return;
+                                           //grpahics2d è ottimo per il 2d ofc, ha più funzioni inerenti
+            Engine.printMap(player.linkedMap, g2);
+            Engine.printMonsters(g2, player.linkedRoom == null ? null : player.linkedRoom.onRoomMonsters);
+            Engine.printObjects(g2);
+            Engine.printPlayer(g2, player);
+            Engine.printHUD(g2, player);
+        }
         
         //g2.dispose();
     }
@@ -232,7 +232,7 @@ public class GamePanel extends JPanel implements Runnable
 
     public void update()
     {
-        player.update();
+        player.update(player);
         updateWorld();
     }
 }

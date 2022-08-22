@@ -84,6 +84,7 @@ public abstract class Entity
             for(Monster m : player.linkedRoom.onRoomMonsters)
             {
                 onMapEnts.add(m);
+                //Utils.printf("monster " + m + " added");
             }
         }
 

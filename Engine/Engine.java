@@ -14,6 +14,8 @@ import Obj.SuperObject.objecType;
 import World.Map;
 import World.Map.MapType;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 
 
@@ -265,5 +267,48 @@ public class Engine
         }
 
         g2D.drawImage(sprite, screenX, screenY, GamePanel.tileSize, GamePanel.tileSize, null);
+    }
+
+
+    public static int centeredText_X(String txt, Graphics2D g2D)
+    {
+        int width = (int)g2D.getFontMetrics().getStringBounds(txt, g2D).getWidth();
+        int x = GamePanel.screenWidth / 2 - width / 2;
+
+        return x;
+    }
+
+    public static void printTitleScreen(Graphics2D g2D)
+    {
+        g2D.setFont(g2D.getFont().deriveFont(Font.BOLD, 90f));
+        String txt = "SANDS";
+        Vector2 coordinates = new Vector2(centeredText_X(txt, g2D), GamePanel.tileSize * 3);
+
+        g2D.setColor(Color.white);
+        g2D.drawString(txt, coordinates.x, coordinates.y);
+
+        g2D.setFont(g2D.getFont().deriveFont(Font.BOLD, 30f));
+        String press = "Press Return to start a new game";
+        coordinates = new Vector2(centeredText_X(press, g2D), GamePanel.tileSize * 6);
+
+        g2D.setColor(Color.white);
+        g2D.drawString(press, coordinates.x, coordinates.y);
+    }
+
+    public static void printEndGameScreen(Graphics2D g2D)
+    {
+        g2D.setFont(g2D.getFont().deriveFont(Font.BOLD, 90f));
+        String txt = "You Died!";
+        Vector2 coordinates = new Vector2(centeredText_X(txt, g2D), GamePanel.tileSize * 3);
+
+        g2D.setColor(Color.red);
+        g2D.drawString(txt, coordinates.x, coordinates.y);
+
+        g2D.setFont(g2D.getFont().deriveFont(Font.BOLD, 30f));
+        String press = "Press Return to start a new game";
+        coordinates = new Vector2(centeredText_X(press, g2D), GamePanel.tileSize * 6);
+
+        g2D.setColor(Color.white);
+        g2D.drawString(press, coordinates.x, coordinates.y);
     }
 }

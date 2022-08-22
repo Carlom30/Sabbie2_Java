@@ -2,6 +2,8 @@ package Entity;
 
 import Engine.Engine;
 import Engine.GamePanel;
+import Engine.Tile;
+import Engine.Tile.TileType;
 import Main.Main;
 import Main.Utils;
 import Math.RectInt;
@@ -17,8 +19,8 @@ import java.awt.Graphics2D;
 
 public class Merchant extends Entity
 {
-    
-    final int randomGoldValueWanted = Main.rand.nextInt(9) + 1;
+    final int randomGoldValueWanted = Main.rand.nextInt(7) + 3;
+    final int randomGoldWanted = randomGoldValueWanted * (Main.rand.nextInt(9) + 1);
     public int goldObtained = 0;
     public int randomChestCost = Main.rand.nextInt(4) + 2; //[2, 5]
     int roomWidth = 9;
@@ -28,6 +30,7 @@ public class Merchant extends Entity
     public Chest merchantChest;
     Vector2 goldSpriteLocalPosition;
     Vector2 chestCostSpriteLocalPosition;
+    Vector2 goldWantedLocalPosition;
 
     Room merchantRoom;
 
@@ -42,6 +45,7 @@ public class Merchant extends Entity
         collisionOn = true;
         collisionArea = new RectInt(new Vector2(0, 0), GamePanel.tileSize, GamePanel.tileSize);
         collisionAreaMin_Default = collisionArea.min;
+        
     }
 
     Room generateMerchantRoom(Map outside, Player player)
@@ -83,6 +87,7 @@ public class Merchant extends Entity
 
         goldSpriteLocalPosition = new Vector2(merchantRoom.bounds.width / 2 + 2, merchantRoom.bounds.height / 2 + 1);
         chestCostSpriteLocalPosition = new Vector2(merchantRoom.bounds.width / 2 + 1, merchantRoom.bounds.height / 2 + 1);
+        goldWantedLocalPosition = new Vector2(merchantRoom.bounds.width / 2, merchantRoom.bounds.height / 2 - 2);
 
         return merchantRoom;
     }
@@ -94,7 +99,37 @@ public class Merchant extends Entity
             Inventory.allItemsSprite[Inventory.GOLD]);
         Engine.printSpriteOnWorld(g2D, GamePanel.player, Vector2.roomToGlobalPosition(chestCostSpriteLocalPosition, merchantRoom), 
             Inventory.allNumbers[randomChestCost]);
+        Engine.printSpriteOnWorld(g2D, GamePanel.player, Vector2.roomToGlobalPosition(goldWantedLocalPosition, merchantRoom), 
+            Inventory.allNumbers[(randomGoldWanted - goldObtained) / randomGoldValueWanted]);
     }
     
+    public void interact(Player player)
+    {
+        if(player.inventory.modifyValue_gold(-(randomGoldValueWanted)))
+        {
+            goldObtained += randomGoldValueWanted;
+        }
+
+        if(goldObtained < randomGoldWanted)
+        {
+            return;
+        }
+
+        Map map = player.linkedMap;
+        int i = 0;
+        int j = 0;
+        int k = 0;
+        do
+        {
+            i = Main.rand.nextInt(map.height) + 1;
+            j = Main.rand.nextInt(map.width) + 1;
+            k = i * map.width + j;
+        }
+        while(map.tiles[k].type != TileType.terrain);
+
+        map.tiles[k] = new Tile(Utils.loadSprite("/Sprites/world/sand/redx.png"));
+        map.tiles[k].treasureTile = true;
+        Utils.printf("red x at (" + j + ", " + i + ")");
+    }
 
 }
