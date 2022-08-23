@@ -31,6 +31,8 @@ public class Dungeon
     public Map area;
     public boolean treasureDungeon;
 
+    public Ladder linkedLadder;
+
     //aggiungo una lista di rooms per tenere traccia di tutte le stanze, anche quelle allocate in game
     public List<Room> rooms= new ArrayList<Room>();
     public List<SuperObject> onDungeonObjects = new ArrayList<>();
@@ -38,8 +40,8 @@ public class Dungeon
     //testing 
     public Room firstRoom = null;
 
-    final int memWidth = 10;
-    final int memHeight = 10;
+    final int memWidth = 20;
+    final int memHeight = 20;
     
     final int maxRoom = 15;
     final int minRoom = 3;
@@ -282,7 +284,7 @@ public class Dungeon
             Room newRoom = new Room(new RectInt(calculateRoomMin(mainRoom, randDir), roomWidth, roomHeight), newRoomDoors, (i < roomNumb) ? RoomType.normal : RoomType.chest, area);
             addRoomToMemArea(mainRoom, newRoom, randDir);
             newRoom.drawRoomOnMap(area);
-            newRoom.addMonsters( 2/*Main.rand.nextInt(3)*/, null);
+            newRoom.addMonsters( Main.rand.nextInt(2) + 1, null);
             //e adesso la aggiungo alle varie struture dati
             rooms.add(newRoom);
             
@@ -330,7 +332,6 @@ public class Dungeon
                 break;
             }
         }
-
         Dungeon dungeon = new Dungeon(false);
         dungeon.generateDungeonRooms();
 

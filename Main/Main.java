@@ -14,6 +14,7 @@ public class Main
     
     public static GamePanel gp;
     public static Random rand = new Random();
+    public static JFrame window;
     public static void main(String[] args) 
     {   
         startNewGame();
@@ -21,6 +22,11 @@ public class Main
 
     public static void startNewGame()
     {
+        if(window != null)
+        {
+            window = null;
+            gp = null;
+        }
         rand = new Random();
         long seed = rand.nextLong();
         Utils.printf("seed: " + seed);
@@ -28,7 +34,7 @@ public class Main
 
         //fix stuttering and lagging problems with linux gpu scheduling
         System.setProperty("sun.java2d.opengl", "true");
-        JFrame window = new JFrame();
+        window = new JFrame();
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // il programma si conclude quando l'utente chiude la finestra con la x
         window.setResizable(false);
         window.setTitle("Sands");

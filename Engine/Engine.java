@@ -34,7 +34,6 @@ public class Engine
             for(int x = 0; x < map.width; x++)
             {
                 int offset = y * map.width + x;
-                // SE C'È SEGM FAULT TI PREGO SONO LE VARIABILI DEL PORCODIO SU gamepanel
                 Tile tile = map.tiles[offset];
 
                 
@@ -64,8 +63,8 @@ public class Engine
                  */
 
                  //quindi, banalmente, queste 4 righe implementano la camera
-                int mapX = x * gp.tileSize;
-                int mapY = y * gp.tileSize;
+                int mapX = x * GamePanel.tileSize;
+                int mapY = y * GamePanel.tileSize;
                 int screenX = mapX - GamePanel.player.worldPosition.x + GamePanel.player.screenPosition.x;
                 int screenY = mapY - GamePanel.player.worldPosition.y + GamePanel.player.screenPosition.y;
 
@@ -299,6 +298,23 @@ public class Engine
     {
         g2D.setFont(g2D.getFont().deriveFont(Font.BOLD, 90f));
         String txt = "You Died!";
+        Vector2 coordinates = new Vector2(centeredText_X(txt, g2D), GamePanel.tileSize * 3);
+
+        g2D.setColor(Color.red);
+        g2D.drawString(txt, coordinates.x, coordinates.y);
+
+        g2D.setFont(g2D.getFont().deriveFont(Font.BOLD, 30f));
+        String press = "Press Return to start a new game";
+        coordinates = new Vector2(centeredText_X(press, g2D), GamePanel.tileSize * 6);
+
+        g2D.setColor(Color.white);
+        g2D.drawString(press, coordinates.x, coordinates.y);
+    }
+
+    public static void printWinGameScreen(Graphics2D g2D)
+    {
+        g2D.setFont(g2D.getFont().deriveFont(Font.BOLD, 90f));
+        String txt = "You Win!";
         Vector2 coordinates = new Vector2(centeredText_X(txt, g2D), GamePanel.tileSize * 3);
 
         g2D.setColor(Color.red);

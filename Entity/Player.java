@@ -134,8 +134,9 @@ public class Player extends Entity
             GamePanel.gameState = GameState.inGame;
         }
 
-        if(kh.returnPressed && GamePanel.gameState == GameState.title && player.isDead)
+        if(kh.returnPressed && GamePanel.gameState == GameState.title && (player.isDead || GamePanel.playerHasWon))
         {
+            Main.window.dispose();
             Main.startNewGame();
             GamePanel.gameState = GameState.inGame;
         }
@@ -149,6 +150,7 @@ public class Player extends Entity
         {
             onCollisionObject = CollisionLogic.checkForCollision_Obj(this, true);
             onCollisionEntities = CollisionLogic.playerWithEntityCollision(this, CollisionType.nextTiles);
+
             
             if(kh.upPressed)
             {
@@ -510,7 +512,7 @@ public class Player extends Entity
                 }
 
                 Room newRoom = new Room(bounds, null, type, linkedDungeon.area);
-
+                newRoom.addMonsters(Main.rand.nextInt(2) + 1, null);
                 dungeon.addRoomToMemArea(mainRoom, newRoom, boomDirection);
                 newRoom.drawRoomOnMap(map);
             }

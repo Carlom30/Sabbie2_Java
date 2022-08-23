@@ -22,10 +22,10 @@ public class Ladder extends SuperObject
     }
 
     //union, uno dei due è sempre null
-    LadderType ladderType;
-    Dungeon linkedDungeon;
-    Map linkedMap;
-    Ladder linkedLadder;
+    public LadderType ladderType;
+    public Dungeon linkedDungeon;
+    public Map linkedMap;
+    public Ladder linkedLadder;
 
 
     //da finire
@@ -39,6 +39,8 @@ public class Ladder extends SuperObject
         //type è solo il "tipo" del super oggetto.
         type = objecType.Ladder;
         this.linkedDungeon = linkedDungeon;
+
+        name = "ladder";
 
         //se linkedDungeon arriva null, allora la ladder è interna è serve solo a riportare il giocatore fuori
         this.linkedMap = linkedDungeon == null ? Main.gp.map : linkedDungeon.area;

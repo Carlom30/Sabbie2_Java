@@ -47,6 +47,7 @@ public class GamePanel extends JPanel implements Runnable
     public final int maxWorldRow = 50;
     public final int worldWidth = tileSize * maxWorldColumn;
     public final int worldHeight = tileSize * maxWorldRow;
+    public final static int maxDungeons = 3;
 
     public static final int maxPrintableObject = 999;
 
@@ -68,6 +69,8 @@ public class GamePanel extends JPanel implements Runnable
     public static List<SuperObject> printableObj = new ArrayList<SuperObject>();
     public static Monster[] onMapMonsters;
 
+    public List<Dungeon> onMapDungeons = new ArrayList<Dungeon>();
+
     public GamePanel()
     {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -81,13 +84,7 @@ public class GamePanel extends JPanel implements Runnable
 
     public void init()
     {
-
-        //up is testing
         gameState = GameState.title;
-        //here goes the game setup
-        //map = new Map(this, maxWorldColumn, maxWorldRow);
-        //map.fillMapWithOneTile(new Tile(Utils.loadSprite("/Sprites/world/sand/sand3.png")));
-        //PerlinNoise.noise(map);
         player = new Player();
         player.worldPosition = new Vector2((maxWorldColumn / 2), (maxWorldRow / 2));
         map = Map.generateOutsideWorld(this);
@@ -161,8 +158,15 @@ public class GamePanel extends JPanel implements Runnable
                 Engine.printEndGameScreen(g2);
             }
 
+            else if(GamePanel.playerHasWon)
+            {
+                Engine.printWinGameScreen(g2);
+            }
+
             else
+            {
                 Engine.printTitleScreen(g2);
+            }
         }
 
         else

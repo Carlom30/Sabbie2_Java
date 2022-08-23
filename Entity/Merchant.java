@@ -43,7 +43,7 @@ public class Merchant extends Entity
         worldPosition = Vector2.roomToGlobalPosition(worldPosition, merchRoom);
         merchantRoom = merchRoom;
         collisionOn = true;
-        collisionArea = new RectInt(new Vector2(0, 0), GamePanel.tileSize, GamePanel.tileSize);
+        collisionArea = new RectInt(new Vector2(8, 8), 32, 32);
         collisionAreaMin_Default = collisionArea.min;
         
     }

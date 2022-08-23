@@ -221,14 +221,15 @@ public class CollisionLogic
         
 
         if(onMapEntities.isEmpty())
+        {
             return onMapEntities;
+            
+        }
         
-        player.collisionArea.min = 
-            new Vector2((player.collisionArea.min.x + player.worldPosition.x), (player.collisionArea.min.y + player.worldPosition.y));
-
-
         for(Entity e : onMapEntities)
         {
+            player.collisionArea.min = 
+                new Vector2((player.collisionArea.min.x + player.worldPosition.x), (player.collisionArea.min.y + player.worldPosition.y));
             //Utils.printf(e.toString());
             e.collisionArea.min = 
                 new Vector2((e.collisionArea.min.x + e.worldPosition.x), (e.collisionArea.min.y + e.worldPosition.y));
@@ -244,26 +245,23 @@ public class CollisionLogic
                             player.collisionArea.min = Vector2.vectorSumm(player.collisionArea.min, playerDirection);
                         }
                         
-                    }
-
-                    if(RectInt.intersect(player.collisionArea, e.collisionArea) && !onCollisionEntities.contains(e))
-                    {
-                        //Utils.printf("entity: " + e + " collision on: " + Utils.allDirections[i]);
-                        onCollisionEntities.add(e);
-                        Utils.printf("entity: " + e + " " + e.collisionArea.min.x + ", " + e.collisionArea.min.y);
-                        
-                        if(e.collisionOn && type == CollisionType.nextTiles)
+                        if(RectInt.intersect(player.collisionArea, e.collisionArea) && !onCollisionEntities.contains(e))
                         {
-                            player.collisionOn = true;
-                        }
-
-                        if(e.collisionOn && type == CollisionType.onStepTile)
-                        {
-                            player.collisionOn = e.name == "merchant" ? false : true;
+                            //Utils.printf("entity: " + e + " collision on: " + Utils.allDirections[i]);
+                            onCollisionEntities.add(e);
+                            Utils.printf("entity: " + e + " " + e.collisionArea.min.x + ", " + e.collisionArea.min.y);
+                            
+                            if(e.collisionOn && type == CollisionType.nextTiles)
+                            {
+                                player.collisionOn = true;
+                            }
+    
+                            if(e.collisionOn && type == CollisionType.onStepTile)
+                            {
+                                player.collisionOn = e.name == "merchant" ? false : true;
+                            }
                         }
                     }
-                       
-                    //return null;
                 }
                 e.collisionArea.min = e.collisionAreaMin_Default;
                 player.collisionArea.min = player.collisionAreaMin_Default;

@@ -139,6 +139,7 @@ public class Map
     {
         int maxRandRooms = 5;
         int randomOutsideRooms = Main.rand.nextInt(maxRandRooms);
+        RectInt playerArea = player.spawnArea;
 
         for(int i = 0; i < randomOutsideRooms; i++)
         {

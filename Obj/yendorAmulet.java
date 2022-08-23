@@ -3,6 +3,7 @@ package Obj;
 import Engine.GamePanel;
 import Entity.Player;
 import Main.Utils;
+import Main.Main.GameState;
 import Math.RectInt;
 import Math.Vector2;
 import World.Dungeon;
@@ -24,6 +25,7 @@ public class yendorAmulet extends SuperObject
     {
         //player win function
         GamePanel.playerHasWon = true;
+        GamePanel.gameState = GameState.title;
         Utils.printf("you win!!");
         return true;
          
