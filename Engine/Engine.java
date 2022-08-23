@@ -1,6 +1,5 @@
 package Engine;
 import java.awt.image.BufferedImage;
-import java.nio.Buffer;
 import java.util.List;
 
 import Entity.Inventory;
@@ -10,10 +9,8 @@ import Main.*;
 import Math.Vector2;
 import Obj.Projectile;
 import Obj.SuperObject;
-import Obj.SuperObject.objecType;
-import World.Map;
-import World.Map.MapType;
 
+import World.Map;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -72,15 +69,15 @@ public class Engine
                 BufferedImage sprite = tile.sprite;
 
                 //easlly, se è furoi dallo schermo non faccio print
-                if(mapX + gp.tileSize < gp.player.worldPosition.x - gp.player.screenPosition.x ||
-                   mapX - gp.tileSize > gp.player.worldPosition.x + gp.player.screenPosition.x ||
-                   mapY + gp.tileSize < gp.player.worldPosition.y - gp.player.screenPosition.y ||
-                   mapY - gp.tileSize > gp.player.worldPosition.y + gp.player.screenPosition.y)
+                if(mapX + GamePanel.tileSize < GamePanel.player.worldPosition.x - GamePanel.player.screenPosition.x ||
+                   mapX - GamePanel.tileSize > GamePanel.player.worldPosition.x + GamePanel.player.screenPosition.x ||
+                   mapY + GamePanel.tileSize < GamePanel.player.worldPosition.y - GamePanel.player.screenPosition.y ||
+                   mapY - GamePanel.tileSize > GamePanel.player.worldPosition.y + GamePanel.player.screenPosition.y)
                 {
                     continue;
                 }
 
-                g2D.drawImage(sprite, screenX, screenY, gp.tileSize, gp.tileSize, null);
+                g2D.drawImage(sprite, screenX, screenY, GamePanel.tileSize, GamePanel.tileSize, null);
             }
         }
         if(map.merchant != null)
@@ -91,7 +88,7 @@ public class Engine
 
     public static void printObjects(Graphics2D g2D)
     {
-        for(SuperObject obj : Main.gp.printableObj)
+        for(SuperObject obj : GamePanel.printableObj)
         {
             obj.draw(g2D, Main.gp);
         }
@@ -179,7 +176,7 @@ public class Engine
                 }
                 break;
         }
-        g2D.drawImage(image, player.screenPosition.x, player.screenPosition.y, player.gp.tileSize, player.gp.tileSize, null);
+        g2D.drawImage(image, player.screenPosition.x, player.screenPosition.y, GamePanel.tileSize, GamePanel.tileSize, null);
     }
     
     public static void printInventory(Graphics2D g2D, Player player)

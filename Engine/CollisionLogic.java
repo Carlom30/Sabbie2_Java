@@ -34,7 +34,7 @@ public class CollisionLogic
     {
         entity.collisionArea.min = entity.collisionAreaMin_Default;
         List<Tile> collisionTiles = new ArrayList<Tile>();
-        Map map = gp.player.linkedMap;
+        Map map = GamePanel.player.linkedMap;
 
         int leftCollisionX =  entity.worldPosition.x + entity.collisionArea.min.x; 
         int rightCollisionX = entity.worldPosition.x + entity.collisionArea.min.x + entity.collisionArea.width;
@@ -132,9 +132,12 @@ public class CollisionLogic
 
                 break;
             }
+
+            case ALL_DIRECTIONS:
+                break;
         }
 
-        if((map.tiles[offsetTileOne].collision == true || map.tiles[offsetTileTwo].collision == true) && gp.player.DEV_MODE == false)
+        if((map.tiles[offsetTileOne].collision == true || map.tiles[offsetTileTwo].collision == true) && GamePanel.player.DEV_MODE == false)
         {
             entity.collisionOn = true;
             

@@ -1,14 +1,7 @@
 package Math;
 import java.lang.Math;
-import java.awt.image.BufferedImage;
 
 import Main.Main;
-import Main.Utils;
-import javax.swing.JFrame;
-
-import Engine.GamePanel;
-import Engine.Tile;
-import World.Map;
 
 public class PerlinNoise 
 {

@@ -1,16 +1,12 @@
 package World;
 
-import World.Map;
 import World.Map.MapType;
 import World.Room.RoomType;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import Engine.GamePanel;
-import Entity.Entity;
-import Entity.Monster;
 import Entity.Player;
 import Main.Main;
 import Main.Utils;
@@ -84,7 +80,7 @@ public class Dungeon
 
     public Vector2 calculateRoomMin(Room mainRoom, Directions randDir)
     {
-        RectInt roomBounds;
+        //RectInt roomBounds;
         Vector2 min = new Vector2(0, 0);
 
         if(randDir == Directions.up)

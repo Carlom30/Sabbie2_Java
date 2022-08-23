@@ -6,19 +6,16 @@ import java.awt.Graphics2D;
 import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 
 import javax.swing.JPanel;
 import Entity.*;
 import Main.KeyHandler;
-import Main.Utils;
 import Main.Main.GameState;
 import Math.*;
 import Obj.Projectile;
 import Obj.SuperObject;
 import World.*;
 import World.Map.MapType;
-import java.awt.image.BufferedImage;
 
 
 /*  
@@ -29,7 +26,6 @@ import java.awt.image.BufferedImage;
 public class GamePanel extends JPanel implements Runnable
 {
     //screen settings
-    public static boolean playerHasWon = false;
     //tilesize è la dimenzione finale di una tile (in pixel ovviamente)
     final public static int originalTileSize = 16; // 16 x 16 tiles
     //16x16 è comunque un po piccolo in generale per i monitor moderni quindi
@@ -158,7 +154,7 @@ public class GamePanel extends JPanel implements Runnable
                 Engine.printEndGameScreen(g2);
             }
 
-            else if(GamePanel.playerHasWon)
+            else if(GamePanel.player.hasWon)
             {
                 Engine.printWinGameScreen(g2);
             }
@@ -199,10 +195,6 @@ public class GamePanel extends JPanel implements Runnable
         {
             for(Projectile p : player.shootedProjectile)
             {
-                if(player.shootedProjectile.size() == 6)
-                {
-                    int a = 0;
-                }
                 p.update();
                 
                 if(player.shootedProjectile.isEmpty())

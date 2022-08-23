@@ -1,6 +1,5 @@
 package Math;
 
-import Engine.GamePanel;
 
 public class RectInt 
 {

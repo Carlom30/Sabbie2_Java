@@ -1,17 +1,10 @@
 package Entity;
 import Math.*;
-import Obj.SuperObject;
 import World.Map.MapType;
 
 import java.awt.image.BufferedImage;
-import java.text.CollationElementIterator;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.text.Utilities;
-
-import Engine.GamePanel;
-import Main.Main;
 import Main.Utils;
 import Main.Utils.*;
 

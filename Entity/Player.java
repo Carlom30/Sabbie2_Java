@@ -42,6 +42,7 @@ public class Player extends Entity
 
     public boolean DEV_MODE;
     public boolean isDead = false;
+    public boolean hasWon = false;
 
     public BufferedImage heart;
     public BufferedImage healtBar_base;
@@ -134,7 +135,7 @@ public class Player extends Entity
             GamePanel.gameState = GameState.inGame;
         }
 
-        if(kh.returnPressed && GamePanel.gameState == GameState.title && (player.isDead || GamePanel.playerHasWon))
+        if(kh.returnPressed && GamePanel.gameState == GameState.title && (player.isDead || player.hasWon))
         {
             Main.window.dispose();
             Main.startNewGame();
@@ -361,9 +362,9 @@ public class Player extends Entity
 
         if(kh.shootUp || kh.shootDown || kh.shootRight || kh.shootLeft)
         {
-            if(Utils.currentTime == -1)
+            if(Projectile.currentTime == -1)
             {
-                Utils.currentTime = System.currentTimeMillis();
+                Projectile.currentTime = System.currentTimeMillis();
                 Directions d = Directions.ALL_DIRECTIONS;
 
                 if(kh.shootUp)
@@ -381,7 +382,7 @@ public class Player extends Entity
                 Utils.printf(d.toString());
                 Projectile.shoot(this, d);
             }
-            Utils.timeIsPassed(Utils.currentTime, 2000);
+            Utils.timeIsPassed(Projectile.currentTime, 2000);
         }
 
         if(linkedDungeon != null)
@@ -415,15 +416,14 @@ public class Player extends Entity
         //quindi per prima cosa creo una lista di tile che hanno effettivamente la tnt
         List<remoteTnt> tntList = new ArrayList<remoteTnt>();
 
-        int length = 0;
 
-        if(Main.gp.printableObj.isEmpty())
+        if(GamePanel.printableObj.isEmpty())
         {
             Utils.printf("list is empty, no Tnt found");
             return;
         }
 
-        for(SuperObject obj : Main.gp.printableObj)
+        for(SuperObject obj : GamePanel.printableObj)
         {
             if(obj.type == objecType.remoteTnt)
             {
@@ -438,7 +438,7 @@ public class Player extends Entity
             //per prima cosa tutti i dati utili
             Utils.printf("remote n: " + obj);
             Dungeon dungeon = this.linkedDungeon;
-            Map map = Main.gp.player.linkedMap;
+            Map map = GamePanel.player.linkedMap;
             Tile mainTile = obj.attachedTile;
             Room mainRoom = mainTile.linkedRoom;
             Vector2 tileVector = map.getGlobalTileVector(mainTile);
@@ -483,7 +483,7 @@ public class Player extends Entity
                 {
                     map.tiles[(tileVector.y + Vector2.directionsVector[i].y) * map.width + (tileVector.x + Vector2.directionsVector[i].x)] = floor;
                 }
-                Main.gp.printableObj.remove(obj);
+                GamePanel.printableObj.remove(obj);
                 return;
             }
 
@@ -527,7 +527,7 @@ public class Player extends Entity
                 map.tiles[(tileVector.y + Vector2.directionsVector[i].y) * map.width + (tileVector.x + Vector2.directionsVector[i].x)] = floor;
             }
 
-            Main.gp.printableObj.remove(obj);
+            GamePanel.printableObj.remove(obj);
 
             //then destroy near tiles
 

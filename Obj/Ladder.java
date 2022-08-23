@@ -1,7 +1,5 @@
 package Obj;
 
-import java.util.Vector;
-
 import Main.Main;
 import Main.Utils;
 import Math.Vector2;
@@ -65,8 +63,8 @@ public class Ladder extends SuperObject
             toRenderMap = this.linkedDungeon.area;
             Main.gp.currentMapType = MapType.dungeon;
             player.linkedDungeon = this.linkedDungeon;
-            newPlayerPosition.x = (toRenderMap.width / 2) * Main.gp.tileSize;
-            newPlayerPosition.y = (toRenderMap.height / 2) * Main.gp.tileSize;
+            newPlayerPosition.x = (toRenderMap.width / 2) * GamePanel.tileSize;
+            newPlayerPosition.y = (toRenderMap.height / 2) * GamePanel.tileSize;
         }
         
         else if(ladderType == LadderType.goesUp)

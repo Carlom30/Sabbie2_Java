@@ -24,7 +24,7 @@ public class yendorAmulet extends SuperObject
     public boolean interact(Player player) 
     {
         //player win function
-        GamePanel.playerHasWon = true;
+        player.hasWon = true;
         GamePanel.gameState = GameState.title;
         Utils.printf("you win!!");
         return true;

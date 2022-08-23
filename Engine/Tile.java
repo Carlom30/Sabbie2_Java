@@ -2,7 +2,6 @@ package Engine;
 
 import World.*;
 import Math.Vector2;
-import Math.Vector2float;
 
 import java.awt.image.BufferedImage;
 

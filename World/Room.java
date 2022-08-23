@@ -7,13 +7,11 @@ import Obj.yendorAmulet;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import Engine.GamePanel;
 import Engine.Tile;
 import Engine.Tile.TileType;
 import Entity.Monster;
-import Entity.Player;
 import Main.Main;
 import Main.Utils;
 import Main.Utils.Directions;

@@ -13,7 +13,7 @@ public class Projectile extends SuperObject
     //player cant interact with this ofc
     public int velocity;
     public long lifeTimeInMilliseconds = 2000;
-    long currentTime = -1;
+    public static long currentTime = -1;
 
     public BufferedImage p_up;
     public BufferedImage p_down;
@@ -79,7 +79,7 @@ public class Projectile extends SuperObject
         long delta = currentTime - lastTime;
         if(delta >= timeToWait)
         {
-            currentTime = -1;
+            Projectile.currentTime = -1;
             return true;
         }
 

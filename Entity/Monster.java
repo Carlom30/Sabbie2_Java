@@ -2,7 +2,6 @@ package Entity;
 import java.util.List;
 import DataStructures.*;
 import Engine.CollisionLogic;
-import Engine.Engine;
 import Engine.GamePanel;
 import Engine.Tile;
 import Engine.CollisionLogic.CollisionType;

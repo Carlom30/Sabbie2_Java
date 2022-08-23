@@ -1,10 +1,6 @@
 package Obj;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
 import Engine.GamePanel;
-import Entity.Inventory;
 import Entity.Merchant;
 import Entity.Player;
 import Main.Main;
